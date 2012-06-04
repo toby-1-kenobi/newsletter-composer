@@ -1,6 +1,7 @@
 <?php
 require_once 'Excel/reader.php';
 require_once '../php/db.php';
+
 ?>
 <!DOCTYPE html>
 
@@ -35,10 +36,14 @@ require_once '../php/db.php';
 
 <p><a href="instructions.html" >Instructions</a></p>
 
-<?php
 
+
+<?php
+print_r($_COOKIES);
+session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
 session_start();
-echo "<p>debug uid {$_SESSION['uid']}</p>";
+$sess_id = session_id();
+echo "<p>debug $sess_id</p>";
 
 // get the user credentials from either the existing session or the login post
 $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : $_POST['uid'];
@@ -52,8 +57,8 @@ $q_user_exists = $dbh->prepare("SELECT COUNT(*) AS user_exists FROM Users WHERE 
 $q_add_user = $dbh->prepare("INSERT INTO Users (name, password, email) VALUES (:name, MD5(:password), :email)");
 $q_check_login = $dbh->prepare ("SELECT COUNT(*) AS login_ok FROM Users WHERE name = :name AND password = MD5(:password)");
 
-//echo '<p>debug A</p>';
 if (isset($_POST['logout'])) {
+	echo '<p>debug A</p>';
 	unset($uid);
 	unset($pwd);
 	unset($_SESSION['uid']);
@@ -109,6 +114,7 @@ if (!isset($uid)) {
 		echo '<p>debug J</p>';
 		$_SESSION['uid'] = $uid;
 		$_SESSION['pwd'] = $pwd;
+		echo "<p>debug uid {$_SESSION['uid']}</p>";
  ?> 
 <!--<div id="loading_splash">Please Wait ...</div>-->
 
