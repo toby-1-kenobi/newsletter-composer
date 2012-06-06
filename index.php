@@ -119,10 +119,24 @@ if (!isset($uid)) {
 		echo '<p>Login Failed</p>';
 		include_once 'login_form.inc';
 	} else { // the rest of the app happens once the user is logged in
-		echo '<p>debug J</p>';
+		//echo '<p>debug J</p>';
 		$_SESSION['uid'] = $uid;
 		$_SESSION['pwd'] = $pwd;
-		echo "<p>debug uid {$_SESSION['uid']}</p>";
+		//echo "<p>debug uid {$_SESSION['uid']}</p>";
+		
+		if (isset($_POST['ch_pwd'])) { // change password form submitted
+			$q_ch_pwd = $dbh->prepare("UPDATE Users SET password=MD5(:password) WHERE name=:name");
+			$q_ch_pwd->bindParam(':name', $uid);
+			$q_ch_pwd->bindParam(':password', $_POST['ch_pwd']);
+			$q_ch_pwd->execute();
+			if ($q_ch_pwd->rowCount() > 0) {
+				$pwd = $_POST['ch_pwd'];
+				$_SESSION['pwd'] = $pwd;
+				echo '<p>Password Updated.</p>';
+			} else {
+				echo '<p>Password Update Failed!</p>';
+			}
+		}
  ?> 
 <!--<div id="loading_splash">Please Wait ...</div>-->
 
@@ -131,6 +145,16 @@ if (!isset($uid)) {
 <form method="post" action="<?=$_SERVER['PHP_SELF']?>">
 <input type="hidden" name="logout" value="1" />
 <input type="submit" value="logout" />
+</form></p></div>
+
+<div class="right"> <!-- change password form -->
+<p><?=$uid?>
+<form id="chpwd_form" method="post" action="<?=$_SERVER['PHP_SELF']?>">
+<div><label for="ch_pwd">New Password:</label>
+<input id="ch_pwd" type="password" required="required" name="ch_pwd" /></div>
+<div><label for="conf_ch_pwd">Confirm new password:</label>
+<input id="conf_ch_pwd" type="password" required="required" name="conf_ch_pwd" /></div>
+<div></div><input type="submit" value="Change Password" /></div>
 </form></p></div>
 
   <fieldset><legend>Personal details</legend>

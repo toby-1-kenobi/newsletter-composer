@@ -12,6 +12,20 @@ function validatePassword()
     }  
 }
 
+// change password form validation
+function validateChangePassword()
+{
+	var pass1 = $('#ch_pwd');
+	var pass2 = $('#conf_ch_pwd');
+	if( pass1.val() != pass2.val() ){  
+        pass2.addClass("error");  
+        return false;  
+    } else{  
+        pass2.removeClass("error");  
+        return true;  
+    }  
+}
+
 // simply pad a number with leading zeros
 function pad(number, length)
 {
@@ -508,6 +522,14 @@ $(document).ready(function() {
 	$('#conf_pwd').keyup(validatePassword); 
 	$('#rego_form').submit(function(){  
 	    if(validatePassword()) return true;
+	    else return false;  
+	}); 
+	
+	// bind change password form validation
+	$('#ch_pwd').blur(validateChangePassword);  
+	$('#conf_ch_pwd').keyup(validateChangePassword); 
+	$('#chpwd_form').submit(function(){  
+	    if(validateChangePassword()) return true;
 	    else return false;  
 	}); 
 	
