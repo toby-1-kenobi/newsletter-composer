@@ -21,6 +21,21 @@ require_once '../php/db.php';
 
 <link href="css/newsletterComposer.css?<?php echo time(); ?>" rel="stylesheet" type="text/css"/>
 
+<?php
+
+session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
+session_start();
+
+// get the user credentials from either the existing session or the login post
+$uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : $_POST['uid'];
+$pwd = isset($_SESSION['pwd']) ? $_SESSION['pwd'] : $_POST['pwd'];
+
+if (isset($uid)) {
+	echo "<script type=\"text/javascript\">var userName = '{$_SESSION['uid']}';</script>";
+}
+
+?>
+
 <script src="js/json2.js" type="text/javascript"></script>
 <script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
 <script src="js/jquery.cookies.2.2.0.js" type="text/javascript"></script>
@@ -39,15 +54,8 @@ require_once '../php/db.php';
 
 
 <?php
-print_r($_COOKIES);
-session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
-session_start();
-$sess_id = session_id();
-echo "<p>debug $sess_id</p>";
-
-// get the user credentials from either the existing session or the login post
-$uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : $_POST['uid'];
-$pwd = isset($_SESSION['pwd']) ? $_SESSION['pwd'] : $_POST['pwd'];
+//$sess_id = session_id();
+//echo "<p>debug $sess_id</p>";
 
 // connect to the database
 $dbh = dbConnect();
@@ -58,7 +66,7 @@ $q_add_user = $dbh->prepare("INSERT INTO Users (name, password, email) VALUES (:
 $q_check_login = $dbh->prepare ("SELECT COUNT(*) AS login_ok FROM Users WHERE name = :name AND password = MD5(:password)");
 
 if (isset($_POST['logout'])) {
-	echo '<p>debug A</p>';
+	//echo '<p>debug A</p>';
 	unset($uid);
 	unset($pwd);
 	unset($_SESSION['uid']);

@@ -158,7 +158,7 @@ var imageUploadHandler = function(event){
 			jQuery.post('save_image.php', { 'filename': file.fileName, 'ext': extension, 'data': canvas.toDataURL(uploadType) }, function(data_returned) {
 				// when it's uploaded to the server and saved then set the image preview to source from there.
 				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved in the cookies
-				uploadedDiv.find('img').attr('src', 'images/' + encodeURIComponent(data_returned));
+				uploadedDiv.find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
 				setNewsletterCookie();
 			});
 		}
@@ -401,7 +401,7 @@ function buildArticles(array, followingElement) {
 				bindControls(image);
 				image.find('input').val(array[a].article[i].value);
 				image.find('.imageLoaded').val(array[a].article[i].value);
-				image.find('img.preview').attr('src', 'images/' + encodeURIComponent(array[a].article[i].value));
+				image.find('img.preview').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
 		      image.find('.imageUpload').bind('change', imageUploadHandler);
 				art.find('.article_buttons').before(image);
 			}

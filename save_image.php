@@ -30,5 +30,7 @@ if (login_ok()) {
 	
 	echo $filename . '.' . $newExtension;
 	
+} else {
+	echo 'could not save image. User not logged in.';
 }
 ?>
