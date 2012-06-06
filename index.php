@@ -140,21 +140,22 @@ if (!isset($uid)) {
  ?> 
 <!--<div id="loading_splash">Please Wait ...</div>-->
 
-<div class="right"> <!-- logout button -->
-<p><?=$uid?>
-<form method="post" action="<?=$_SERVER['PHP_SELF']?>">
-<input type="hidden" name="logout" value="1" />
-<input type="submit" value="logout" />
-</form></p></div>
-
 <div class="right"> <!-- change password form -->
-<p><?=$uid?>
-<form id="chpwd_form" method="post" action="<?=$_SERVER['PHP_SELF']?>">
+<p>
+<button class="reveal_trigger">Change Password</button>
+<form class="hidden" id="chpwd_form" method="post" action="<?=$_SERVER['PHP_SELF']?>">
 <div><label for="ch_pwd">New Password:</label>
 <input id="ch_pwd" type="password" required="required" name="ch_pwd" /></div>
 <div><label for="conf_ch_pwd">Confirm new password:</label>
 <input id="conf_ch_pwd" type="password" required="required" name="conf_ch_pwd" /></div>
 <div></div><input type="submit" value="Change Password" /></div>
+</form></p></div>
+
+<div class="right"> <!-- logout button -->
+<p><?=$uid?>
+<form method="post" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="logout" value="1" />
+<input type="submit" value="logout" />
 </form></p></div>
 
   <fieldset><legend>Personal details</legend>

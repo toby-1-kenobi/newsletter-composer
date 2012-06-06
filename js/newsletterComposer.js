@@ -517,6 +517,14 @@ $(document).ready(function() {
 
 	//debugger; 
 	
+	// hide everything that should be hidden
+	$('.hidden').hide();
+	
+	// bind buttons that reveal things
+	$('.reveal_trigger').click(function(){
+		$(this).parent().next('.hidden').show();
+	});
+	
 	// bind rego form validation
 	$('#conf_pwd').blur(validatePassword);  
 	$('#conf_pwd').keyup(validatePassword); 
