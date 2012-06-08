@@ -31,7 +31,7 @@ $uid = isset($_SESSION['uid']) ? $_SESSION['uid'] : $_POST['uid'];
 $pwd = isset($_SESSION['pwd']) ? $_SESSION['pwd'] : $_POST['pwd'];
 
 if (isset($uid)) {
-	echo "<script type=\"text/javascript\">var userName = '{$_SESSION['uid']}';</script>";
+	echo "<script type=\"text/javascript\">var userName = '$uid';</script>";
 }
 
 ?>
