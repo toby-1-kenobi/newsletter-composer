@@ -4,7 +4,7 @@ require_once '../php/db.php';
 
 ?>
 <!DOCTYPE html>
-
+<html>
 <head>
 
 <title>Newsletter Composer</title>
