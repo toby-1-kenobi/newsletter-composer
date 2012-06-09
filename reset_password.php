@@ -8,67 +8,84 @@
 
 require_once '../php/db.php';
 
-//this function will display error messages in alert boxes, used for login forms so if a field is invalid it will still keep the info
-//use error('foobar');
-function error($msg) {
-    ?>
-    <html>
-    <head>
-    <script language="JavaScript">
-    <!--
-        alert("<?=$msg?>");
-        history.back();
-    //-->
-    </script>
-    </head>
-    <body>
-    </body>
-    </html>
-    <?
-    exit;
-}
+?>
+<!DOCTYPE html>
+<html>
+<head>
+
+<title>Newsletter Composer</title>
+
+<meta name="author" content="Toby Anderson" />
+<meta name="description" content="Reset user password for newsletter composer"/>
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+<meta http-equiv="content-style-type" content="text/css"/>
+<meta http-equiv="expires" content="0"/>
+
+<link href="css/newsletterComposer.css?<?php echo time(); ?>" rel="stylesheet" type="text/css"/>
+
+</head>
+
+<body>
+
+<h1>Newsletter Composer</h1>
+<h2>Reset Password</h2>
+
+<?php
 
 
-if (isset($_POST['submit'])) {
+if (!isset($_POST['email_sent'])) {
 	
-	if ($_POST['forgotpassword']=='') {
-		error('Please Fill in Email.');
-	}
+?>
+  <form name="forgotpasswordform" action="reset_password.php" method="post">
+	<input type="hidden" name="email_sent" value="1" />
+    <div><label for="email">email address:</label>
+    <input type="email" required="required" name="email" /></div>
+    <div><input type="submit" value="reset password" /></div>
+  </form>
+<?
+
+} else {
+	echo '<p>debug A</p>';
+	
 	if(get_magic_quotes_gpc()) {
-		$forgotpassword = htmlspecialchars(stripslashes($_POST['forgotpassword']));
+		$user_email = htmlspecialchars(stripslashes($_POST['email']));
 	} 
 	else {
-		$forgotpassword = htmlspecialchars($_POST['forgotpassword']);
+		$user_email = htmlspecialchars($_POST['email']);
 	}
-	//Make sure it's a valid email address, last thing we want is some sort of exploit!
-	if (!check_email_address($_POST['forgotpassword'])) {
-  		error('Email Not Valid - Must be in format of name@domain.tld');
-	}
+	echo "<p>$user_email</p>";
+	
     // Lets see if the email exists
-    $sql = "SELECT COUNT(*) FROM members WHERE user_email = '$forgotpassword'";
-    $result = mysql_query($sql)or die('Could not find member: ' . mysql_error());
-    if (!mysql_result($result,0,0)>0) {
-        error('Email Not Found!');
-    }
-
-	//Generate a RANDOM MD5 Hash for a password
-	$random_password=md5(uniqid(rand()));
-	
-	//Take the first 8 digits and use them as the password we intend to email the user
-	$emailpassword=substr($random_password, 0, 8);
-	
-	//Encrypt $emailpassword in MD5 format for the database
-	$newpassword = md5($emailpassword);
-	
-        // Make a safe query
-       	$query = sprintf("UPDATE `members` SET `user_password` = '%s' 
-						  WHERE `user_email` = '$forgotpassword'",
-                    mysql_real_escape_string($newpassword));
-					
-					mysql_query($query)or die('Could not update members: ' . mysql_error());
-
-//Email out the infromation
-$subject = "Your New Password"; 
+    $q_email_exists = $dbh->prepare("SELECT COUNT(*) AS email_exists FROM Users WHERE email = :email");
+    $q_email_exists->bindParam(':email', $user_email);
+    $q_email_exists->execute();
+    $email_exists = $q_email_exists->fetchColumn();
+    echo "<p>debug $email_exists</p>";
+    if (!$email_exists) {
+		
+		echo '<p>That email address is not registered in our system!</p>';
+		echo '<p><a href="reset_password.php">Go back</a></p>';
+		
+	} /*else {
+		
+		//Generate a RANDOM MD5 Hash for a password
+		$random_password=md5(uniqid(rand()));
+		
+		//Take the first 8 digits and use them as the password we intend to email the user
+		$emailpassword=substr($random_password, 0, 8);
+		
+		$q_ch_pwd = $dbh->prepare("UPDATE Users SET password=MD5(:password) WHERE email=:email");
+		$q_ch_pwd->bindParam(':email', $forgotpassword);
+		$q_ch_pwd->bindParam(':password', $emailpassword);
+		$q_ch_pwd->execute();
+		if ($q_ch_pwd->rowCount() == 0) {
+			echo '<p>Password Update Failed!</p>';
+			echo '<p><a href="reset_password.php">Go back</a></p>';
+		} else {
+			
+			//Email out the information
+			$subject = "Your New Password"; 
 $message = "Your new password is as follows:
 ---------------------------- 
 Password: $emailpassword
@@ -77,30 +94,15 @@ Please login and change your password ASAP
 
 This email was automatically generated."; 
                        
-          if(!mail($forgotpassword, $subject, $message,  "FROM: $site_name <$site_email>")){ 
-             die ("Sending Email Failed, Please Contact Site Admin! ($site_email)"); 
-          }else{ 
-                error('New Password Sent!.');
-         } 
-		
-	}
-	
-else {
-?>
-      <form name="forgotpasswordform" action="" method="post">
-        <table border="0" cellspacing="0" cellpadding="3" width="100%">
-          <caption>
-          <div>Forgot Password</div>
-          </caption>
-          <tr>
-            <td>Email Address:</td>
-            <td><input name="forgotpassword" type="text" value="" id="forgotpassword" /></td>
-          </tr>
-          <tr>
-            <td colspan="2" class="footer"><input type="submit" name="submit" value="Reset my password" /></td>
-          </tr>
-        </table>
-      </form>
-      <?
+			if(!mail($forgotpassword, $subject, $message,  "FROM: Toby Anderson <toby_anderson@sil.org>")){
+				echo '<p> Your password was changed, but we were unable to send you the email with your new password. Please Contact Site Admin! (toby_anderson@sil.org)</p>'; 
+			} else {
+				echo '<p>Your new password was sent in an email.</p>';
+				echo '<p><a href="index.php">Go back to Newsletter Composer</a></p>';
+			}
+		}
+	}*/
 }
 ?>
+</body>
+</html>

@@ -9,6 +9,7 @@
     <input type="password" required="required" name="pwd" /></div>
     <div><input type="submit" value="Log in" /></div>
   </form>
+  <p><a href="reset_password.php">Forgot password?</a></p>
 </fieldset>
 
 <fieldset id="rego_form"><legend>Register</legend>
