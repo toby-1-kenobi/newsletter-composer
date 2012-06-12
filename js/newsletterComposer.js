@@ -522,7 +522,7 @@ $(document).ready(function() {
 	
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){
-		$(this).parent().next('.hidden').show();
+		$(this).parent().find('.hidden').show();
 	});
 	
 	// bind rego form validation
