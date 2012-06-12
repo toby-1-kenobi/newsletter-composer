@@ -34,6 +34,8 @@ require_once '../php/db.php';
 <?php
 
 
+$dbh = dbConnect();
+
 if (!isset($_POST['email_sent'])) {
 	
 ?>
@@ -46,7 +48,6 @@ if (!isset($_POST['email_sent'])) {
 <?
 
 } else {
-	echo '<p>debug A</p>';
 	
 	if(get_magic_quotes_gpc()) {
 		$user_email = htmlspecialchars(stripslashes($_POST['email']));
@@ -54,20 +55,19 @@ if (!isset($_POST['email_sent'])) {
 	else {
 		$user_email = htmlspecialchars($_POST['email']);
 	}
-	echo "<p>$user_email</p>";
+	//echo "<p>$user_email</p>";
 	
     // Lets see if the email exists
     $q_email_exists = $dbh->prepare("SELECT COUNT(*) AS email_exists FROM Users WHERE email = :email");
     $q_email_exists->bindParam(':email', $user_email);
     $q_email_exists->execute();
     $email_exists = $q_email_exists->fetchColumn();
-    echo "<p>debug $email_exists</p>";
     if (!$email_exists) {
 		
 		echo '<p>That email address is not registered in our system!</p>';
 		echo '<p><a href="reset_password.php">Go back</a></p>';
 		
-	} /*else {
+	} else {
 		
 		//Generate a RANDOM MD5 Hash for a password
 		$random_password=md5(uniqid(rand()));
@@ -76,7 +76,7 @@ if (!isset($_POST['email_sent'])) {
 		$emailpassword=substr($random_password, 0, 8);
 		
 		$q_ch_pwd = $dbh->prepare("UPDATE Users SET password=MD5(:password) WHERE email=:email");
-		$q_ch_pwd->bindParam(':email', $forgotpassword);
+		$q_ch_pwd->bindParam(':email', $user_email);
 		$q_ch_pwd->bindParam(':password', $emailpassword);
 		$q_ch_pwd->execute();
 		if ($q_ch_pwd->rowCount() == 0) {
@@ -85,23 +85,24 @@ if (!isset($_POST['email_sent'])) {
 		} else {
 			
 			//Email out the information
-			$subject = "Your New Password"; 
+			$subject = "Your new password for Newsletter Composer"; 
 $message = "Your new password is as follows:
 ---------------------------- 
 Password: $emailpassword
 ---------------------------- 
 Please login and change your password ASAP
+<a href=\"http://www.newslettercomposer.net/\">www.newslettercomposer.net/</a>
 
 This email was automatically generated."; 
                        
-			if(!mail($forgotpassword, $subject, $message,  "FROM: Toby Anderson <toby_anderson@sil.org>")){
+			if(!mail($user_email, $subject, $message,  "FROM: Toby Anderson <toby_anderson@sil.org>")){
 				echo '<p> Your password was changed, but we were unable to send you the email with your new password. Please Contact Site Admin! (toby_anderson@sil.org)</p>'; 
 			} else {
 				echo '<p>Your new password was sent in an email.</p>';
 				echo '<p><a href="index.php">Go back to Newsletter Composer</a></p>';
 			}
 		}
-	}*/
+	}
 }
 ?>
 </body>
