@@ -151,12 +151,12 @@ if (!isset($uid)) {
 <input id="ch_pwd" type="password" required="required" name="ch_pwd" /></div>
 <div><label for="conf_ch_pwd">Confirm new password:</label>
 <input id="conf_ch_pwd" type="password" required="required" name="conf_ch_pwd" /></div>
-<div><input type="submit" value="Change Password" /></div>
+<div><input type="submit" class="button" value="Change Password" /></div>
 </form></div>
 
 <div><form method="post" action="<?=$_SERVER['PHP_SELF']?>">
 <input type="hidden" name="logout" value="1" />
-<input type="submit" value="logout" />
+<input type="submit" class="button" value="logout" />
 </form></div>
 
 </div>

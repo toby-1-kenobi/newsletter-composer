@@ -100,7 +100,7 @@ font-weight:bold;
 }
 */
 
-button {
+button, input.button {
  
 	/*basic styles*/
 	width: 150px;
@@ -127,7 +127,7 @@ button {
 	box-shadow:inset 0 0 2px #000000;
 }
 
-button:hover, button.hover {
+button:hover, button.hover, input.button:hover, input.button.hover {
 	-moz-box-shadow:inset 0 0 5px #000000;
 	-webkit-box-shadow:inset 0 0 5px #000000;
 	box-shadow:inset 0 0 5px #000000;

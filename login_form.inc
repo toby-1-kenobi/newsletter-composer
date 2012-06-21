@@ -7,7 +7,7 @@
     <input type="text" required="required" name="uid" /></div>
     <div><label for="pwd">Password:</label>
     <input type="password" required="required" name="pwd" /></div>
-    <div><input type="submit" value="Log in" /></div>
+    <div><input type="submit" class="button" value="Log in" /></div>
   </form>
   <p><a href="reset_password.php">Forgot password?</a></p>
 </fieldset>
@@ -23,6 +23,6 @@
     <input id="conf_pwd" type="password" required="required" name="conf_pwd" /></div>
     <div><label for="new_email">email address:</label>
     <input type="email" required="required" name="new_email" /></div>
-    <div><input type="submit" value="register" /></div>
+    <div><input type="submit" class="button" value="register" /></div>
   </form>
 </fieldset>
