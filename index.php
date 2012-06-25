@@ -23,7 +23,7 @@ require_once '../php/db.php';
 
 <?php
 
-session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
+//session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
 session_start();
 
 // get the user credentials from either the existing session or the login post

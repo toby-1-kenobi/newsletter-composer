@@ -5,7 +5,7 @@ require_once '../php/db.php';
 // make sure the user is logged in
 function login_ok() {
 	
-	session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
+	//session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
 	session_start();
 	
 	if (!isset($_SESSION['uid'])) return false;
