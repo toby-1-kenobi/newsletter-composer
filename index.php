@@ -209,8 +209,21 @@ can say what they want.
     <option value="cool.php" selected="selected">Cool</option>
   </select>
   
-  <div id="header">
-  </div>
+  <!-- This is tabs, one for the header of each format-->
+  <section class="tabs" id="header">
+	<section id="tab1">
+		<h2><a href="#tab1">Email</a></h2>
+		<textarea class="input-issue save" rows="8" cols="40"></textarea>
+	</section>
+	<section id="tab2">
+		<h2><a href="#tab2">Web</a></h2>
+		<textarea class="input-issue save" rows="8" cols="40"></textarea>
+	</section>
+	<section id="tab3">
+		<h2><a href="#tab3">Print</a></h2>
+		<textarea class="input-issue save" rows="8" cols="40"></textarea>
+	</section>
+</section>
   
   <div><label for="newsletterTitle">Newsletter title: </label>
   <input class="input-issue save" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
@@ -238,6 +251,22 @@ can say what they want.
 </div>
 
 </div>
+
+  <!-- This is tabs, one for the footer of each format-->
+  <section class="tabs" id="footer">
+	<section id="tab1">
+		<h2><a href="#tab1">Email</a></h2>
+		<textarea class="input-issue save" rows="8" cols="40"></textarea>
+	</section>
+	<section id="tab2">
+		<h2><a href="#tab2">Web</a></h2>
+		<textarea class="input-issue save" rows="8" cols="40"></textarea>
+	</section>
+	<section id="tab3">
+		<h2><a href="#tab3">Print</a></h2>
+		<textarea class="input-issue save" rows="8" cols="40"></textarea>
+	</section>
+</section>
 
 <button class="saveIssue right">Save to file</button>
 <button class="clear left">Clear</button>
