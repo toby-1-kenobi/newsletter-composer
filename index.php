@@ -39,7 +39,7 @@ if (isset($uid)) {
 <script src="js/json2.js" type="text/javascript"></script>
 <script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
 <script src="js/jquery.cookies.2.2.0.js" type="text/javascript"></script>
-<script src="js/tiny_mce/jquery.tinymce.js" type="text/javascript"></script>
+<!--<script src="js/tiny_mce/jquery.tinymce.js" type="text/javascript"></script>-->
 <script src="js/newsletterComposer.js?<?php echo time(); ?>" type="text/javascript"></script>
 
 </head>
@@ -65,6 +65,7 @@ $q_user_exists = $dbh->prepare("SELECT COUNT(*) AS user_exists FROM Users WHERE 
 $q_add_user = $dbh->prepare("INSERT INTO Users (name, password, email) VALUES (:name, MD5(:password), :email)");
 $q_check_login = $dbh->prepare ("SELECT COUNT(*) AS login_ok FROM Users WHERE name = :name AND password = MD5(:password)");
 
+// logout the user if that's what they asked for
 if (isset($_POST['logout'])) {
 	//echo '<p>debug A</p>';
 	unset($uid);
@@ -72,7 +73,9 @@ if (isset($_POST['logout'])) {
 	unset($_SESSION['uid']);
 	unset($_SESSION['pwd']);
 }
-if (isset($_POST['rego'])) { // register the user
+
+// register the user if they have filled in the rego form
+if (isset($_POST['rego'])) {
 		//echo '<p>debug B</p>';
 		// TODO: server side form validation
 		// check uid is unique
@@ -101,30 +104,37 @@ if (isset($_POST['rego'])) { // register the user
 		//echo '<p>debug E</p>';
 	}
 	//echo '<p>debug F</p>';
+	
+	
 if (!isset($uid)) {
 	echo '<p>debug G</p>';
 	// if the user is not logged in provide login or rego form
 	include_once 'login_form.inc';
-} else {
+}
+
+else { // the user is logged in or attempting to log in
 	//echo '<p>debug H</p>';
 	// check the user credentials
 	$q_check_login->bindParam(':name', $uid);
 	$q_check_login->bindParam(':password', $pwd);
 	$q_check_login->execute();
 	$login_ok = $q_check_login->fetchColumn();
-	if (!$login_ok) {
+	
+	if (!$login_ok) { // failed login
 		//echo '<p>debug I</p>';
 		unset($uid);
 		unset($pwd);
 		echo '<p>Login Failed</p>';
 		include_once 'login_form.inc';
-	} else { // the rest of the app happens once the user is logged in
+	}
+	
+	else { // the rest of the app happens once the user is logged in
 		//echo '<p>debug J</p>';
 		$_SESSION['uid'] = $uid;
 		$_SESSION['pwd'] = $pwd;
 		//echo "<p>debug uid {$_SESSION['uid']}</p>";
 		
-		if (isset($_POST['ch_pwd'])) { // change password form submitted
+		if (isset($_POST['ch_pwd'])) { //  user has submitted the change password form
 			$q_ch_pwd = $dbh->prepare("UPDATE Users SET password=MD5(:password) WHERE name=:name");
 			$q_ch_pwd->bindParam(':name', $uid);
 			$q_ch_pwd->bindParam(':password', $_POST['ch_pwd']);
@@ -161,6 +171,12 @@ if (!isset($uid)) {
 
 </div>
 
+<!-- The whole personal details section is not needed any more
+That's because it was for inserting various info into the headers and footers
+that are already in the template.
+It's better to allow the user to write their own headers and footers so they
+can say what they want.
+
 
   <fieldset><legend>Personal details</legend>
   <div><label for="address_line_1">Address line 1: </label>
@@ -178,6 +194,9 @@ if (!isset($uid)) {
   <label for="org_web">Organisation Website: </label>
   <input class="input-personal save" type="text" size="30" name="org_web" id="org_web"/></div>
   </fieldset>
+-->
+  
+  
   
   <fieldset><legend>Newsletter</legend>
   
@@ -189,6 +208,9 @@ if (!isset($uid)) {
   <select name="template" id="template" class="input-issue save">
     <option value="cool.php" selected="selected">Cool</option>
   </select>
+  
+  <div id="header">
+  </div>
   
   <div><label for="newsletterTitle">Newsletter title: </label>
   <input class="input-issue save" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>

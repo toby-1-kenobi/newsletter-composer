@@ -108,6 +108,11 @@ jQuery.cookies.setOptions({expiresAt: oneYear});
 var MAX_WIDTH = 600; // for image uploaded to server
 var MAX_WIDTH_UI = 200; // for preview of image displayed in the user interface
 
+/*
+ * I've decided I don't need to use TinyMCE - it's not that "tiny"
+ * It's far to big for the simple task I require,
+ * and it's limited to working on text areas, not text fields.
+ * I'll use a simple wiki-type syntax instead.
 // settings for TinyMCE editors
 var TMCEsettings = {
 			// Location of TinyMCE script
@@ -128,6 +133,7 @@ var TMCEsettings = {
 			// Example content CSS (should be your site CSS)
 			content_css : "css/newsletterComposer.css"
 		};
+*/
 
 // read image data from file, then use canvas element to set max size then upload and save on server
 var imageUploadHandler = function(event){
