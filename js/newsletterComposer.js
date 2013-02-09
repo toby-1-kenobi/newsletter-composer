@@ -526,6 +526,9 @@ $(document).ready(function() {
 	// hide everything that should be hidden
 	$('.hidden').hide();
 	
+	// apply jQueryUI elements
+	$( ".tabs" ).tabs();
+	
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){
 		$(this).parent().find('.hidden').show();

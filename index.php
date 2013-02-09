@@ -19,6 +19,7 @@ require_once '../php/db.php';
 <meta http-equiv="content-style-type" content="text/css"/>
 <meta http-equiv="expires" content="0"/>
 
+<link href="css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet" type="text/css"/>
 <link href="css/newsletterComposer.css?<?php echo time(); ?>" rel="stylesheet" type="text/css"/>
 
 <?php
@@ -38,6 +39,7 @@ if (isset($uid)) {
 
 <script src="js/json2.js" type="text/javascript"></script>
 <script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
+<script src="js/jquery-ui-1.10.0.custom.js" type="text/javascript"></script>
 <script src="js/jquery.cookies.2.2.0.js" type="text/javascript"></script>
 <!--<script src="js/tiny_mce/jquery.tinymce.js" type="text/javascript"></script>-->
 <script src="js/newsletterComposer.js?<?php echo time(); ?>" type="text/javascript"></script>
@@ -197,7 +199,6 @@ can say what they want.
 -->
   
   
-  
   <fieldset><legend>Newsletter</legend>
   
   <button class="saveIssue right">Save to file</button>
@@ -210,20 +211,22 @@ can say what they want.
   </select>
   
   <!-- This is tabs, one for the header of each format-->
-  <section class="tabs" id="header">
-	<section id="tab1">
-		<h2><a href="#tab1">Email</a></h2>
+  <div class="tabs" id="header">
+	  <ul>
+        <li><a href="#emailHeader"><span>Email</span></a></li>
+        <li><a href="#webHeader"><span>Web</span></a></li>
+        <li><a href="#printHeader"><span>Print</span></a></li>
+      </ul>
+	<div id="emailHeader">
 		<textarea class="input-issue save" rows="8" cols="40"></textarea>
-	</section>
-	<section id="tab2">
-		<h2><a href="#tab2">Web</a></h2>
+	</div>
+	<div id="webHeader">
 		<textarea class="input-issue save" rows="8" cols="40"></textarea>
-	</section>
-	<section id="tab3">
-		<h2><a href="#tab3">Print</a></h2>
+	</div>
+	<div id="printHeader">
 		<textarea class="input-issue save" rows="8" cols="40"></textarea>
-	</section>
-</section>
+	</div>
+</div>
   
   <div><label for="newsletterTitle">Newsletter title: </label>
   <input class="input-issue save" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
@@ -253,20 +256,22 @@ can say what they want.
 </div>
 
   <!-- This is tabs, one for the footer of each format-->
-  <section class="tabs" id="footer">
-	<section id="tab1">
-		<h2><a href="#tab1">Email</a></h2>
+  <div class="tabs" id="footer">
+	  <ul>
+        <li><a href="#emailFooter"><span>Email</span></a></li>
+        <li><a href="#webFooter"><span>Web</span></a></li>
+        <li><a href="#printFooter"><span>Print</span></a></li>
+      </ul>
+	<div id="emailFooter">
 		<textarea class="input-issue save" rows="8" cols="40"></textarea>
-	</section>
-	<section id="tab2">
-		<h2><a href="#tab2">Web</a></h2>
+	</div>
+	<div id="webFooter">
 		<textarea class="input-issue save" rows="8" cols="40"></textarea>
-	</section>
-	<section id="tab3">
-		<h2><a href="#tab3">Print</a></h2>
+	</div>
+	<div id="printFooter">
 		<textarea class="input-issue save" rows="8" cols="40"></textarea>
-	</section>
-</section>
+	</div>
+</div>
 
 <button class="saveIssue right">Save to file</button>
 <button class="clear left">Clear</button>
