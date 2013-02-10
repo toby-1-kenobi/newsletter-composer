@@ -271,10 +271,14 @@ function collectNewsletterData() {
 	var saveData = {
 		"template": $('#template').val(),
 		"title": encodeHTML($('#newsletterTitle').val()),
-		"subscribe": $('#subscribeURI').val(),
-		"unsubscribe": $('#unsubscribeURI').val(),
 		"number": encodeHTML($('#issuenum').val()),
 		"date": encodeHTML($('#issuedate').val()),
+		"headerEmail": encodeHTML($('#emailHeader > textarea').val()),
+		"headerWeb": encodeHTML($('#webHeader > textarea').val()),
+		"headerPrint": encodeHTML($('#printHeader > textarea').val()),
+		"footerEmail": encodeHTML($('#emailFooter > textarea').val()),
+		"footerWeb": encodeHTML($('#webFooter > textarea').val()),
+		"footerPrint": encodeHTML($('#printFooter > textarea').val()),
 		"mainArticles": [],
 		"sideArticles": []
 	};
@@ -451,10 +455,14 @@ var addRecipientHandler = function(){
 // restore form content from JSON
 function restore(jsonData) {
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
-	$('#subscribeURI').val(jsonData.subscribe);
-	$('#unsubscribeURI').val(jsonData.unsubscribe);
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
+	$('#emailHeader > textarea').val(decodeHTML(jsonData.headerEmail));
+	$('#webHeader > textarea').val(decodeHTML(jsonData.webEmail));
+	$('#printHeader > textarea').val(decodeHTML(jsonData.printEmail));
+	$('#emailFooter > textarea').val(decodeHTML(jsonData.footerEmail));
+	$('#webFooter > textarea').val(decodeHTML(jsonData.footerEmail));
+	$('#printFooter > textarea').val(decodeHTML(jsonData.footerEmail));
 	buildArticles(jsonData.mainArticles, $('#leftPanel .addArticle'));
 	buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
 }
@@ -558,12 +566,14 @@ $(document).ready(function() {
 	} catch(e) {
 		alert('Cannot restore newsletter content. ' + e.message)
 	}
+	/* this data isn't there now
 	try {
 		var personalData = jQuery.cookies.get('personal');
 		if (personalData) restorePersonal(personalData);
 	} catch(e) {
 		alert('Cannot restore personal content. ' + e.message)
 	}
+	*/
 	try {
 		var sendData = jQuery.cookies.get('send');
 		if (sendData) restoreSend(sendData);
