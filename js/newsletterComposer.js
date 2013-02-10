@@ -528,6 +528,7 @@ $(document).ready(function() {
 	
 	// apply jQueryUI elements
 	$( ".tabs" ).tabs();
+	$( "#accordion" ).accordion();
 	
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){

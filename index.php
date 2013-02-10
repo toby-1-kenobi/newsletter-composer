@@ -197,8 +197,9 @@ can say what they want.
   <input class="input-personal save" type="text" size="30" name="org_web" id="org_web"/></div>
   </fieldset>
 -->
-  
-  
+<div id="accordion">  
+  <h3>Compose Newsletter</h3>
+  <div>
   <fieldset><legend>Newsletter</legend>
   
   <button class="saveIssue right">Save to file</button>
@@ -230,12 +231,6 @@ can say what they want.
   
   <div><label for="newsletterTitle">Newsletter title: </label>
   <input class="input-issue save" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
-  <div><label for="subscribeURI">Subscribe address: <br />
-  <span class="small">A person wishing to subscribe to the newsletter should go here.</span></label>
-  <input class="input-issue save" type="text" size="30" name="subscribeURI" id="subscribeURI"/></div>
-  <div><label for="unsubscribeURI">Unsubscribe address: <br />
-  <span class="small">A person wishing to unsubscribe from the newsletter should go here.</span></label>
-  <input class="input-issue save" type="text" size="30" name="unsubscribeURI" id="unsubscribeURI"/></div>
   
   <div><label for="issuednum">Issue number: </label>
   <input class="input-issue save" type="text" name="issuenum" size="4" maxlength="3" id="issuenum" />
@@ -282,7 +277,9 @@ can say what they want.
   <button id="generate" name="generate">Generate Newsletter</button>
   <div id="generateResults"></div>
 </fieldset>
-
+</div>
+<h3>Send Newsletter</h3>
+<div>
   <fieldset><legend>Send out newsletter</legend>
   <div><label for="greeting">Generic greeting:<br />
   <span class="small">will appear below "dear recipient" in the head of the email</span></label>
@@ -369,6 +366,7 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
 	}
 }
 ?>
-
+</div> <!-- end of send newsletter slice -->
+</div> <!-- end of accordian -->
 </body>
 </html>
