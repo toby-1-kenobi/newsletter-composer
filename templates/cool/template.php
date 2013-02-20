@@ -1,7 +1,4 @@
 <?php
-// This template wont work if a title in a secondary article comes anywhere other than first up 
-// relying on the generate_newsletter.php script to make sure that doesn't happen
-
 // Templates must specify all the forms of the newsletter that can be generated in an array called $types
 $types = array('web', 'email');
 
@@ -407,7 +404,7 @@ $template['print']['begin']['footer'] = <<<PRINTFOOTERBEGIN
                                             <td height="15"></td>
                                         </tr>
                                     </table>
-PRINTFOOTERBEGIN
+PRINTFOOTERBEGIN;
 
 $template['print']['footerText'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px"><!--CONTENT--></p>';
 
@@ -491,7 +488,7 @@ $template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTERBEGIN
             <!--content section-->
             <table width="576" border="0" align="center" cellpadding="0" cellspacing="0">
                 <tr>
-PRINTNEWSLETTERBEGIN
+PRINTNEWSLETTERBEGIN;
 
 $template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTEREND
                 </tr>
@@ -510,7 +507,7 @@ $template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTEREND
 <!--/100% body table-->
 </body>
 </html>
-PRINTNEWSLETTEREND
+PRINTNEWSLETTEREND;
 
 $template['print']['begin']['main'] = <<<PRINTMAINBEGIN
                     <td width="350" valign="top">

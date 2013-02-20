@@ -646,7 +646,7 @@ $(document).ready(function() {
 		
 		// send the content to the php code that generates the newsletter
 		var data = {
-			personal: JSON.stringify(collectPersonalData()),
+			//personal: JSON.stringify(collectPersonalData()),
 			newsletter: JSON.stringify(collectNewsletterData())
 		};
 		// the generate_newsletter php returns some html links to the generated file that get loaded into our user interface

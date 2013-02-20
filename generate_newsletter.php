@@ -2,6 +2,7 @@
 require_once 'common.php';
 // check user is logged in
 if (login_ok() == 1) {
+
 	//echo '<p>login ok</p>';
 	
 	// get the paths to the images
@@ -13,8 +14,8 @@ if (login_ok() == 1) {
 	// TODO: remove hard coding of template
 	$template_img_src = $web_path . 'templates/cool/images/';
 	$full_template_img_src = $full_web_path . 'templates/cool/images/';
-	//echo "<p>Web path: {$web_path}</p>";
-	//echo "<p>Img src: {$img_src}</p>";
+	//echo "<p>Full Web path: {$full_web_path}</p>";
+	//echo "<p>Full Img src: {$full_img_src}</p>";
 	
 	
 	//$types = array('email', 'web', 'print', 'print bw');
@@ -28,7 +29,7 @@ if (login_ok() == 1) {
 	//print_r(stripslashes($_POST['newsletter']));
 	
 	// collect the JSON containing all the data entered into the form
-	$personal_info = json_decode(stripslashes($_POST['personal']), true);
+	//$personal_info = json_decode(stripslashes($_POST['personal']), true);
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
 	
 	//echo "\n<br />personal_info:<br />";
@@ -47,21 +48,21 @@ if (login_ok() == 1) {
 	//include('templates/' . $newsletter_info['template'] . '/template.php');
 	// TODO: remove hard coding of template file to import
 	include 'templates/cool/template.php';
-	
+
 	// do all this for each type of newsletter we are creating (the $types array comes from the template file)
 	foreach ($types as $type)
 	{
 		// build the newsletter
 		$newsletter = $template[$type]['begin']['newsletter'];
-		$newsletter = $template[$type]['begin']['main'];
-		$newsletter = $template[$type]['end']['main'];
-		$newsletter = $template[$type]['begin']['secondary'];
-		$newsletter = $template[$type]['end']['secondary'];
+		$newsletter .= $template[$type]['begin']['main'];
+		$newsletter .= $template[$type]['end']['main'];
+		$newsletter .= $template[$type]['begin']['secondary'];
+		$newsletter .= $template[$type]['end']['secondary'];
 		$newsletter .= $template[$type]['end']['newsletter'];
 		
 		// build the header
 		$header = $template[$type]['begin']['header'];
-		foreach ( explode("\n", $newsletter_info['header'][$type]); as $header_line
+		foreach ( explode("\n", $newsletter_info['header'][$type]) as $header_line);
 		{
 			$header .= str_replace('<!--CONTENT-->', $header_line, $template[$type]['headerText']);
 		}
@@ -72,7 +73,7 @@ if (login_ok() == 1) {
 		
 		// build the footer
 		$footer = $template[$type]['begin']['footer'];
-		foreach ( explode("\n", $newsletter_info['footer'][$type]); as $footer_line
+		foreach ( explode("\n", $newsletter_info['footer'][$type]) as $footer_line);
 		{
 			$footer .= str_replace('<!--CONTENT-->', $footer_line, $template[$type]['footerText']);
 		}
