@@ -4,7 +4,7 @@ require_once 'common.php';
 if (login_ok() == 1) {
 	//echo '<p>login ok</p>';
 	
-	// get the path to the images directory
+	// get the paths to the images
 	$rel_user_path = 'users/' . $_SESSION['uid'] . '/';
 	$web_path = substr($_SERVER['PHP_SELF'], 0, strlen(strrchr($_SERVER['PHP_SELF'], '/')) * -1) . '/';
 	$img_src = $web_path . $rel_user_path . 'images/';
@@ -45,10 +45,10 @@ if (login_ok() == 1) {
 	
 	// import the data from the template being used
 	//include('templates/' . $newsletter_info['template'] . '/template.php');
-	// TODO: remove hard coding of template
+	// TODO: remove hard coding of template file to import
 	include 'templates/cool/template.php';
 	
-	// do all this for each type of newsletter we are creating 
+	// do all this for each type of newsletter we are creating (the $types array comes from the template file)
 	foreach ($types as $type)
 	{
 		// fetch the file template

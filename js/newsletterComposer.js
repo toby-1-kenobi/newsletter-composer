@@ -273,15 +273,20 @@ function collectNewsletterData() {
 		"title": encodeHTML($('#newsletterTitle').val()),
 		"number": encodeHTML($('#issuenum').val()),
 		"date": encodeHTML($('#issuedate').val()),
-		"headerEmail": encodeHTML($('#emailHeader > textarea').val()),
-		"headerWeb": encodeHTML($('#webHeader > textarea').val()),
-		"headerPrint": encodeHTML($('#printHeader > textarea').val()),
-		"footerEmail": encodeHTML($('#emailFooter > textarea').val()),
-		"footerWeb": encodeHTML($('#webFooter > textarea').val()),
-		"footerPrint": encodeHTML($('#printFooter > textarea').val()),
+		"header": {
+			"email": encodeHTML($('#emailHeader > textarea').val()),
+			"web": encodeHTML($('#webHeader > textarea').val()),
+			"print": encodeHTML($('#printHeader > textarea').val())
+		},
+		"footer": {
+			"email": encodeHTML($('#emailFooter > textarea').val()),
+			"web": encodeHTML($('#webFooter > textarea').val()),
+			"print": encodeHTML($('#printFooter > textarea').val())
+		},
 		"mainArticles": [],
 		"sideArticles": []
 	};
+	
 	// now we need to gather the data from the articles
 	$('#leftPanel').find('.article').each(function() {
 		var article = {"article": []};
@@ -457,12 +462,12 @@ function restore(jsonData) {
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
-	$('#emailHeader > textarea').val(decodeHTML(jsonData.headerEmail));
-	$('#webHeader > textarea').val(decodeHTML(jsonData.webEmail));
-	$('#printHeader > textarea').val(decodeHTML(jsonData.printEmail));
-	$('#emailFooter > textarea').val(decodeHTML(jsonData.footerEmail));
-	$('#webFooter > textarea').val(decodeHTML(jsonData.footerEmail));
-	$('#printFooter > textarea').val(decodeHTML(jsonData.footerEmail));
+	$('#emailHeader > textarea').val(decodeHTML(jsonData.header.email));
+	$('#webHeader > textarea').val(decodeHTML(jsonData.header.web));
+	$('#printHeader > textarea').val(decodeHTML(jsonData.header.print));
+	$('#emailFooter > textarea').val(decodeHTML(jsonData.footer.email));
+	$('#webFooter > textarea').val(decodeHTML(jsonData.footer.web));
+	$('#printFooter > textarea').val(decodeHTML(jsonData.footer.print));
 	buildArticles(jsonData.mainArticles, $('#leftPanel .addArticle'));
 	buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
 }
