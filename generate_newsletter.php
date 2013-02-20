@@ -51,8 +51,36 @@ if (login_ok() == 1) {
 	// do all this for each type of newsletter we are creating (the $types array comes from the template file)
 	foreach ($types as $type)
 	{
-		// fetch the file template
-		$newsletter = $templateData[$type]['file'];
+		// build the newsletter
+		$newsletter = $template[$type]['begin']['newsletter'];
+		$newsletter = $template[$type]['begin']['main'];
+		$newsletter = $template[$type]['end']['main'];
+		$newsletter = $template[$type]['begin']['secondary'];
+		$newsletter = $template[$type]['end']['secondary'];
+		$newsletter .= $template[$type]['end']['newsletter'];
+		
+		// build the header
+		$header = $template[$type]['begin']['header'];
+		foreach ( explode("\n", $newsletter_info['header'][$type]); as $header_line
+		{
+			$header .= str_replace('<!--CONTENT-->', $header_line, $template[$type]['headerText']);
+		}
+		$header .= $template[$type]['end']['header'];
+		
+		// insert the header
+		$newsletter = str_replace('<!--HEADER-->', $header, $newsletter);
+		
+		// build the footer
+		$footer = $template[$type]['begin']['footer'];
+		foreach ( explode("\n", $newsletter_info['footer'][$type]); as $footer_line
+		{
+			$footer .= str_replace('<!--CONTENT-->', $footer_line, $template[$type]['footerText']);
+		}
+		$footer .= $template[$type]['end']['footer'];
+		
+		// insert the footer
+		$newsletter = str_replace('<!--FOOTER-->', $footer, $newsletter);
+		
 		
 		// replace some of the placeholders with values the user has entered
 		$newsletter = str_replace('<!--TITLE_ONSET-->', $title_onset, $newsletter);
@@ -61,29 +89,8 @@ if (login_ok() == 1) {
 		$newsletter = str_replace('<!--NUM-->', $newsletter_info['number'], $newsletter);
 		$newsletter = str_replace('<!--0NUM-->', $num_pad, $newsletter);
 		$newsletter = str_replace('<!--DATE-->', $newsletter_info['date'], $newsletter);
-		$newsletter = str_replace('<!--WEB VERSION-->', $web_newsletter, $newsletter);
-		if ($newsletter_info['subscribe']) {
-			$newsletter = str_replace('<!--SUBSCRIBE-->', '<a href="' . $newsletter_info['subscribe'] . '">Click here to subscribe to the ' . $newsletter_info['title'] . ' newsletter.</a>', $newsletter);
-		}
-		if ($newsletter_info['unsubscribe']) {
-			$newsletter = str_replace('<!--UNSUBSCRIBE-->', '<a href="' . $newsletter_info['unsubscribe'] . '">Click here to unsubscribe</a>', $newsletter);
-		}
-		if ($personal_info['website']) {
-			$newsletter = str_replace('<!--PERSONAL WEBSITE-->', 'Visit <a href="' . $personal_info['website'] . '">our website</a> for more.', $newsletter);
-		}
-		if ($personal_info['websiteOrg'] && $personal_info['org']) {
-			$newsletter = str_replace('<!--ORG WEBSITE-->', 'Visit <a href="' . $personal_info['websiteOrg'] . '">' . $personal_info['org'] . '</a> for more info.', $newsletter);
-		}
-		if ($personal_info['addressLine1']) {
-			$newsletter = str_replace('<!--ADDRESS-->', "Write to us at {$personal_info['addressLine1']}, {$personal_info['addressLine2']}", $newsletter);
-		}
-		if ($personal_info['phone']) {
-			$newsletter = str_replace('<!--PHONE-->', "Phone us {$personal_info['phone']}", $newsletter);
-		}
-		if ($personal_info['skype']) {
-			$newsletter = str_replace('<!--SKYPE-->', "Skype us {$personal_info['skype']}", $newsletter);
-		}
 		
+		/*
 		// start building the content for the main articles
 		$main_content = '';
 		$main_first_article = True; // we don't want to insert the stuff that goes between articles before the first one
@@ -166,7 +173,7 @@ if (login_ok() == 1) {
 		// now that we've built the secondary articles content add it to the newsletter
 	   $newsletter = str_replace('<!--SECONDARY-->', $secondary_content, $newsletter);
 	   //$newsletter = str_replace('<!--SECONDARY-->', 'SECONDARY CONTENT', $newsletter);
-	   
+	   */
 	   // finally add the path to the images
 	   $newsletter = str_replace('<!--IMAGE PATH-->', $img_src, $newsletter);
 	   $newsletter = str_replace('<!--FULL IMAGE PATH-->', $full_img_src, $newsletter);
