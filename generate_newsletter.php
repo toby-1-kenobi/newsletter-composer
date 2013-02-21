@@ -33,7 +33,7 @@ if (login_ok() == 1) {
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
 
 	//echo "\n<br />newsletter_info:<br />";
-	//print_r($newsletter_info);
+	print_r($newsletter_info);
 	
 	// manipulate some of the data so it's easier to use later
 	$num_pad = str_pad($newsletter_info['number'], 3, '0', STR_PAD_LEFT);
@@ -50,11 +50,30 @@ if (login_ok() == 1) {
 	// do all this for each type of newsletter we are creating (the $types array comes from the template file)
 	foreach ($types as $type)
 	{
+		// keep track of the last element iserted into our newsletter so we know what in between bits to put in before the next.
+		$last_inserted = '';
+		
 		// build the newsletter
 		$newsletter = $template[$type]['begin']['newsletter'];
-		$newsletter .= $template[$type]['begin']['main'];
+		$newsletter .= $template[$type]['begin']['main'];		
+		// for every article we get from the entered data build it
+		foreach ($newsletter_info['mainArticles'] as $article)
+		{
+			$articleHTML = $template[$type]['begin']['mainArticle'];
+			$articleHTML .= $template[$type]['end']['mainArticle'];
+			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
+			$newsletter .= $articleHTML;
+		}
 		$newsletter .= $template[$type]['end']['main'];
-		$newsletter .= $template[$type]['begin']['secondary'];
+		$newsletter .= $template[$type]['begin']['secondary'];		
+		// for every article we get from the entered data build it
+		foreach ($newsletter_info['sideArticles'] as $article)
+		{
+			$articleHTML = $template[$type]['begin']['secondaryArticle'];
+			$articleHTML .= $template[$type]['end']['secondaryArticle'];
+			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
+			$newsletter .= $articleHTML;
+		}
 		$newsletter .= $template[$type]['end']['secondary'];
 		$newsletter .= $template[$type]['end']['newsletter'];
 		

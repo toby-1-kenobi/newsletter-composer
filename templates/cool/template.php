@@ -209,7 +209,7 @@ $template['web']['begin']['secondary'] = '<td valign="top">';
 $template['web']['end']['secondary'] ='</td>';
 
 // include title in main article beginning
-$template['web']['begin']['mainArticle'] = '<h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--MAIN ARTICLE TITLE--></h2>';
+$template['web']['begin']['mainArticle'] = '<h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
 // an article may also not have a title
 $template['web']['begin']['mainArticleNoTitle'] = '';
 $template['web']['end']['mainArticle'] = "\n";
@@ -259,7 +259,7 @@ $template['web']['begin']['secondaryArticle'] = <<<SECONDARYARTICLEBEGIN
                                                                 <tr>
                                                                     <td>&nbsp;</td>
                                                                     <td>
-                                                                        <p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #1f2d41; font-size: 16px; font-weight: bold; text-shadow: 0px 1px 1px #ffffff"><!--SECONDARY ARTICLE TITLE--></p>
+                                                                        <p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #1f2d41; font-size: 16px; font-weight: bold; text-shadow: 0px 1px 1px #ffffff"><!--ARTICLE TITLE--></p>
                                                                     </td>
                                                                 </tr>
                                                             </table>
