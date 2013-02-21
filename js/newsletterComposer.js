@@ -203,7 +203,7 @@ var addParaButton = '<button class="addPara">Add paragraph</button>';
 var addListItemButton = '<button class="addLI">Add list item</button>';
 var addImageButton = '<button class="addImage">Add image</button>';
 var articleField = "<fieldset class=\"article moveable\"><legend>Article</legend>\n";
-articleField += '<div><label>Title</label> <input type="text" class="articleTitle input-issue save" /></div>';
+articleField += '<div><label>Title</label> <input type="text" class="articleTitle" /></div>';
 articleField += controls + "\n";
 articleField += "<div class=\"article_buttons\">\n";
 //articleField += addTitleButton + "\n";
@@ -290,20 +290,17 @@ function collectNewsletterData() {
 	
 	// now we need to gather the data from the articles
 	$('#leftPanel').find('.article').each(function() {
-		var article = {"article": []};
+		var article = {"title": encodeHTML($(this).find('.articleTitle').val()), "article": []};
 		$(this).find('.save').each(function() {
 			var itemType = '';
 			var itemValue = '';
 			if ($(this).hasClass('articlePara')) { itemType = "para"; }
-			else if ($(this).hasClass('articleTitle')) { itemType = "title"; }
 			else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
 			// strip off the <p> tags that TinyMCE adds
 			if (itemType == "para" || itemType == "list") {
 				itemValue = encodeHTML($(this).val().replace('<p>','').replace('</p>',''));
-			} else if (itemType == "title") {
-				itemValue = encodeHTML($(this).val());
 			} else itemValue = $(this).val();
 			var item = {"type": itemType, "value": itemValue};
 			article.article.push(item);
@@ -311,20 +308,17 @@ function collectNewsletterData() {
 		saveData.mainArticles.push(article);
 	});
 	$('#rightPanel').find('.article').each(function() {
-		var article = {"article": []};
+		var article = {"title": encodeHTML($(this).find('.articleTitle').val()), "article": []};
 		$(this).find('.save').each(function() {
 			var itemType = '';
 			var itemValue = '';
 			if ($(this).hasClass('articlePara')) { itemType = "para"; }
-			else if ($(this).hasClass('articleTitle')) { itemType = "title"; }
 			else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
 			// strip off the <p> tags that TinyMCE adds
 			if (itemType == "para" || itemType == "list") {
 				itemValue = encodeHTML($(this).val().replace('<p>','').replace('</p>',''));
-			} else if (itemType == "title") {
-				itemValue = encodeHTML($(this).val());
 			} else itemValue = $(this).val();
 			var item = {"type": itemType, "value": itemValue};
 			article.article.push(item);
@@ -409,14 +403,11 @@ function buildArticles(array, followingElement) {
 	// go through each article in the array
 	for (var a = 0; a < array.length; ++a) {
 		var art = $(articleField);
+		// put the title in first
+		art.find('.articleTitle').val(decodeHTML(array[a].title));
 		// within the article go through each field
 		for (var i = 0; i < array[a].article.length; ++i) {
-			if (array[a].article[i].type == "title") {
-				var title = $(titleField)
-				bindControls(title);
-				title.find('input').val(decodeHTML(array[a].article[i].value));
-				art.find('.article_buttons').before(title);
-			} else if (array[a].article[i].type == "para") {
+			if (array[a].article[i].type == "para") {
 				var paragraph = $(paraField)
 				bindControls(paragraph);
 				paragraph.find('textarea').text(decodeHTML(array[a].article[i].value)).tinymce(TMCEsettings);
