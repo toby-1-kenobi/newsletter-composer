@@ -1,6 +1,6 @@
 <?php
 // Templates must specify all the forms of the newsletter that can be generated in an array called $types
-$types = array('web', 'email');
+$types = array('web', 'email', 'print');
 
 $break = <<<BREAK
 

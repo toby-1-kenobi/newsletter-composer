@@ -31,9 +31,7 @@ if (login_ok() == 1) {
 	// collect the JSON containing all the data entered into the form
 	//$personal_info = json_decode(stripslashes($_POST['personal']), true);
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
-	
-	//echo "\n<br />personal_info:<br />";
-	//print_r($personal_info);
+
 	//echo "\n<br />newsletter_info:<br />";
 	//print_r($newsletter_info);
 	
@@ -62,8 +60,9 @@ if (login_ok() == 1) {
 		
 		// build the header
 		$header = $template[$type]['begin']['header'];
-		foreach ( explode("\n", $newsletter_info['header'][$type]) as $header_line);
+		foreach ( explode('&#10;', $newsletter_info['header'][$type]) as $header_line)
 		{
+			if ($header_line == '') $header_line = '&nbsp;';
 			$header .= str_replace('<!--CONTENT-->', $header_line, $template[$type]['headerText']);
 		}
 		$header .= $template[$type]['end']['header'];
@@ -73,8 +72,9 @@ if (login_ok() == 1) {
 		
 		// build the footer
 		$footer = $template[$type]['begin']['footer'];
-		foreach ( explode("\n", $newsletter_info['footer'][$type]) as $footer_line);
+		foreach ( explode('&#10;', $newsletter_info['footer'][$type]) as $footer_line)
 		{
+			if ($footer_line == '') $footer_line = '&nbsp;';
 			$footer .= str_replace('<!--CONTENT-->', $footer_line, $template[$type]['footerText']);
 		}
 		$footer .= $template[$type]['end']['footer'];
