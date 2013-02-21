@@ -490,7 +490,7 @@ $template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTERBEGIN
                 <tr>
 PRINTNEWSLETTERBEGIN;
 
-$template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTEREND
+$template['print']['end']['newsletter'] = <<<PRINTNEWSLETTEREND
                 </tr>
             </table>
             <!--break-->
