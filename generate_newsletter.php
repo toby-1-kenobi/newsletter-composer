@@ -59,20 +59,24 @@ if (login_ok() == 1) {
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['mainArticles'] as $article)
 		{
+			$newsletter .= $template[$type]['between'][$last_inserted]['mainArticle'];
 			$articleHTML = $template[$type]['begin']['mainArticle'];
 			$articleHTML .= $template[$type]['end']['mainArticle'];
 			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
 			$newsletter .= $articleHTML;
+			$last_inserted = 'mainArticle';
 		}
 		$newsletter .= $template[$type]['end']['main'];
 		$newsletter .= $template[$type]['begin']['secondary'];		
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['sideArticles'] as $article)
 		{
+			$newsletter .= $template[$type]['between'][$last_inserted]['secondaryArticle'];
 			$articleHTML = $template[$type]['begin']['secondaryArticle'];
 			$articleHTML .= $template[$type]['end']['secondaryArticle'];
 			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
 			$newsletter .= $articleHTML;
+			$last_inserted = 'secondaryArticle';
 		}
 		$newsletter .= $template[$type]['end']['secondary'];
 		$newsletter .= $template[$type]['end']['newsletter'];
