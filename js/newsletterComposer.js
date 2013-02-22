@@ -379,13 +379,13 @@ function bindArticleButtons(article) {
 	article.find('.addPara').click(function(){
 		var field = $(paraField);
 		bindControls(field);
-		field.find('.input-issue.save').change(setNewsletterCookie).tinymce(TMCEsettings);
+		field.find('.input-issue.save').change(setNewsletterCookie);
 		field.insertBefore($(this).parent());
 	});
 	article.find('.addLI').click(function(){
 		var field = $(lIField);
 		bindControls(field);
-		field.find('.input-issue.save').change(setNewsletterCookie).tinymce(TMCEsettings);
+		field.find('.input-issue.save').change(setNewsletterCookie);
 		field.insertBefore($(this).parent());
 	});
 	article.find('.addImage').click(function(){
@@ -410,12 +410,12 @@ function buildArticles(array, followingElement) {
 			if (array[a].article[i].type == "para") {
 				var paragraph = $(paraField)
 				bindControls(paragraph);
-				paragraph.find('textarea').text(decodeHTML(array[a].article[i].value)).tinymce(TMCEsettings);
+				paragraph.find('textarea').text(decodeHTML(array[a].article[i].value));
 				art.find('.article_buttons').before(paragraph);
 			} else if (array[a].article[i].type == "list") {
 				var listItem = $(lIField)
 				bindControls(listItem);
-				listItem.find('textarea').text(decodeHTML(array[a].article[i].value)).tinymce(TMCEsettings);
+				listItem.find('textarea').text(decodeHTML(array[a].article[i].value));
 				art.find('.article_buttons').before(listItem);
 			} else if (array[a].article[i].type == "image") {
 				var image = $(imageField)
