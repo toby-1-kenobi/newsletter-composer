@@ -1,5 +1,42 @@
 <?php
 require_once 'common.php';
+
+function splitText($text)
+{
+	$buffer = '';
+	$output = array();
+	foreach (explode('&#10;', $text) as $line)
+	{
+		if (startsWith($line, '- '))
+		{
+			if ($buffer) {
+				array_push($output, {"type": 'para', "value": $buffer});
+				$buffer = '';
+			}
+			array_push($output, {"type": 'list', "value": $line});
+		}
+		else if (trim($line) === '')
+		{
+			if ($buffer) {
+				array_push($output, {"type": 'para', "value": $buffer});
+				$buffer = '';
+			}
+		}
+		else
+		{
+			if ($buffer) {
+				$buffer .= '<br />' . $line;
+			} else {
+				$buffer = $line;
+			}
+		}
+	}
+	if ($buffer) {
+		array_push($output, {"type": 'para', "value": $buffer});
+	}
+	return $output;
+}
+
 // check user is logged in
 if (login_ok() == 1) {
 
@@ -33,7 +70,7 @@ if (login_ok() == 1) {
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
 
 	//echo "\n<br />newsletter_info:<br />";
-	print_r($newsletter_info);
+	//print_r($newsletter_info);
 	
 	// manipulate some of the data so it's easier to use later
 	$num_pad = str_pad($newsletter_info['number'], 3, '0', STR_PAD_LEFT);
@@ -61,6 +98,18 @@ if (login_ok() == 1) {
 		{
 			$newsletter .= $template[$type]['between'][$last_inserted]['mainArticle'];
 			$articleHTML = $template[$type]['begin']['mainArticle'];
+			foreach ($article['article'] as $item) 
+			{
+				if ($template[$type]['between'][$last_inserted][$item['type']])
+				{
+					$articleHTML .= $template[$type]['between'][$last_inserted][$item['type']];
+				} else {
+					if ($last_inserted == 'para' or $last_inserted == 'list' or $last_inserted == 'image') {
+						$articleHTML .= $template[$type]['betweenMainItems'];
+					}
+				}
+				
+			}
 			$articleHTML .= $template[$type]['end']['mainArticle'];
 			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
 			$newsletter .= $articleHTML;
