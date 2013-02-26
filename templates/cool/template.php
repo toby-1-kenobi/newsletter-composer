@@ -38,6 +38,37 @@ $hr = <<<HOZRULE
 
 HOZRULE;
 
+/*
+ * $template[$newsletterFormat][$blockType][$section][$item]
+ * 'between' blockType adds aother dimension to the array
+ * [$item] is an optional dimension only used for articles and within articles
+ * 
+ * $newsletterFormat
+ * 'web'
+ * 'email'
+ * 'print'
+ * etc
+ * 
+ * $blockType
+ * 'begin'
+ * 'end'
+ * 'whole'
+ * 'between'
+ * 
+ * $seciton
+ * 'header'
+ * 'main'
+ * 'secondary'
+ * 'footer'
+ * 
+ * $item
+ * 'article'
+ * 'articleNoTitle'
+ * 'para'
+ * 'list'
+ * 'image'
+ */
+
 $template['web']['begin']['header'] = <<<WEBHEADERBEGIN
             <!--header text-->
             <table style="background-image: url(<!--TEMPLATE IMAGE PATH-->header-lines.jpg); background-position: bottom; background-repeat: repeat-x;" bgcolor="#1d3952" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -63,8 +94,8 @@ $template['web']['end']['header'] = <<<WEBHEADEREND
             <!--/header text-->
 WEBHEADEREND;
 
-$template['web']['headerText'] = '<p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #4484b5; margin: 0; padding: 0;"><!--CONTENT--></p>';
-$template['web']['between']['headerText']['headerText'] = "\n";
+$template['web']['whole']['header']['text'] = '<p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #4484b5; margin: 0; padding: 0;"><!--CONTENT--></p>';
+$template['web']['between']['header']['text']['text'] = "\n";
 
 $template['web']['begin']['footer'] = <<<WEBFOOTERBEGIN
             <!--footer-->
@@ -91,8 +122,8 @@ $template['web']['end']['footer'] = <<<WEBFOOTEREND
             <!--/footer-->
 WEBFOOTEREND;
 
-$template['web']['footerText'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px; color: #30648d; text-shadow: 1px 1px 1px #000;"><!--CONTENT--></p>';
-$template['web']['between']['footerText']['footerText'] = "\n";
+$template['web']['whole']['footer']['text'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px; color: #30648d; text-shadow: 1px 1px 1px #000;"><!--CONTENT--></p>';
+$template['web']['between']['footer']['text']['text'] = "\n";
 
 
 $template['web']['begin']['newsletter'] = <<<WEBNEWSLETTERBEGIN
@@ -209,14 +240,14 @@ $template['web']['begin']['secondary'] = '<td valign="top">';
 $template['web']['end']['secondary'] ='</td>';
 
 // include title in main article beginning
-$template['web']['begin']['mainArticle'] = '<h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
+$template['web']['begin']['main']['article'] = '<h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
 // an article may also not have a title
-$template['web']['begin']['mainArticleNoTitle'] = '';
-$template['web']['end']['mainArticle'] = "\n";
-$template['web']['between']['mainArticle']['mainArticle'] = $break . $hr . $break;
+$template['web']['begin']['main']['articleNoTitle'] = '';
+$template['web']['end']['main']['article'] = "\n";
+$template['web']['between']['main']['article']['article'] = $break . $hr . $break;
 
 // include title in secondary article beginning
-$template['web']['begin']['secondaryArticle'] = <<<SECONDARYARTICLEBEGIN
+$template['web']['begin']['secondary']['article'] = <<<SECONDARYARTICLEBEGIN
 
                         <!--section-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -289,7 +320,7 @@ SECONDARYARTICLEBEGIN;
 
 // and article may not have a title
 // TODO: adjust this block of HTML so it looks right
-$template['web']['begin']['secondaryArticleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGIN
+$template['web']['begin']['secondary']['articleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGIN
 
                         <!--section-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -320,7 +351,7 @@ $template['web']['begin']['secondaryArticleNoTitle'] = <<<SECONDARYARTICLENOTITL
                                     
 SECONDARYARTICLENOTITLEBEGIN;
 
-$template['web']['end']['secondaryArticle'] = <<<SECONDARYARTICLEEND
+$template['web']['end']['secondary']['article'] = <<<SECONDARYARTICLEEND
                                     
                                                         </td>
                                                     </tr>
@@ -336,27 +367,27 @@ $template['web']['end']['secondaryArticle'] = <<<SECONDARYARTICLEEND
                         
 SECONDARYARTICLEEND;
 
-$template['web']['between']['secondaryArticle']['secondaryArticle'] = $bigBreak;
+$template['web']['between']['secondary']['article']['article'] = $bigBreak;
 
 
-$template['web']['paraMain'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #e7eff6;"><!--CONTENT--></p>';
+$template['web']['whole']['main']['para'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #e7eff6;"><!--CONTENT--></p>';
 
-$template['web']['listMain'] = '<p style="font-family: Helvetica, Arial, sans-serif; list-style: none; font-size: 13px; margin-top: 0px; margin-bottom: 5px; padding: 0px; color: #e7eff6"><img src="<!--TEMPLATE IMAGE PATH-->li.png" height="14" width="13" /><!--CONTENT--></p>';
+$template['web']['whole']['main']['list'] = '<p style="font-family: Helvetica, Arial, sans-serif; list-style: none; font-size: 13px; margin-top: 0px; margin-bottom: 5px; padding: 0px; color: #e7eff6"><img src="<!--TEMPLATE IMAGE PATH-->li.png" height="14" width="13" /><!--CONTENT--></p>';
 
-$template['web']['imageMain'] = '<a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="309" /></a>';
+$template['web']['whole']['main']['image'] = '<a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="309" /></a>';
 
 // this is a shortcut for when you have the same thing between many or all of the item combinations
 // it is used when no specific between is assigned
-$template['web']['betweenMainItems'] = $break;
+$template['web']['between']['main']['items'] = $break;
 
 
-$template['web']['paraSecondary'] = $template['web']['paraMain'];
+$template['web']['whole']['secondary']['para'] = $template['web']['whole']['main']['para'];
 
-$template['web']['listSecondary'] = $template['web']['listMain'];
+$template['web']['whole']['secondary']['list'] = $template['web']['whole']['main']['list'];
 
-$template['web']['imageSecondary'] = '<a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="204" /></a>';
+$template['web']['whole']['secondary']['image'] = '<a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="204" /></a>';
 
-$template['web']['betweenSecondaryItems'] = "\n";
+$template['web']['between']['secondary']['items'] = "\n";
 
 // TODO: change link to full format
 $template['web']['linkStyle'] = 'color:#62b6ee;';
@@ -373,23 +404,23 @@ $template['email']['begin']['newsletter'] = str_replace('<!--TEMPLATE IMAGE PATH
 
 $template['email']['begin']['main'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['main']);
 
-$template['email']['begin']['secondaryArticle'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['secondaryArticle']);
+$template['email']['begin']['secondary']['article'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['secondary']['article']);
 
-$template['email']['begin']['secondaryArticleNoTitle'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['secondaryArticleNoTitle']);
+$template['email']['begin']['secondary']['articleNoTitle'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['secondary']['articleNoTitle']);
 
-$template['email']['listMain'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['listMain']);
+$template['email']['whole']['main']['list'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['whole']['main']['list']);
 
-$template['email']['listSecondary'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['listSecondary']);
+$template['email']['whole']['secondary']['list'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['whole']['list']['list']);
 
-$template['email']['imageMain'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['imageMain']);
+$template['email']['whole']['main']['image'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['whole']['main']['image']);
 
-$template['email']['imageSecondary'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['imageSecondary']);
+$template['email']['whole']['secondary']['image'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['whole']['secondary']['image']);
 
 
 $template['print']['begin']['header'] = '';
 $template['print']['end']['header'] = '';
 
-$template['print']['headerText'] = '<tr><td><!--CONTENT--></td></tr>';
+$template['print']['whole']['header']['text'] = '<tr><td><!--CONTENT--></td></tr>';
 
 $template['print']['begin']['footer'] = <<<PRINTFOOTERBEGIN
             <!--footer-->
@@ -406,7 +437,7 @@ $template['print']['begin']['footer'] = <<<PRINTFOOTERBEGIN
                                     </table>
 PRINTFOOTERBEGIN;
 
-$template['print']['footerText'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px"><!--CONTENT--></p>';
+$template['print']['whole']['footer']['text'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px"><!--CONTENT--></p>';
 
 $template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTERBEGIN
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -517,7 +548,7 @@ $template['print']['begin']['main'] = <<<PRINTMAINBEGIN
 PRINTMAINBEGIN;
 
 // include title in secondary article beginning
-$template['print']['begin']['secondaryArticle'] = <<<PRINTSECONDARYARTICLEBEGIN
+$template['print']['begin']['secondary']['article'] = <<<PRINTSECONDARYARTICLEBEGIN
 <!--section-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
@@ -563,7 +594,7 @@ PRINTSECONDARYARTICLEBEGIN;
 
 // and article may not have a title
 // TODO: check this looks right
-$template['web']['begin']['secondaryArticleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGINPRINT
+$template['web']['begin']['secondary']['srticleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGINPRINT
 
 <!--section-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -601,17 +632,17 @@ $template['web']['begin']['secondaryArticleNoTitle'] = <<<SECONDARYARTICLENOTITL
                                                             </table>
 SECONDARYARTICLENOTITLEBEGINPRINT;
 
-$template['print']['paraMain'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px;"><!--CONTENT--></p>';
+$template['print']['whole']['main']['para'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px;"><!--CONTENT--></p>';
 
-$template['print']['listMain'] = '<p style="font-family: Helvetica, Arial, sans-serif; list-style: none; font-size: 13px; margin-top: 0px; margin-bottom: 5px; padding: 0px;"><img src="<!--FULL TEMPLATE IMAGE PATH-->li.png" height="14" width="13" /><!--CONTENT--></p>';
+$template['print']['whole']['main']['list'] = '<p style="font-family: Helvetica, Arial, sans-serif; list-style: none; font-size: 13px; margin-top: 0px; margin-bottom: 5px; padding: 0px;"><img src="<!--FULL TEMPLATE IMAGE PATH-->li.png" height="14" width="13" /><!--CONTENT--></p>';
 
-$template['print']['imageMain'] = '<a href="<!--FULL IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--FULL IMAGE PATH--><!--CONTENT-->" width="309" /></a>';
+$template['print']['whole']['main']['image'] = '<a href="<!--FULL IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--FULL IMAGE PATH--><!--CONTENT-->" width="309" /></a>';
 
-$template['print']['paraSecondary'] = $template['print']['paraMain'];
+$template['print']['whole']['secondary']['para'] = $template['print']['whole']['main']['para'];
 
-$template['print']['listSecondary'] = $template['print']['listMain'];
+$template['print']['whole']['secondary']['list'] = $template['print']['whole']['main']['list'];
 
-$template['print']['imageSecondary'] = '<a href="<!--FULL IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--FULL IMAGE PATH--><!--CONTENT-->" width="204" /></a>';
+$template['print']['whole']['secondary']['image'] = '<a href="<!--FULL IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--FULL IMAGE PATH--><!--CONTENT-->" width="204" /></a>';
 
 
 // TODO: make links in print format appear as plain text with linked URL in braces
