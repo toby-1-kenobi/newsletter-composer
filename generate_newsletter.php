@@ -10,15 +10,15 @@ function splitText($text)
 		if (startsWith($line, '- '))
 		{
 			if ($buffer) {
-				array_push($output, {"type": 'para', "value": $buffer});
+				array_push($output, array("type" => 'para', "value" => $buffer));
 				$buffer = '';
 			}
-			array_push($output, {"type": 'list', "value": $line});
+			array_push($output, array("type" => 'list', "value" => $line));
 		}
 		else if (trim($line) === '')
 		{
 			if ($buffer) {
-				array_push($output, {"type": 'para', "value": $buffer});
+				array_push($output, array("type" => 'para', "value" => $buffer));
 				$buffer = '';
 			}
 		}
@@ -32,9 +32,54 @@ function splitText($text)
 		}
 	}
 	if ($buffer) {
-		array_push($output, {"type": 'para', "value": $buffer});
+		//$entry = {"type": 'para', "value": $buffer};
+		array_push($output, array('type' => 'para', 'value' => $buffer));
 	}
 	return $output;
+}
+
+// build the html for an article from the content and the template.
+// TODO: handle the case that there is no title.
+function generateArticle($article, $template, $newsletterFormat, $section, $lastInserted)
+{
+	$articleHTML = $template[$newsletterFormat]['between'][$section][$lastInserted]['article'];
+	$articleHTML .= $template[$newsletterFormat]['begin'][$section]['article'];
+	foreach ($article['article'] as $item)
+	{
+		if ($item['type'] === 'image')
+		{
+			$articleHTML .= generateArticleItem($item, $template, $newsletterFormat, $section, $lastInserted);
+			$lastInserted = 'image';
+		}
+		else
+		{
+			foreach (splitText($item['value']) as $newItem)
+			{
+				$articleHTML .= generateArticleItem($newItem, $template, $newsletterFormat, $section, $lastInserted);
+				$lastInserted = $newItem['type'];
+			}
+		}
+	}
+	$articleHTML .= $template[$newsletterFormat]['end'][$section]['article'];
+	$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
+	return $articleHTML;
+}
+
+// build the HTML for one part of an article
+function generateArticleItem($item, $template, $newsletterFormat, $section, $lastInserted)
+{
+	$itemHTML = '';
+	if ($template[$newsletterFormat]['between'][$section][$lastInserted][$item['type']])
+	{
+		$itemHTML .= $template[$newsletterFormat]['between'][$section][$lastInserted][$item['type']];
+	} else {
+		if ($last_inserted == 'para' or $last_inserted == 'list' or $last_inserted == 'image')
+		{
+			$itemHTML .= $template[$newsletterFormat]['between'][$section]['items'];
+		}
+	}
+	$itemHTML .= str_replace('<!--CONTENT-->', $item['value'], $template[$newsletterFormat]['whole'][$section][$item['type']]);
+	return $itemHTML;
 }
 
 // check user is logged in
@@ -96,38 +141,20 @@ if (login_ok() == 1) {
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['mainArticles'] as $article)
 		{
-			$newsletter .= $template[$type]['between'][$last_inserted]['mainArticle'];
-			$articleHTML = $template[$type]['begin']['mainArticle'];
-			foreach ($article['article'] as $item) 
-			{
-				if ($template[$type]['between'][$last_inserted][$item['type']])
-				{
-					$articleHTML .= $template[$type]['between'][$last_inserted][$item['type']];
-				} else {
-					if ($last_inserted == 'para' or $last_inserted == 'list' or $last_inserted == 'image') {
-						$articleHTML .= $template[$type]['betweenMainItems'];
-					}
-				}
-				
-			}
-			$articleHTML .= $template[$type]['end']['mainArticle'];
-			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
-			$newsletter .= $articleHTML;
-			$last_inserted = 'mainArticle';
+	//		$newsletter .= generateArticle($article, $template, $type, 'main', $last_inserted);
+			$last_inserted = 'article';
 		}
 		$newsletter .= $template[$type]['end']['main'];
+		$last_inserted = 'main';
 		$newsletter .= $template[$type]['begin']['secondary'];		
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['sideArticles'] as $article)
 		{
-			$newsletter .= $template[$type]['between'][$last_inserted]['secondaryArticle'];
-			$articleHTML = $template[$type]['begin']['secondaryArticle'];
-			$articleHTML .= $template[$type]['end']['secondaryArticle'];
-			$articleHTML = str_replace('<!--ARTICLE TITLE-->', $article['title'], $articleHTML);
-			$newsletter .= $articleHTML;
-			$last_inserted = 'secondaryArticle';
+	//		$newsletter .= generateArticle($article, $template, $type, 'secondary', $last_inserted);
+			$last_inserted = 'article';
 		}
 		$newsletter .= $template[$type]['end']['secondary'];
+		$last_inserted = 'secondary';
 		$newsletter .= $template[$type]['end']['newsletter'];
 		
 		// build the header
