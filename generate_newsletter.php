@@ -1,5 +1,9 @@
 <?php
 require_once 'common.php';
+function startsWith($haystack, $needle)
+{
+	return strpos($haystack, $needle, 0) === 0;
+}
 
 function splitText($text)
 {
@@ -9,7 +13,7 @@ function splitText($text)
 	{
 		if (startsWith($line, '- '))
 		{
-			if ($buffer) {
+			if (strlen($buffer) > 0) {
 				array_push($output, array("type" => 'para', "value" => $buffer));
 				$buffer = '';
 			}
@@ -17,21 +21,21 @@ function splitText($text)
 		}
 		else if (trim($line) === '')
 		{
-			if ($buffer) {
+			if (strlen($buffer) > 0) {
 				array_push($output, array("type" => 'para', "value" => $buffer));
 				$buffer = '';
 			}
 		}
 		else
 		{
-			if ($buffer) {
+			if (strlen($buffer) > 0) {
 				$buffer .= '<br />' . $line;
 			} else {
 				$buffer = $line;
 			}
 		}
 	}
-	if ($buffer) {
+	if (strlen($buffer) > 0) {
 		//$entry = {"type": 'para', "value": $buffer};
 		array_push($output, array('type' => 'para', 'value' => $buffer));
 	}
@@ -141,7 +145,7 @@ if (login_ok() == 1) {
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['mainArticles'] as $article)
 		{
-	//		$newsletter .= generateArticle($article, $template, $type, 'main', $last_inserted);
+			$newsletter .= generateArticle($article, $template, $type, 'main', $last_inserted);
 			$last_inserted = 'article';
 		}
 		$newsletter .= $template[$type]['end']['main'];
@@ -150,7 +154,7 @@ if (login_ok() == 1) {
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['sideArticles'] as $article)
 		{
-	//		$newsletter .= generateArticle($article, $template, $type, 'secondary', $last_inserted);
+			$newsletter .= generateArticle($article, $template, $type, 'secondary', $last_inserted);
 			$last_inserted = 'article';
 		}
 		$newsletter .= $template[$type]['end']['secondary'];
