@@ -89,11 +89,11 @@ function generateArticleItem($item, $template, $newsletterFormat, $section, $las
 	echo "<br/><strong>last inserted</strong> $lastInserted";
 	* */
 	$itemHTML = '';
-	if ($template[$newsletterFormat]['between'][$section][$lastInserted.'-'.$item['type']])
+	if (strlen($template[$newsletterFormat]['between'][$section][$lastInserted.'-'.$item['type']]) > 0)
 	{
 		$itemHTML .= $template[$newsletterFormat]['between'][$section][$lastInserted.'-'.$item['type']];
 	} else {
-		if ($last_inserted == 'para' or $last_inserted == 'list' or $last_inserted == 'image')
+		if ($lastInserted === 'para' or $lastInserted === 'list' or $lastInserted === 'image')
 		{
 			$itemHTML .= $template[$newsletterFormat]['between'][$section]['items'];
 		}
