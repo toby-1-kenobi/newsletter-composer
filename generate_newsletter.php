@@ -1,8 +1,23 @@
 <?php
 require_once 'common.php';
+
 function startsWith($haystack, $needle)
 {
 	return strpos($haystack, $needle, 0) === 0;
+}
+
+function parseLinksAndEmph($text)
+{
+	// find any links in the text
+	if (preg_match_all('/\[([^\]]+)\]\s*\(([^\)]*)\)/', $text, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE) > 0)
+	{
+		echo '<br/>';
+		print_r($matches);
+	}
+	else
+	{
+		echo "<br/>no links in text";
+	}
 }
 
 function splitText($text)
@@ -88,6 +103,12 @@ function generateArticleItem($item, $template, $newsletterFormat, $section, $las
 	echo "<br/><strong>section</strong> $section";
 	echo "<br/><strong>last inserted</strong> $lastInserted";
 	* */
+	
+	if ($item['type'] !== 'image')
+	{
+		parseLinksAndEmph($item['value']);
+	}
+	
 	$itemHTML = '';
 	if (strlen($template[$newsletterFormat]['between'][$section][$lastInserted.'-'.$item['type']]) > 0)
 	{
