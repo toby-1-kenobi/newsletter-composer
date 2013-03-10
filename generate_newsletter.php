@@ -46,7 +46,15 @@ function splitText($text)
 // TODO: handle the case that there is no title.
 function generateArticle($article, $template, $newsletterFormat, $section, $lastInserted)
 {
-	$articleHTML = $template[$newsletterFormat]['between'][$section][$lastInserted]['article'];
+	/*
+	echo '<h3>generate article</h3>';
+	echo '<strong>article</strong><br/>';
+	print_r($article);
+	echo "<br/><strong>newsletter Format</strong> $newsletterFormat";
+	echo "<br/><strong>section</strong> $section";
+	echo "<br/><strong>last inserted</strong> $lastInserted";
+	* */
+	$articleHTML = $template[$newsletterFormat]['between'][$section][$lastInserted.'-article'];
 	$articleHTML .= $template[$newsletterFormat]['begin'][$section]['article'];
 	foreach ($article['article'] as $item)
 	{
@@ -72,10 +80,18 @@ function generateArticle($article, $template, $newsletterFormat, $section, $last
 // build the HTML for one part of an article
 function generateArticleItem($item, $template, $newsletterFormat, $section, $lastInserted)
 {
+	/*
+	echo '<h4>generate item</h4>';
+	echo '<strong>item</strong><br/>';
+	print_r($item);
+	echo "<br/><strong>newsletter Format</strong> $newsletterFormat";
+	echo "<br/><strong>section</strong> $section";
+	echo "<br/><strong>last inserted</strong> $lastInserted";
+	* */
 	$itemHTML = '';
-	if ($template[$newsletterFormat]['between'][$section][$lastInserted][$item['type']])
+	if ($template[$newsletterFormat]['between'][$section][$lastInserted.'-'.$item['type']])
 	{
-		$itemHTML .= $template[$newsletterFormat]['between'][$section][$lastInserted][$item['type']];
+		$itemHTML .= $template[$newsletterFormat]['between'][$section][$lastInserted.'-'.$item['type']];
 	} else {
 		if ($last_inserted == 'para' or $last_inserted == 'list' or $last_inserted == 'image')
 		{
@@ -140,47 +156,47 @@ if (login_ok() == 1) {
 		$last_inserted = '';
 		
 		// build the newsletter
-		$newsletter = $template[$type]['begin']['newsletter'];
-		$newsletter .= $template[$type]['begin']['main'];		
+		$newsletter = $template[$type]['begin']['newsletter']['container'];
+		$newsletter .= $template[$type]['begin']['main']['container'];
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['mainArticles'] as $article)
 		{
 			$newsletter .= generateArticle($article, $template, $type, 'main', $last_inserted);
 			$last_inserted = 'article';
 		}
-		$newsletter .= $template[$type]['end']['main'];
+		$newsletter .= $template[$type]['end']['main']['container'];
 		$last_inserted = 'main';
-		$newsletter .= $template[$type]['begin']['secondary'];		
+		$newsletter .= $template[$type]['begin']['secondary']['container'];		
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['sideArticles'] as $article)
 		{
 			$newsletter .= generateArticle($article, $template, $type, 'secondary', $last_inserted);
 			$last_inserted = 'article';
 		}
-		$newsletter .= $template[$type]['end']['secondary'];
+		$newsletter .= $template[$type]['end']['secondary']['container'];
 		$last_inserted = 'secondary';
-		$newsletter .= $template[$type]['end']['newsletter'];
+		$newsletter .= $template[$type]['end']['newsletter']['container'];
 		
 		// build the header
-		$header = $template[$type]['begin']['header'];
+		$header = $template[$type]['begin']['header']['container'];
 		foreach ( explode('&#10;', $newsletter_info['header'][$type]) as $header_line)
 		{
 			if ($header_line == '') $header_line = '&nbsp;';
 			$header .= str_replace('<!--CONTENT-->', $header_line, $template[$type]['headerText']);
 		}
-		$header .= $template[$type]['end']['header'];
+		$header .= $template[$type]['end']['header']['container'];
 		
 		// insert the header
 		$newsletter = str_replace('<!--HEADER-->', $header, $newsletter);
 		
 		// build the footer
-		$footer = $template[$type]['begin']['footer'];
+		$footer = $template[$type]['begin']['footer']['container'];
 		foreach ( explode('&#10;', $newsletter_info['footer'][$type]) as $footer_line)
 		{
 			if ($footer_line == '') $footer_line = '&nbsp;';
 			$footer .= str_replace('<!--CONTENT-->', $footer_line, $template[$type]['footerText']);
 		}
-		$footer .= $template[$type]['end']['footer'];
+		$footer .= $template[$type]['end']['footer']['container'];
 		
 		// insert the footer
 		$newsletter = str_replace('<!--FOOTER-->', $footer, $newsletter);

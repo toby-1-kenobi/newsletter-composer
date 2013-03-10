@@ -41,7 +41,6 @@ HOZRULE;
 /*
  * $template[$newsletterFormat][$blockType][$section][$item]
  * 'between' blockType adds aother dimension to the array
- * [$item] is an optional dimension only used for articles and within articles
  * 
  * $newsletterFormat
  * 'web'
@@ -62,6 +61,7 @@ HOZRULE;
  * 'footer'
  * 
  * $item
+ * 'container'
  * 'article'
  * 'articleNoTitle'
  * 'para'
@@ -69,8 +69,8 @@ HOZRULE;
  * 'image'
  */
 
-$template['web']['begin']['header'] = <<<WEBHEADERBEGIN
-            <!--header text-->
+$template['web']['begin']['header']['container'] = <<<WEBHEADERBEGIN
+            <!--header-->
             <table style="background-image: url(<!--TEMPLATE IMAGE PATH-->header-lines.jpg); background-position: bottom; background-repeat: repeat-x;" bgcolor="#1d3952" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
                 <tr>
                     <td>
@@ -84,20 +84,20 @@ $template['web']['begin']['header'] = <<<WEBHEADERBEGIN
                                     </table>
 WEBHEADERBEGIN;
 
-$template['web']['end']['header'] = <<<WEBHEADEREND
+$template['web']['end']['header']['container'] = <<<WEBHEADEREND
                                 </td>
                             </tr>
                         </table>
                     </td>
                 </tr>
             </table>
-            <!--/header text-->
+            <!--/header-->
 WEBHEADEREND;
 
-$template['web']['whole']['header']['text'] = '<p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #4484b5; margin: 0; padding: 0;"><!--CONTENT--></p>';
-$template['web']['between']['header']['text']['text'] = "\n";
+$template['web']['whole']['header']['text'] = '<!--header text--><p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #4484b5; margin: 0; padding: 0;"><!--CONTENT--></p><!--/header text-->';
+$template['web']['between']['header']['text-text'] = "\n";
 
-$template['web']['begin']['footer'] = <<<WEBFOOTERBEGIN
+$template['web']['begin']['footer']['container'] = <<<WEBFOOTERBEGIN
             <!--footer-->
             <table style="background-image: url(<!--TEMPLATE IMAGE PATH-->footer-lines.jpg); background-position: top; background-repeat: repeat-x;" bgcolor="#1c293b" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
                 <tr>
@@ -112,7 +112,7 @@ $template['web']['begin']['footer'] = <<<WEBFOOTERBEGIN
                                     </table>
 WEBFOOTERBEGIN;
 
-$template['web']['end']['footer'] = <<<WEBFOOTEREND
+$template['web']['end']['footer']['container'] = <<<WEBFOOTEREND
                                 </td>
                             </tr>
                         </table>
@@ -122,11 +122,11 @@ $template['web']['end']['footer'] = <<<WEBFOOTEREND
             <!--/footer-->
 WEBFOOTEREND;
 
-$template['web']['whole']['footer']['text'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px; color: #30648d; text-shadow: 1px 1px 1px #000;"><!--CONTENT--></p>';
-$template['web']['between']['footer']['text']['text'] = "\n";
+$template['web']['whole']['footer']['text'] = '<!--footer text--><p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px; color: #30648d; text-shadow: 1px 1px 1px #000;"><!--CONTENT--></p><!--/footer text-->';
+$template['web']['between']['footer']['text-text'] = "\n";
 
 
-$template['web']['begin']['newsletter'] = <<<WEBNEWSLETTERBEGIN
+$template['web']['begin']['newsletter']['container'] = <<<WEBNEWSLETTERBEGIN
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -202,7 +202,7 @@ $template['web']['begin']['newsletter'] = <<<WEBNEWSLETTERBEGIN
                 <tr>
 WEBNEWSLETTERBEGIN;
 
-$template['web']['end']['newsletter'] = <<<WEBNEWSLETTEREND
+$template['web']['end']['newsletter']['container'] = <<<WEBNEWSLETTEREND
 </tr>
             </table>
             <!--break-->
@@ -221,35 +221,38 @@ $template['web']['end']['newsletter'] = <<<WEBNEWSLETTEREND
 </html>
 WEBNEWSLETTEREND;
 
-$template['web']['begin']['main'] = <<<WEBMAINBEGIN
+$template['web']['begin']['main']['container'] = <<<WEBMAINBEGIN
+                    <!--main section-->
                     <td width="350" valign="top">
                         <table width="100%" border="0" cellpadding="20" cellspacing="0">
                             <tr>
                                 <td valign="top" bgcolor="#1c3851" background="<!--TEMPLATE IMAGE PATH-->content-bg.jpg" style="border: solid 1px #193044; border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -khtml-border-radius: 8px;">
 WEBMAINBEGIN;
 
-$template['web']['end']['main'] = <<<WEBMAINEND
+$template['web']['end']['main']['container'] = <<<WEBMAINEND
                                 </td>
                             </tr>
                         </table>
                         <!--break-->
                     </td>
+                    <!--/main section-->
 WEBMAINEND;
 
-$template['web']['begin']['secondary'] = '<td valign="top">';
-$template['web']['end']['secondary'] ='</td>';
+$template['web']['begin']['secondary']['container'] = '<!--secondary section--><td valign="top">';
+$template['web']['end']['secondary']['container'] ='</td><!--/secondary section-->';
 
 // include title in main article beginning
-$template['web']['begin']['main']['article'] = '<h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
+$template['web']['begin']['main']['article'] = '<!--main article--><h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
+
 // an article may also not have a title
-$template['web']['begin']['main']['articleNoTitle'] = '';
-$template['web']['end']['main']['article'] = "\n";
-$template['web']['between']['main']['article']['article'] = $break . $hr . $break;
+$template['web']['begin']['main']['articleNoTitle'] = '<!--main article-->';
+$template['web']['end']['main']['article'] = "\n<!--/main article-->\n";
+$template['web']['between']['main']['article-article'] = $break . $hr . $break;
 
 // include title in secondary article beginning
 $template['web']['begin']['secondary']['article'] = <<<SECONDARYARTICLEBEGIN
 
-                        <!--section-->
+                        <!--secondary article-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td>
@@ -322,7 +325,7 @@ SECONDARYARTICLEBEGIN;
 // TODO: adjust this block of HTML so it looks right
 $template['web']['begin']['secondary']['articleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGIN
 
-                        <!--section-->
+                        <!--secondary article-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td>
@@ -363,18 +366,18 @@ $template['web']['end']['secondary']['article'] = <<<SECONDARYARTICLEEND
                                 </td>
                             </tr>
                         </table>
-                        <!--/section-->
+                        <!--/secondary article-->
                         
 SECONDARYARTICLEEND;
 
-$template['web']['between']['secondary']['article']['article'] = $bigBreak;
+$template['web']['between']['secondary']['article-article'] = $bigBreak;
 
 
-$template['web']['whole']['main']['para'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #e7eff6;"><!--CONTENT--></p>';
+$template['web']['whole']['main']['para'] = '<!--para--><p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #e7eff6;"><!--CONTENT--></p><!--/para-->';
 
-$template['web']['whole']['main']['list'] = '<p style="font-family: Helvetica, Arial, sans-serif; list-style: none; font-size: 13px; margin-top: 0px; margin-bottom: 5px; padding: 0px; color: #e7eff6"><img src="<!--TEMPLATE IMAGE PATH-->li.png" height="14" width="13" /><!--CONTENT--></p>';
+$template['web']['whole']['main']['list'] = '<!--list--><p style="font-family: Helvetica, Arial, sans-serif; list-style: none; font-size: 13px; margin-top: 0px; margin-bottom: 5px; padding: 0px; color: #e7eff6"><img src="<!--TEMPLATE IMAGE PATH-->li.png" height="14" width="13" /><!--CONTENT--></p><!--/list-->';
 
-$template['web']['whole']['main']['image'] = '<a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="309" /></a>';
+$template['web']['whole']['main']['image'] = '<!--image--><a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="309" /></a><!--/image-->';
 
 // this is a shortcut for when you have the same thing between many or all of the item combinations
 // it is used when no specific between is assigned
@@ -385,7 +388,7 @@ $template['web']['whole']['secondary']['para'] = $template['web']['whole']['main
 
 $template['web']['whole']['secondary']['list'] = $template['web']['whole']['main']['list'];
 
-$template['web']['whole']['secondary']['image'] = '<a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="204" /></a>';
+$template['web']['whole']['secondary']['image'] = '<!--image--><a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="204" /></a><!--/image-->';
 
 $template['web']['between']['secondary']['items'] = "\n";
 
@@ -396,13 +399,13 @@ $template['web']['linkStyle'] = 'color:#62b6ee;';
 $template['print'] = $template['email'] = $template['web'];
 
 // must use full path for images in email
-$template['email']['begin']['header'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['header']);
+$template['email']['begin']['header']['container'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['header']['container']);
 
-$template['email']['begin']['footer'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['footer']);
+$template['email']['begin']['footer']['container'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['footer']['container']);
 
-$template['email']['begin']['newsletter'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['newsletter']);
+$template['email']['begin']['newsletter']['container'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['newsletter']['container']);
 
-$template['email']['begin']['main'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['main']);
+$template['email']['begin']['main']['container'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['main']['container']);
 
 $template['email']['begin']['secondary']['article'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['begin']['secondary']['article']);
 
@@ -417,12 +420,12 @@ $template['email']['whole']['main']['image'] = str_replace('<!--IMAGE PATH-->', 
 $template['email']['whole']['secondary']['image'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['whole']['secondary']['image']);
 
 
-$template['print']['begin']['header'] = '';
-$template['print']['end']['header'] = '';
+$template['print']['begin']['header']['container'] = '';
+$template['print']['end']['header']['container'] = '';
 
 $template['print']['whole']['header']['text'] = '<tr><td><!--CONTENT--></td></tr>';
 
-$template['print']['begin']['footer'] = <<<PRINTFOOTERBEGIN
+$template['print']['begin']['footer']['container'] = <<<PRINTFOOTERBEGIN
             <!--footer-->
             <table width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
                 <tr>
@@ -439,7 +442,7 @@ PRINTFOOTERBEGIN;
 
 $template['print']['whole']['footer']['text'] = '<p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px"><!--CONTENT--></p>';
 
-$template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTERBEGIN
+$template['print']['begin']['newsletter']['container'] = <<<PRINTNEWSLETTERBEGIN
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
@@ -521,7 +524,7 @@ $template['print']['begin']['newsletter'] = <<<PRINTNEWSLETTERBEGIN
                 <tr>
 PRINTNEWSLETTERBEGIN;
 
-$template['print']['end']['newsletter'] = <<<PRINTNEWSLETTEREND
+$template['print']['end']['newsletter']['container'] = <<<PRINTNEWSLETTEREND
                 </tr>
             </table>
             <!--break-->
@@ -540,7 +543,7 @@ $template['print']['end']['newsletter'] = <<<PRINTNEWSLETTEREND
 </html>
 PRINTNEWSLETTEREND;
 
-$template['print']['begin']['main'] = <<<PRINTMAINBEGIN
+$template['print']['begin']['main']['container'] = <<<PRINTMAINBEGIN
                     <td width="350" valign="top">
                         <table width="100%" border="0" cellpadding="20" cellspacing="0">
                             <tr>
@@ -648,8 +651,7 @@ $template['print']['whole']['secondary']['image'] = '<a href="<!--FULL IMAGE PAT
 // TODO: make links in print format appear as plain text with linked URL in braces
 
 
-
-
+/*
 
 
 $templateData['web']['file'] = <<<WEBFILE
@@ -921,7 +923,6 @@ $templateData['web']['linkStyle'] = 'color:#62b6ee;';
 
 
 $templateData['print'] = $templateData['email'] = $templateData['web'];
-
 
 $templateData['email']['file'] = <<<EMAILFILE
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -1218,4 +1219,7 @@ $templateData['print']['file'] = <<<PRINTFILE
 </body>
 </html>
 PRINTFILE
+
+*/
+
 ?>
