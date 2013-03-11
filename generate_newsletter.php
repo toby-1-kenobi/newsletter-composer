@@ -6,10 +6,11 @@ function startsWith($haystack, $needle)
 	return strpos($haystack, $needle, 0) === 0;
 }
 
+
+// a link looks like this: [link text] (URL)
 function parseLinksAndEmph($text, $template, $newsletterFormat, $section)
 {
 	// find any links in the text
-	// a link looks like this: [link text] (URL)
 	if (preg_match_all('/\[([^\]]+)\]\s*\(([^\)]*)\)/', $text, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE) > 0)
 	{
 		//echo '<br/><pre>';
@@ -45,11 +46,60 @@ function parseLinksAndEmph($text, $template, $newsletterFormat, $section)
 	}
 }
 
+// italic (weak emphasis) is marked by bounding the text with double underscores
 function parseEmph($text)
 {
-	echo '<br/><strong>parsing:</strong> ';
-	echo $text;
-	return $text;
+	if (preg_match_all('/__(..*?)__/', $text, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE) > 0)
+	{
+		$parsed = '';
+		// iterate over array of matches parsing the text between and inside the matches for strong emphasis markers
+		$index = 0;
+		foreach ($matches as $match)
+		{
+			// parse the text before the match
+			$parsed .= parseStrongEmph(substr($text, $index, $match[0][1] - $index));
+			// parse the text inside the match
+			$parsed .= '<em>' . parseStrongEmph($match[1][0]) . '</em>';
+			// move the index forward to the end of the match
+			$index = $match[1][1] + strlen($match[1][0]) + 2;
+			
+		}
+		// and parse any remaining text
+		$parsed .= parseStrongEmph(substr($text, $index));
+		return $parsed;
+	}
+	else
+	{
+		return parseStrongEmph($text);
+	}
+}
+
+// bold (strong emphasis) is marked by bounding the text with double asterisks
+function parseStrongEmph($text)
+{
+	if (preg_match_all('/\*\*(..*?)\*\*/', $text, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE) > 0)
+	{
+		$parsed = '';
+		// iterate over array of matches parsing the text between and inside the matches for strong emphasis markers
+		$index = 0;
+		foreach ($matches as $match)
+		{
+			// get the text before the match
+			$parsed .= substr($text, $index, $match[0][1] - $index);
+			// parse the text inside the match
+			$parsed .= '<strong>' . $match[1][0] . '</strong>';
+			// move the index forward to the end of the match
+			$index = $match[1][1] + strlen($match[1][0]) + 2;
+			
+		}
+		// add any remaining text
+		$parsed .= substr($text, $index);
+		return $parsed;
+	}
+	else
+	{
+		return $text;
+	}
 }
 
 function splitText($text)
