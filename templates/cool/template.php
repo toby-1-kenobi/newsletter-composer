@@ -97,6 +97,9 @@ WEBHEADEREND;
 $template['web']['whole']['header']['text'] = '<!--header text--><p style="font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #4484b5; margin: 0; padding: 0;"><!--CONTENT--></p><!--/header text-->';
 $template['web']['between']['header']['text-text'] = "\n";
 
+
+$template['web']['whole']['header']['link'] = '<a style="color: #62b6ee;" href="<!--LINK URL-->"><!--LINK TEXT--></a>';
+
 $template['web']['begin']['footer']['container'] = <<<WEBFOOTERBEGIN
             <!--footer-->
             <table style="background-image: url(<!--TEMPLATE IMAGE PATH-->footer-lines.jpg); background-position: top; background-repeat: repeat-x;" bgcolor="#1c293b" width="100%" border="0" align="center" cellpadding="0" cellspacing="0">
@@ -125,6 +128,7 @@ WEBFOOTEREND;
 $template['web']['whole']['footer']['text'] = '<!--footer text--><p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin: 0px; padding: 0px; color: #30648d; text-shadow: 1px 1px 1px #000;"><!--CONTENT--></p><!--/footer text-->';
 $template['web']['between']['footer']['text-text'] = "\n";
 
+$template['web']['whole']['footer']['link'] = $template['web']['whole']['header']['link'];
 
 $template['web']['begin']['newsletter']['container'] = <<<WEBNEWSLETTERBEGIN
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
@@ -379,9 +383,13 @@ $template['web']['whole']['main']['list'] = '<!--list--><p style="font-family: H
 
 $template['web']['whole']['main']['image'] = '<!--image--><a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="309" /></a><!--/image-->';
 
+//$template['web']['between']['main']['list-list'] = $smallBreak;
+
 // this is a shortcut for when you have the same thing between many or all of the item combinations
 // it is used when no specific between is assigned
 $template['web']['between']['main']['items'] = $break;
+
+$template['web']['whole']['main']['link'] = $template['web']['whole']['header']['link'];
 
 
 $template['web']['whole']['secondary']['para'] = $template['web']['whole']['main']['para'];
@@ -392,8 +400,8 @@ $template['web']['whole']['secondary']['image'] = '<!--image--><a href="<!--IMAG
 
 $template['web']['between']['secondary']['items'] = "\n";
 
-// TODO: change link to full format
-$template['web']['linkStyle'] = 'color:#62b6ee;';
+$template['web']['whole']['secondary']['link'] = $template['web']['whole']['header']['link'];
+
 
 // The template for print and email is the same as that for web unless otherwise specified below this line
 $template['print'] = $template['email'] = $template['web'];
@@ -648,8 +656,8 @@ $template['print']['whole']['secondary']['list'] = $template['print']['whole']['
 $template['print']['whole']['secondary']['image'] = '<a href="<!--FULL IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--FULL IMAGE PATH--><!--CONTENT-->" width="204" /></a>';
 
 
-// TODO: make links in print format appear as plain text with linked URL in braces
-
+$template['print']['whole']['header']['link']= '<!--LINK TEXT--> (<!--LINK URL-->)';
+$template['print']['whole']['secondary']['link'] = $template['print']['whole']['main']['link'] = $template['print']['whole']['footer']['link'] = $template['print']['whole']['header']['link'];
 
 /*
 

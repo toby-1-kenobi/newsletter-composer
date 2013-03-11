@@ -6,18 +6,50 @@ function startsWith($haystack, $needle)
 	return strpos($haystack, $needle, 0) === 0;
 }
 
-function parseLinksAndEmph($text)
+function parseLinksAndEmph($text, $template, $newsletterFormat, $section)
 {
 	// find any links in the text
+	// a link looks like this: [link text] (URL)
 	if (preg_match_all('/\[([^\]]+)\]\s*\(([^\)]*)\)/', $text, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE) > 0)
 	{
-		echo '<br/>';
-		print_r($matches);
+		//echo '<br/><pre>';
+		//print_r($matches);
+		//echo '</pre>';
+		$parsed = '';
+		// iterate over array of links parsing the text between and in the link text for emphasis markers
+		$index = 0;
+		foreach ($matches as $match)
+		{
+			// parse the text before the link
+			$parsed .= parseEmph(substr($text, $index, $match[0][1] - $index));
+			
+			// build the link, parsing the link text
+			$link = $template[$newsletterFormat]['whole'][$section]['link'];
+			$link = str_replace('<!--LINK TEXT-->', parseEmph($match[1][0]), $link);
+			$link = str_replace('<!--LINK URL-->', $match[2][0], $link);
+			$parsed .= $link;
+			
+			// move the index forward to the end of the URL + 1 for the closing braces
+			$index = $match[2][1] + strlen($match[2][0]) + 1;
+			
+		}
+		// and parse any remaining text
+		$parsed .= parseEmph(substr($text, $index));
+		
+		return $parsed;
 	}
 	else
 	{
-		echo "<br/>no links in text";
+		//echo "<br/>no links in text";
+		return parseEmph($text);
 	}
+}
+
+function parseEmph($text)
+{
+	echo '<br/><strong>parsing:</strong> ';
+	echo $text;
+	return $text;
 }
 
 function splitText($text)
@@ -106,7 +138,7 @@ function generateArticleItem($item, $template, $newsletterFormat, $section, $las
 	
 	if ($item['type'] !== 'image')
 	{
-		parseLinksAndEmph($item['value']);
+		$item['value'] = parseLinksAndEmph($item['value'], $template, $newsletterFormat, $section);
 	}
 	
 	$itemHTML = '';
