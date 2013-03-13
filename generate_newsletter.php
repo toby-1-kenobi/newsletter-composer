@@ -1,4 +1,7 @@
 <?php
+//ini_set('display_errors', 'On');
+//error_reporting(E_ALL | E_STRICT);
+
 require_once 'common.php';
 
 function startsWith($haystack, $needle)
@@ -114,6 +117,8 @@ function splitText($text)
 				array_push($output, array("type" => 'para', "value" => $buffer));
 				$buffer = '';
 			}
+			// remove the hyuphen at the beginning of the line (the template will handle formatting as a list item)
+			$line = substr($line, 2);
 			array_push($output, array("type" => 'list', "value" => $line));
 		}
 		else if (trim($line) === '')
@@ -421,5 +426,3 @@ if (login_ok() == 1) {
 } else {
 	echo '<p>Newsletter not generated. Could not verify user. Login again.</p>';
 }
-
-?>
