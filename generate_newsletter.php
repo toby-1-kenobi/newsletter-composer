@@ -166,7 +166,15 @@ function generateArticle($article, $template, $newsletterFormat, $section, $last
 	echo "<br/><strong>last inserted</strong> $lastInserted";
 	*/ 
 	$articleHTML = $template[$newsletterFormat]['between'][$section][$lastInserted.'-article'];
-	$articleHTML .= $template[$newsletterFormat]['begin'][$section]['article'];
+	if (strlen(trim($article['title'])) > 0)
+	{
+		$articleHTML .= $template[$newsletterFormat]['begin'][$section]['article'];
+	}
+	else
+	{
+		$articleHTML .= $template[$newsletterFormat]['begin'][$section]['articleNoTitle'];
+	}
+	
 	foreach ($article['article'] as $item)
 	{
 		if ($item['type'] === 'image')
@@ -265,6 +273,7 @@ if (login_ok() == 1) {
 	//include('templates/' . $newsletter_info['template'] . '/template.php');
 	// TODO: remove hard coding of template file to import
 	include 'templates/cool/template.php';
+
 
 	// do all this for each type of newsletter we are creating (the $types array comes from the template file)
 	foreach ($types as $type)
