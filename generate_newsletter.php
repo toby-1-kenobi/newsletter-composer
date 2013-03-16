@@ -284,6 +284,17 @@ if (login_ok() == 1) {
 		// build the newsletter
 		$newsletter = $template[$type]['begin']['newsletter']['container'];
 		
+		// build the header
+		$header = $template[$type]['begin']['header']['container'];
+		foreach ( explode('&#10;', $newsletter_info['header'][$type]) as $header_line)
+		{
+			$header .= $template[$type]['between']['header'][$last_inserted .'-text'];
+			if ($header_line == '') $header_line = '&nbsp;';
+			$header .= str_replace('<!--CONTENT-->', parseLinksAndEmph($header_line, $template, $type, 'header'), $template[$type]['whole']['header']['text']);
+			$last_inserted = 'text';
+		}
+		$header .= $template[$type]['end']['header']['container'];
+		
 		$newsletter .= $template[$type]['begin']['main']['container'];
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['mainArticles'] as $article)
@@ -304,15 +315,6 @@ if (login_ok() == 1) {
 		$last_inserted = 'secondary';
 		$newsletter .= $template[$type]['end']['newsletter']['container'];
 		
-		// build the header
-		$header = $template[$type]['begin']['header']['container'];
-		foreach ( explode('&#10;', $newsletter_info['header'][$type]) as $header_line)
-		{
-			if ($header_line == '') $header_line = '&nbsp;';
-			$header .= str_replace('<!--CONTENT-->', $header_line, $template[$type]['headerText']);
-		}
-		$header .= $template[$type]['end']['header']['container'];
-		
 		// insert the header
 		$newsletter = str_replace('<!--HEADER-->', $header, $newsletter);
 		
@@ -320,8 +322,10 @@ if (login_ok() == 1) {
 		$footer = $template[$type]['begin']['footer']['container'];
 		foreach ( explode('&#10;', $newsletter_info['footer'][$type]) as $footer_line)
 		{
+			$footer .= $template[$type]['between']['footer'][$last_inserted .'-text'];
 			if ($footer_line == '') $footer_line = '&nbsp;';
-			$footer .= str_replace('<!--CONTENT-->', $footer_line, $template[$type]['footerText']);
+			$footer .= str_replace('<!--CONTENT-->', parseLinksAndEmph($footer_line, $template, $type, 'footer'), $template[$type]['whole']['footer']['text']);
+			$last_inserted = 'text';
 		}
 		$footer .= $template[$type]['end']['footer']['container'];
 		
@@ -426,8 +430,11 @@ if (login_ok() == 1) {
 	   $newsletter = str_replace('<!--FULL IMAGE PATH-->', $full_img_src, $newsletter);
 	   $newsletter = str_replace('<!--TEMPLATE IMAGE PATH-->', $template_img_src, $newsletter);
 	   $newsletter = str_replace('<!--FULL TEMPLATE IMAGE PATH-->', $full_template_img_src, $newsletter);
+	   
+	   // and the path to the online version
+	   $newsletter = str_replace('%WEB URL%', $full_web_path . $rel_user_path . $newsletter_info['title'].'_'.$num_pad.'.html', $newsletter);
 	   // and style the links
-	   $newsletter = str_replace('<a', "<a style=\"{$templateData[$type]['linkStyle']}\"", $newsletter);
+	   //$newsletter = str_replace('<a', "<a style=\"{$templateData[$type]['linkStyle']}\"", $newsletter);
 	   
 	   // create the filename
 	   if ($type == 'web') {
