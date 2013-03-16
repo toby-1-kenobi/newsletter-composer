@@ -54,21 +54,30 @@ function parseEmph($text)
 {
 	if (preg_match_all('/__(..*?)__/', $text, $matches, PREG_SET_ORDER+PREG_OFFSET_CAPTURE) > 0)
 	{
-		$parsed = '';
-		// iterate over array of matches parsing the text between and inside the matches for strong emphasis markers
+		// iterate over array of matches folding the text inside the matches
+		// this will allow us to check the remaining text for strong emphasis markers that might have weak emphasis markers nested in them
 		$index = 0;
+		$folded = '';
 		foreach ($matches as $match)
 		{
 			// parse the text before the match
-			$parsed .= parseStrongEmph(substr($text, $index, $match[0][1] - $index));
-			// parse the text inside the match
-			$parsed .= '<em>' . parseStrongEmph($match[1][0]) . '</em>';
+			$folded .= substr($text, $index, $match[0][1] - $index);
+			$folded .= '%FOLD%'; // hopefully people won't put this in the content of their newsletter
 			// move the index forward to the end of the match
 			$index = $match[1][1] + strlen($match[1][0]) + 2;
-			
 		}
-		// and parse any remaining text
-		$parsed .= parseStrongEmph(substr($text, $index));
+		// and add any remaining text
+		$folded .= substr($text, $index);
+		
+		// now parse the folded text for strong emphasis
+		$folded = parseStrongEmph($folded);
+		
+		// now put back the weak emphasis matches, parsing the content of those for strong emphasis as we go
+		$parsed = $folded;
+		foreach ($matches as $match)
+		{
+			$parsed = preg_replace('/%FOLD%/', '<em>' . parseStrongEmph($match[1][0]) . '</em>', $parsed, 1);
+		}
 		return $parsed;
 	}
 	else
@@ -155,7 +164,7 @@ function generateArticle($article, $template, $newsletterFormat, $section, $last
 	echo "<br/><strong>newsletter Format</strong> $newsletterFormat";
 	echo "<br/><strong>section</strong> $section";
 	echo "<br/><strong>last inserted</strong> $lastInserted";
-	* */
+	*/ 
 	$articleHTML = $template[$newsletterFormat]['between'][$section][$lastInserted.'-article'];
 	$articleHTML .= $template[$newsletterFormat]['begin'][$section]['article'];
 	foreach ($article['article'] as $item)
@@ -189,7 +198,7 @@ function generateArticleItem($item, $template, $newsletterFormat, $section, $las
 	echo "<br/><strong>newsletter Format</strong> $newsletterFormat";
 	echo "<br/><strong>section</strong> $section";
 	echo "<br/><strong>last inserted</strong> $lastInserted";
-	* */
+	*/ 
 	
 	if ($item['type'] !== 'image')
 	{
@@ -265,6 +274,7 @@ if (login_ok() == 1) {
 		
 		// build the newsletter
 		$newsletter = $template[$type]['begin']['newsletter']['container'];
+		
 		$newsletter .= $template[$type]['begin']['main']['container'];
 		// for every article we get from the entered data build it
 		foreach ($newsletter_info['mainArticles'] as $article)
@@ -412,9 +422,9 @@ if (login_ok() == 1) {
 	   
 	   // create the filename
 	   if ($type == 'web') {
-		$filename = $newsletter_info['title'].'_'.$num_pad.'.html';
-	    } else {
-		$filename = $newsletter_info['title'].'_'.$num_pad.'_'.$type.'.html';
+		   $filename = $newsletter_info['title'].'_'.$num_pad.'.html';
+		} else {
+			$filename = $newsletter_info['title'].'_'.$num_pad.'_'.$type.'.html';
 	    }
 	    
 	    // write the file
