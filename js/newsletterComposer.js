@@ -198,18 +198,18 @@ controls += '<img class="down" src="images/move_down.png" />';
 controls += '<img class="delete" src="images/delete.png" />';
 controls += '</div>';
 
-var addTitleButton = '<button class="addTitle">Add title</button>';
-var addParaButton = '<button class="addPara">Add paragraph</button>';
-var addListItemButton = '<button class="addLI">Add list item</button>';
-var addImageButton = '<button class="addImage">Add image</button>';
+//var addTitleButton = '<button class="addTitle">Add title</button>';
+var addParaButton = '<button class="addPara" title="Add some text">Add text</button>';
+//var addListItemButton = '<button class="addLI">Add list item</button>';
+var addImageButton = '<button class="addImage" title="Add an image">Add image</button>';
 var articleField = "<fieldset class=\"article moveable\"><legend>Article</legend>\n";
 articleField += '<div><label>Title</label> <input type="text" class="articleTitle" /></div>';
 articleField += controls + "\n";
 articleField += "<div class=\"article_buttons\">\n";
 //articleField += addTitleButton + "\n";
 articleField += addParaButton + "\n";
-articleField += '<br/>';
-articleField += addListItemButton + "\n";
+//articleField += '<br/>';
+//articleField += addListItemButton + "\n";
 articleField += addImageButton + "\n";
 articleField += "</div>\n</fieldset>\n";
 
@@ -395,6 +395,8 @@ function bindArticleButtons(article) {
 		field.find('.input-issue.save').change(setNewsletterCookie);
 		field.insertBefore($(this).parent());
 	});
+	article.find('button.addImage').button({icons:{primary: "ui-icon-image"},text:false});
+	article.find('button.addPara').button({icons:{primary: "ui-icon-document"},text:false});
 }
 
 // build a filled in set of form articles from an array
@@ -534,6 +536,8 @@ $(document).ready(function() {
 	// apply jQueryUI elements
 	$( ".tabs" ).tabs();
 	$( "#accordion" ).accordion();
+	$( "button" ).button();
+	$( ".button" ).button();
 	
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){

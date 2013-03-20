@@ -152,7 +152,7 @@ else { // the user is logged in or attempting to log in
  ?> 
 <!--<div id="loading_splash">Please Wait ...</div>-->
 
-<div class="right"> <!-- logout or change password -->
+<div> <!-- logout or change password -->
 
 <div><?=$uid?></div>
 
