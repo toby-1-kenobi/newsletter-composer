@@ -19,7 +19,8 @@ require_once '../php/db.php';
 <meta http-equiv="content-style-type" content="text/css"/>
 <meta http-equiv="expires" content="0"/>
 
-<link href="css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet" type="text/css"/>
+<!--link href="css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet" type="text/css"/-->
+<link href="http://code.jquery.com/ui/1.10.2/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css"/>
 <link href="css/newsletterComposer.css?<?php echo time(); ?>" rel="stylesheet" type="text/css"/>
 
 <?php
@@ -152,7 +153,7 @@ else { // the user is logged in or attempting to log in
  ?> 
 <!--<div id="loading_splash">Please Wait ...</div>-->
 
-<div> <!-- logout or change password -->
+<div class="ui-widget"> <!-- logout or change password -->
 
 <div><?=$uid?></div>
 
@@ -200,7 +201,7 @@ can say what they want.
 <div id="accordion">  
   <h3>Compose Newsletter</h3>
   <div>
-  <fieldset><legend>Newsletter</legend>
+  <!--fieldset><legend>Newsletter</legend-->
   
   <button class="saveIssue right">Save to file</button>
   <div class="right sneaky-file-input"><button>Load from file</button><input type="file" class="loadIssue" /></div>
@@ -239,19 +240,20 @@ can say what they want.
 
 <div id="newslettercontent">
 
-<div id="rightPanel" class="right">
-  <button class="addArticle">Add article</button>
-</div>
-
-<div id="leftPanel">
+<div id="leftPanel" class="section ui-corner-all">
   <!--<textarea class="remember" name="content" id="content" rows="20" cols="60"></textarea>-->
   <button class="addArticle">Add article</button>
 </div>
 
+<div id="rightPanel" class="section ui-corner-all">
+  <button class="addArticle">Add article</button>
 </div>
 
+</div>
+
+
   <!-- This is tabs, one for the footer of each format-->
-  <div class="tabs" id="footer">
+<div class="tabs" id="footer">
 	  <ul>
         <li><a href="#emailFooter"><span>Email</span></a></li>
         <li><a href="#webFooter"><span>Web</span></a></li>
@@ -271,7 +273,7 @@ can say what they want.
 <button class="saveIssue right">Save to file</button>
 <button class="clear left">Clear</button>
   
-</fieldset>
+<!--/fieldset-->
 
 <fieldset><legend>Generated Newsletter</legend>
   <button id="generate" name="generate">Generate Newsletter</button>

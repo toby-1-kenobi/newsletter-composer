@@ -202,7 +202,7 @@ controls += '</div>';
 var addParaButton = '<button class="addPara" title="Add some text">Add text</button>';
 //var addListItemButton = '<button class="addLI">Add list item</button>';
 var addImageButton = '<button class="addImage" title="Add an image">Add image</button>';
-var articleField = "<fieldset class=\"article moveable\"><legend>Article</legend>\n";
+var articleField = "<fieldset class=\"article moveable ui-corner-all\"><legend>Article</legend>\n";
 articleField += '<div><label>Title</label> <input type="text" class="articleTitle" /></div>';
 articleField += controls + "\n";
 articleField += "<div class=\"article_buttons\">\n";

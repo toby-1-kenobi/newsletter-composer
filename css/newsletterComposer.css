@@ -1,27 +1,58 @@
+/*
+ * background colour: #47AFAF
+ * second background colour: #60DFDF
+ * section colour: #E3DEC1
+ * article colour: #E89F65
+ * border cololur: #B94629
+ */
+
 body{
 font-family:"Lucida Grande", "Lucida Sans Unicode", Verdana, Arial, Helvetica, sans-serif;
 font-size:12px;
+background-color: #47AFAF;
 }
 
-p, h1, form, button{border:0; margin:0; padding:0;}
+#accordion > div{
+	background-color: #60DFDF;
+}
+
+.section {
+	background-color: #E3DEC1;
+	box-sizing: border-box;
+	-moz-box-sizing:border-box; /* Firefox */
+	-webkit-box-sizing:border-box; /* Safari */
+	border: solid 3px #B94629;
+	margin: 1ex;
+	float: left;
+}
+
+#newslettercontent {
+	overflow: hidden;
+}
+
+p, h1, form {border:0; margin:0; padding:0;}
 
 .spacer {
 	clear:both;
 	height:1px;
 }
 
+#rightPanel {
+	width: 35%;
+}
+
+#leftPanel {
+	width: 60%;
+}
+
+.left {
+	float: left;
+}
+
 .right {
 	float: right;
 }
 
-#rightPanel {
-	max-width: 45%;
-}
-/*
-#leftPanel {
-	max-width: 60%;
-}
-*/
 
 h1 {
 	font-size:20px;
@@ -31,15 +62,15 @@ h1 {
 
 
 fieldset {
-	border: solid 2px #b7ddf2;
-	background-color: #ebf4fb;
+	border: solid 2px #B94629;
+	background-color: #E89F65;
 	margin: 10px 40px;
 	padding: 10px;
 }
 
 fieldset legend {
 	font-weight: bold;
-	color: #666;
+	color: #B94629;
 }
 /*
 fieldset div {
@@ -134,10 +165,6 @@ button:hover, button.hover, input.button:hover, input.button.hover {
 	box-shadow:inset 0 0 5px #000000;
 }
 */
-
-#rightPanel button {
-	width: 120px;
-}
 
 .moveable {
 	position: relative;
