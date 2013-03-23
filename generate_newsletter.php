@@ -259,8 +259,8 @@ if (login_ok() == 1) {
 	//$personal_info = json_decode(stripslashes($_POST['personal']), true);
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
 
-	//echo "\n<br />newsletter_info:<br />";
-	//print_r($newsletter_info);
+	echo "\n<br />newsletter_info:<br />";
+	print_r($newsletter_info);
 	
 	// manipulate some of the data so it's easier to use later
 	$num_pad = str_pad($newsletter_info['number'], 3, '0', STR_PAD_LEFT);

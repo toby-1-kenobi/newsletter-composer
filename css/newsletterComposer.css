@@ -28,6 +28,7 @@ background-color: #47AFAF;
 
 #newslettercontent {
 	overflow: hidden;
+	clear: both;
 }
 
 p, h1, form {border:0; margin:0; padding:0;}
@@ -165,6 +166,10 @@ button:hover, button.hover, input.button:hover, input.button.hover {
 	box-shadow:inset 0 0 5px #000000;
 }
 */
+
+#logo, #mugshot {
+	margin-right: 1em;
+}
 
 .moveable {
 	position: relative;

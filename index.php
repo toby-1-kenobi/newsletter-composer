@@ -230,6 +230,16 @@ can say what they want.
 	</div>
 </div>
   
+  <div class="right" id="logo">
+	<p>Organisation logo:</p>
+	<button>Upload logo</button>
+  </div>
+  
+  <div class="right" id="mugshot">
+	<p>Your mugshot:</p>
+	<button>Upload mugshot</button>
+  </div>
+  
   <div><label for="newsletterTitle">Newsletter title: </label>
   <input class="input-issue save" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
   

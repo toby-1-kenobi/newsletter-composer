@@ -269,11 +269,17 @@ function collectPersonalData() {
 // harvest the data entered for the newsletter
 function collectNewsletterData() {
 	// make a JSON object for the form data
+	var logo = '';
+	var mugshot = '';
+	if ($('#logo .imageLoaded').length > 0) logo = $('#logo .imageLoaded').val();
+	if ($('#mugshot .imageLoaded').length > 0) mugshot = $('#mugshot .imageLoaded').val();
 	var saveData = {
 		"template": $('#template').val(),
 		"title": encodeHTML($('#newsletterTitle').val()),
 		"number": encodeHTML($('#issuenum').val()),
 		"date": encodeHTML($('#issuedate').val()),
+		"logo": logo,
+		"mugshot": mugshot,
 		"header": {
 			"email": encodeHTML($('#emailHeader > textarea').val()),
 			"web": encodeHTML($('#webHeader > textarea').val()),
@@ -298,10 +304,7 @@ function collectNewsletterData() {
 			else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
-			// strip off the <p> tags that TinyMCE adds
-			if (itemType == "para" || itemType == "list") {
-				itemValue = encodeHTML($(this).val().replace('<p>','').replace('</p>',''));
-			} else itemValue = $(this).val();
+			itemValue = $(this).val();
 			var item = {"type": itemType, "value": itemValue};
 			article.article.push(item);
 		});
@@ -316,10 +319,7 @@ function collectNewsletterData() {
 			else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
-			// strip off the <p> tags that TinyMCE adds
-			if (itemType == "para" || itemType == "list") {
-				itemValue = encodeHTML($(this).val().replace('<p>','').replace('</p>',''));
-			} else itemValue = $(this).val();
+			itemValue = $(this).val();
 			var item = {"type": itemType, "value": itemValue};
 			article.article.push(item);
 		});
@@ -456,6 +456,7 @@ function restore(jsonData) {
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
+	// TODO: restore logo and mugshot images
 	$('#emailHeader > textarea').val(decodeHTML(jsonData.header.email));
 	$('#webHeader > textarea').val(decodeHTML(jsonData.header.web));
 	$('#printHeader > textarea').val(decodeHTML(jsonData.header.print));
@@ -538,10 +539,27 @@ $(document).ready(function() {
 	$( "#accordion" ).accordion();
 	$( "button" ).button();
 	$( ".button" ).button();
+	$( "#logo > button, #mugshot > button" ).button({
+		icons: {
+			primary: "ui-icon-image"
+		},
+		text: false
+	});
 	
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){
 		$(this).parent().find('.hidden').show();
+	});
+	
+	// bind button to bring up file upload controls for logo and mugshot
+	$('#logo > button, #mugshot > button').click(function(){
+		var parent = $(this).parent();
+		var uploadControl = "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
+		uploadControl += '<div><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
+		$(this).replaceWith(uploadControl);
+		parent.find('.imageUpload').bind('change', imageUploadHandler);
+		parent.find('.input-issue.save').change(setNewsletterCookie);
+		parent.find('button.addImage').button({icons:{primary: "ui-icon-image"},text:false});
 	});
 	
 	// bind rego form validation
