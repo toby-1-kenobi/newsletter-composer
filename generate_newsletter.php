@@ -196,6 +196,22 @@ function generateArticle($article, $template, $newsletterFormat, $section, $last
 	return $articleHTML;
 }
 
+// build the HTML for the header or footer
+function generateHeaderOrFooter($sectionType, $template, $newsletterFormat, $newsletterContent)
+{
+	$lastInserted = '';
+	$html = $template[$newsletterFormat]['begin'][$sectionType]['container'];
+	foreach ( explode('&#10;', $newsletterContent[$sectionType][$newsletterFormat]) as $line)
+	{
+			$html .= $template[$newsletterFormat]['between'][$sectionType][$lastInserted .'-text'];
+			if ($line == '') $line = '&nbsp;';
+			$html .= str_replace('<!--CONTENT-->', parseLinksAndEmph($line, $template, $newsletterFormat, $sectionType), $template[$newsletterFormat]['whole'][$sectionType]['text']);
+			$lastInserted = 'text';
+	}
+	$html .= $template[$newsletterFormat]['end'][$sectionType]['container'];
+	return $html;
+}
+
 // build the HTML for one part of an article
 function generateArticleItem($item, $template, $newsletterFormat, $section, $lastInserted)
 {
@@ -211,6 +227,10 @@ function generateArticleItem($item, $template, $newsletterFormat, $section, $las
 	if ($item['type'] !== 'image')
 	{
 		$item['value'] = parseLinksAndEmph($item['value'], $template, $newsletterFormat, $section);
+	}
+	else
+	{
+		$item['value'] = rawurlencode($item['value']);
 	}
 	
 	$itemHTML = '';
@@ -259,8 +279,8 @@ if (login_ok() == 1) {
 	//$personal_info = json_decode(stripslashes($_POST['personal']), true);
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
 
-	echo "\n<br />newsletter_info:<br />";
-	print_r($newsletter_info);
+	//echo "\n<br />newsletter_info:<br />";
+	//print_r($newsletter_info);
 	
 	// manipulate some of the data so it's easier to use later
 	$num_pad = str_pad($newsletter_info['number'], 3, '0', STR_PAD_LEFT);
@@ -268,16 +288,16 @@ if (login_ok() == 1) {
 	$title_onset = array_shift($title_words);
 	$title_coda = implode(' ', $title_words);
 	$web_newsletter = $web_path . $rel_user_path . $newsletter_info['title'].'_'.$num_pad.'.html';
-	
+
 	// import the data from the template being used
 	//include('templates/' . $newsletter_info['template'] . '/template.php');
 	// TODO: remove hard coding of template file to import
 	include 'templates/cool/template.php';
 
-
 	// do all this for each type of newsletter we are creating (the $types array comes from the template file)
 	foreach ($types as $type)
 	{
+		//echo "<br />$type";
 		// keep track of the last element iserted into our newsletter so we know what in between bits to put in before the next.
 		$last_inserted = '';
 		
@@ -285,15 +305,7 @@ if (login_ok() == 1) {
 		$newsletter = $template[$type]['begin']['newsletter']['container'];
 		
 		// build the header
-		$header = $template[$type]['begin']['header']['container'];
-		foreach ( explode('&#10;', $newsletter_info['header'][$type]) as $header_line)
-		{
-			$header .= $template[$type]['between']['header'][$last_inserted .'-text'];
-			if ($header_line == '') $header_line = '&nbsp;';
-			$header .= str_replace('<!--CONTENT-->', parseLinksAndEmph($header_line, $template, $type, 'header'), $template[$type]['whole']['header']['text']);
-			$last_inserted = 'text';
-		}
-		$header .= $template[$type]['end']['header']['container'];
+		$header = generateHeaderOrFooter('header', $template, $type, $newsletter_info);
 		
 		$newsletter .= $template[$type]['begin']['main']['container'];
 		// for every article we get from the entered data build it
@@ -319,16 +331,7 @@ if (login_ok() == 1) {
 		$newsletter = str_replace('<!--HEADER-->', $header, $newsletter);
 		
 		// build the footer
-		$footer = $template[$type]['begin']['footer']['container'];
-		foreach ( explode('&#10;', $newsletter_info['footer'][$type]) as $footer_line)
-		{
-			$footer .= $template[$type]['between']['footer'][$last_inserted .'-text'];
-			if ($footer_line == '') $footer_line = '&nbsp;';
-			$footer .= str_replace('<!--CONTENT-->', parseLinksAndEmph($footer_line, $template, $type, 'footer'), $template[$type]['whole']['footer']['text']);
-			$last_inserted = 'text';
-		}
-		$footer .= $template[$type]['end']['footer']['container'];
-		
+		$footer = generateHeaderOrFooter('footer', $template, $type, $newsletter_info);
 		// insert the footer
 		$newsletter = str_replace('<!--FOOTER-->', $footer, $newsletter);
 		
@@ -340,6 +343,15 @@ if (login_ok() == 1) {
 		$newsletter = str_replace('<!--NUM-->', $newsletter_info['number'], $newsletter);
 		$newsletter = str_replace('<!--0NUM-->', $num_pad, $newsletter);
 		$newsletter = str_replace('<!--DATE-->', $newsletter_info['date'], $newsletter);
+		
+		if(strlen($newsletter_info['mugshot']) > 0)
+		{
+			$encodedMugshot = $full_img_src . rawurlencode($newsletter_info['mugshot']);
+			//echo "<br /><strong>MUGSHOT</strong>$encodedMugshot";
+			$mugshot = $template[$type]['whole']['newsletter']['mugshot'];
+			$mugshot = str_replace('<!--CONTENT-->', $encodedMugshot, $mugshot);
+			$newsletter = str_replace('<!--MUGSHOT-->', $mugshot, $newsletter);
+		}
 		
 		/*
 		// start building the content for the main articles
@@ -447,7 +459,7 @@ if (login_ok() == 1) {
 	    file_put_contents($rel_user_path . '/' . $filename, $newsletter);
 	    
 	    // output a link to the file which will go back into the user interface
-	    echo "<a id=\"{$type}_file\" href=\"$rel_user_path$filename\">$type</a><br/>\n";
+	    echo "<a id=\"{$type}_file\" href=\"$rel_user_path$filename\">$type</a><br />\n";
 	}
 } else {
 	echo '<p>Newsletter not generated. Could not verify user. Login again.</p>';

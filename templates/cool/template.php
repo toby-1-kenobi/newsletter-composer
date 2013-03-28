@@ -67,6 +67,8 @@ HOZRULE;
  * 'para'
  * 'list'
  * 'image'
+ * 'mugshot'
+ * 'logo'
  */
 
 $template['web']['begin']['header']['container'] = <<<WEBHEADERBEGIN
@@ -159,6 +161,8 @@ $template['web']['begin']['newsletter']['container'] = <<<WEBNEWSLETTERBEGIN
                 </tr>
                 <tr>
                     <td background="<!--TEMPLATE IMAGE PATH-->header-bg.jpg" bgcolor="#c6d2db" valign="top" height="79">
+                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                    <tr><td>
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
                             <tr>
                                 <td height="22" width="68%"></td>
@@ -195,6 +199,10 @@ $template['web']['begin']['newsletter']['container'] = <<<WEBNEWSLETTERBEGIN
                             </tr>
                         </table>
                     </td>
+                    <!--MUGSHOT-->
+                    </tr>
+                    </table>
+                    </td>
                 </tr>
                 <tr>
                     <td valign="top" height="20"></td>
@@ -224,6 +232,17 @@ $template['web']['end']['newsletter']['container'] = <<<WEBNEWSLETTEREND
 </body>
 </html>
 WEBNEWSLETTEREND;
+
+$template['web']['whole']['newsletter']['mugshot'] = <<<WEBMUGSHOT
+<td>
+                         <table>
+                           <tr><td height="5"></td></tr>
+                           <tr>
+                             <td><a href="<!--CONTENT-->"><img src="<!--CONTENT-->" alt="Me or Us" width="80" /></a></td>
+                           </tr>
+                         </table>
+                      </td>
+WEBMUGSHOT;
 
 $template['web']['begin']['main']['container'] = <<<WEBMAINBEGIN
                     <!--main section-->

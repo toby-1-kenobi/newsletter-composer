@@ -175,7 +175,8 @@ var imageUploadHandler = function(event){
 				extension = 'png'
 			}
 			// post the image data to php script using ajax
-			jQuery.post('save_image.php', { 'filename': file.fileName, 'ext': extension, 'data': canvas.toDataURL(uploadType) }, function(data_returned) {
+			alert(file.name);
+			jQuery.post('save_image.php', { 'filename': file.name, 'ext': extension, 'data': canvas.toDataURL(uploadType) }, function(data_returned) {
 				// when it's uploaded to the server and saved then set the image preview to source from there.
 				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved in the cookies
 				uploadedDiv.find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
