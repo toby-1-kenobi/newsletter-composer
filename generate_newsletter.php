@@ -348,9 +348,18 @@ if (login_ok() == 1) {
 		{
 			$encodedMugshot = $full_img_src . rawurlencode($newsletter_info['mugshot']);
 			//echo "<br /><strong>MUGSHOT</strong>$encodedMugshot";
-			$mugshot = $template[$type]['whole']['newsletter']['mugshot'];
-			$mugshot = str_replace('<!--CONTENT-->', $encodedMugshot, $mugshot);
-			$newsletter = str_replace('<!--MUGSHOT-->', $mugshot, $newsletter);
+			$mugshotHTML = $template[$type]['whole']['newsletter']['mugshot'];
+			$mugshotHTML = str_replace('<!--CONTENT-->', $encodedMugshot, $mugshotHTML);
+			$newsletter = str_replace('<!--MUGSHOT-->', $mugshotHTML, $newsletter);
+		}
+		
+		if(strlen($newsletter_info['logo']) > 0)
+		{
+			$encodedLogo = $full_img_src . rawurlencode($newsletter_info['logo']);
+			//echo "<br /><strong>MUGSHOT</strong>$encodedMugshot";
+			$logoHTML = $template[$type]['whole']['newsletter']['logo'];
+			$logoHTML = str_replace('<!--CONTENT-->', $encodedLogo, $logoHTML);
+			$newsletter = str_replace('<!--LOGO-->', $logoHTML, $newsletter);
 		}
 		
 		/*
