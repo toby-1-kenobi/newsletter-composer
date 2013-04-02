@@ -395,6 +395,22 @@ $template['web']['begin']['secondary']['articleNoTitle'] = <<<SECONDARYARTICLENO
                                             <td width="19">&nbsp;</td>
                                         </tr>
                                     </table>
+                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                                        <tr>
+                                            <td width="20">&nbsp;</td>
+                                            <td>
+                                                <table width="100%" border="0" cellpadding="20" cellspacing="0">
+                                                    <tr>
+                                                        <td width="204" valign="top" bgcolor="#1c3851" background="<!--TEMPLATE IMAGE PATH-->content-bg.jpg" style="border: solid 1px #193044; 
+					-webkit-border-bottom-left-radius: 8px;
+	                -khtml-border-radius-bottomleft: 8px;	
+	                -moz-border-radius-bottomleft: 8px;
+	                border-bottom-left-radius: 8px;
+					-webkit-border-bottom-right-radius: 8px;
+	                -khtml-border-radius-bottomright: 8px;	
+	                -moz-border-radius-bottomright: 8px;
+	                border-bottom-right-radius: 8px;
+				    border-top: none;">
                                     
 SECONDARYARTICLENOTITLEBEGIN;
 
