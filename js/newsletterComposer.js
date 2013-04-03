@@ -658,17 +658,20 @@ $(document).ready(function() {
 	
 	// once the data is entered into the form the user can click to generate the html newsletter
 	$('#generate').click(function(){
-		
 		// send the content to the php code that generates the newsletter
 		var data = {
 			//personal: JSON.stringify(collectPersonalData()),
 			newsletter: JSON.stringify(collectNewsletterData())
 		};
 		// the generate_newsletter php returns some html links to the generated file that get loaded into our user interface
-		$('#generateResults').html('Generating ...').load('generate_newsletter.php', data, function(){
-			// once it's done get ready to send the newsletter
-			$('#newsletter_file_name').val($('#email_file').attr('href'))
-			$('#send').removeAttr('disabled');
+		$('#generateResults').html('Generating ...').load('generate_newsletter.php', data, function(response, status, xhr){
+			if (status == "error") {
+				$('#generateResults').html("Could not generate: " + xhr.status + " " + xhr.statusText);
+			} else {
+				// once it's done get ready to send the newsletter
+				$('#newsletter_file_name').val($('#email_file').attr('href'));
+				$('#send').removeAttr('disabled');
+			}
 		});
 		
 	});
