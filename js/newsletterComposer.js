@@ -445,7 +445,7 @@ function buildArticles(array, followingElement) {
 			} else if (array[a].article[i].type == "image") {
 				var image = $(imageField)
 				bindControls(image);
-				image.find('input').val(array[a].article[i].value);
+				//image.find('input').val(array[a].article[i].value);
 				image.find('.imageLoaded').val(array[a].article[i].value);
 				image.find('img.preview').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
 				image.find('.imageUpload').bind('change', imageUploadHandler);
