@@ -394,8 +394,6 @@ $template['web']['begin']['secondary']['articleNoTitle'] = <<<SECONDARYARTICLENO
                                             </td>
                                             <td width="19">&nbsp;</td>
                                         </tr>
-                                    </table>
-                                    <table width="100%" border="0" cellspacing="0" cellpadding="0">
                                         <tr>
                                             <td width="20">&nbsp;</td>
                                             <td>

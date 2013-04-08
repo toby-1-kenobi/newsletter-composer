@@ -138,7 +138,7 @@ var TMCEsettings = {
 // read image data from file, then use canvas element to set max size then upload and save on server
 var imageUploadHandler = function(event){
 	var file = $(this)[0].files[0]; // get file from file selector input that triggered this
-	var uploadedDiv = $(this).next(); // div that displays the uploaded image
+	var uploadedDiv = $(this).siblings('div.uploadedData'); // div that displays the uploaded image
 	var canvas = document.createElement("canvas"); // canvas to change image size
 	var context2d = canvas.getContext("2d");
 	if (!file.type.match(/image.*/)) {
@@ -175,7 +175,7 @@ var imageUploadHandler = function(event){
 				extension = 'png'
 			}
 			// post the image data to php script using ajax
-			alert(file.name);
+			//alert(file.name);
 			jQuery.post('save_image.php', { 'filename': file.name, 'ext': extension, 'data': canvas.toDataURL(uploadType) }, function(data_returned) {
 				// when it's uploaded to the server and saved then set the image preview to source from there.
 				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved in the cookies
@@ -222,7 +222,7 @@ var lIField = '<div class="moveable">' + controls + '<img src="images/li.png" al
 
 var imageField = '<div class="moveable">' + controls + "\n";
 imageField += "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
-imageField += '<div><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
+imageField += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
 imageField += "</div>\n";
 
 var recipientRow = "<tr class=\"newRecipient\">\n";
@@ -253,7 +253,28 @@ function bindControls(elements) {
 	elements.find('.delete').click(deleteElement);
 }
 
-// harvest the personal data entered
+function logoMugshotHandler(container) {
+		//var parent = $(this).parent();
+		var uploadControl = "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
+		uploadControl += '<button class="removeImage">Remove</button>';
+		uploadControl += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
+		container.find('button').replaceWith(uploadControl);
+		container.find('.imageUpload').bind('change', imageUploadHandler);
+		container.find('.input-issue.save').change(setNewsletterCookie);
+		container.find('button.removeImage').button({icons:{primary: "ui-icon-trash"},text:false}).click(function(){
+			var parent = $(this).parent()
+			parent.find('input.imageUpload').remove();
+			parent.find('input.imageLoaded').parent().remove();
+			var freshButton = '<button>Upload</button>';
+			$(this).replaceWith(freshButton);
+			parent.find('button').button({icons:{primary: "ui-icon-image"},text:false}).click(function(){
+				logoMugshotHandler($(this).parent());
+			});
+			setNewsletterCookie();
+		});
+};
+
+/*/ harvest the personal data entered
 function collectPersonalData() {
 	var data = {
 		"addressLine1": encodeHTML($('#address_line_1').val()),
@@ -266,6 +287,7 @@ function collectPersonalData() {
 	};
 	return data;
 }
+*/
 	
 // harvest the data entered for the newsletter
 function collectNewsletterData() {
@@ -415,19 +437,21 @@ function buildArticles(array, followingElement) {
 				bindControls(paragraph);
 				paragraph.find('textarea').text(decodeHTML(array[a].article[i].value));
 				art.find('.article_buttons').before(paragraph);
-			} else if (array[a].article[i].type == "list") {
-				var listItem = $(lIField)
-				bindControls(listItem);
-				listItem.find('textarea').text(decodeHTML(array[a].article[i].value));
-				art.find('.article_buttons').before(listItem);
+			//} else if (array[a].article[i].type == "list") {
+			//	var listItem = $(lIField)
+			//	bindControls(listItem);
+			//	listItem.find('textarea').text(decodeHTML(array[a].article[i].value));
+			//	art.find('.article_buttons').before(listItem);
 			} else if (array[a].article[i].type == "image") {
 				var image = $(imageField)
 				bindControls(image);
 				image.find('input').val(array[a].article[i].value);
 				image.find('.imageLoaded').val(array[a].article[i].value);
 				image.find('img.preview').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
-		      image.find('.imageUpload').bind('change', imageUploadHandler);
+				image.find('.imageUpload').bind('change', imageUploadHandler);
 				art.find('.article_buttons').before(image);
+			} else {
+				alert('Could not restore article item. Unknown type: ' + array[a].article[i].type);
 			}
 		}
 		bindControls(art);
@@ -457,7 +481,18 @@ function restore(jsonData) {
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
-	// TODO: restore logo and mugshot images
+	if (jsonData.logo.length > 0)
+	{
+		logoMugshotHandler($('#logo'));
+		$('#logo > .uploadedData').find('input').val(jsonData.logo);
+		$('#logo > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.logo));
+	}
+	if (jsonData.mugshot.length > 0)
+	{
+		logoMugshotHandler($('#mugshot'));
+		$('#mugshot > .uploadedData').find('input').val(jsonData.mugshot);
+		$('#mugshot > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.mugshot));
+	}
 	$('#emailHeader > textarea').val(decodeHTML(jsonData.header.email));
 	$('#webHeader > textarea').val(decodeHTML(jsonData.header.web));
 	$('#printHeader > textarea').val(decodeHTML(jsonData.header.print));
@@ -554,13 +589,7 @@ $(document).ready(function() {
 	
 	// bind button to bring up file upload controls for logo and mugshot
 	$('#logo > button, #mugshot > button').click(function(){
-		var parent = $(this).parent();
-		var uploadControl = "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
-		uploadControl += '<div><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
-		$(this).replaceWith(uploadControl);
-		parent.find('.imageUpload').bind('change', imageUploadHandler);
-		parent.find('.input-issue.save').change(setNewsletterCookie);
-		parent.find('button.addImage').button({icons:{primary: "ui-icon-image"},text:false});
+		logoMugshotHandler($(this).parent());
 	});
 	
 	// bind rego form validation
