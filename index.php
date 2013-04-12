@@ -285,10 +285,24 @@ can say what they want.
   
 <!--/fieldset-->
 
-<fieldset><legend>Generated Newsletter</legend>
+<div class="section">
+	<fieldset><legend>Privacy</legend>
+	My online content is
+	<div id="privacy_radioset">
+		<input type="radio" id="public" name="privacy" checked="checked" /><label for="public">Public</label>
+		<input type="radio" id="protected" name="privacy" /><label for="protected">Password protected</label>
+	</div>
+	<div id="privacy_credentials">
+		<label for="privacy_user">Username</label><input type="text" id="privacy_username" name="privacy_user" />
+		<br />
+		<label for="privacy_pass">Password</label><input type="password" id="privacy_password" name="privacy_pass" />
+		<input type="checkbox" id="show_privacy_password" class="button" /><label for="show_privacy_password">Show</label>
+	</div>
+	</fieldset>
   <button id="generate" name="generate">Generate Newsletter</button>
   <div id="generateResults"></div>
-</fieldset>
+</div>
+
 </div>
 <h3>Send Newsletter</h3>
 <div>
