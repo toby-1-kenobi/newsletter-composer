@@ -604,6 +604,14 @@ $(document).ready(function() {
 		$(this).parent().find('.hidden').show();
 	});
 	
+	$('#privacy_protected').click(function(){
+		$('#privacy_credentials').show();
+	});
+	
+	$('#privacy_public').click(function(){
+		$('#privacy_credentials').hide();
+	});
+	
 	// bind button to bring up file upload controls for logo and mugshot
 	$('#logo > button, #mugshot > button').click(function(){
 		logoMugshotHandler($(this).parent());

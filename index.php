@@ -289,10 +289,10 @@ can say what they want.
 	<fieldset><legend>Privacy</legend>
 	My online content is
 	<div id="privacy_radioset">
-		<input type="radio" id="public" name="privacy" checked="checked" /><label for="public">Public</label>
-		<input type="radio" id="protected" name="privacy" /><label for="protected">Password protected</label>
+		<input type="radio" id="privacy_public" name="privacy" checked="checked" /><label for="privacy_public">Public</label>
+		<input type="radio" id="privacy_protected" name="privacy" /><label for="privacy_protected">Password protected</label>
 	</div>
-	<div id="privacy_credentials">
+	<div id="privacy_credentials" class="hidden">
 		<label for="privacy_user">Username</label><input type="text" id="privacy_username" name="privacy_user" />
 		<br />
 		<label for="privacy_pass">Password</label><input type="password" id="privacy_password" name="privacy_pass" />
