@@ -570,28 +570,6 @@ $(document).ready(function() {
 	// hide everything that should be hidden
 	$('.hidden').hide();
 	
-	// put a show toggle button on password fields that want one
-	// this code swaps out the entire input field
-	// thanks to Aaron Saray
-	/*
-	$(".showpassword").each(function(index,input) {
-        var $input = $(input);
-        $('<div class="showpasswordlabel"/>').append(
-            $("<input type='checkbox' class='showpasswordcheckbox button' />").click(function() {
-                var change = $(this).is(":checked") ? "text" : "password";
-                var rep = $("<input type='" + change + "' />")
-                    .attr("id", $input.attr("id"))
-                    .attr("name", $input.attr("name"))
-                    .attr('class', $input.attr('class'))
-                    .val($input.val())
-                    .insertBefore($input);
-                $input.remove();
-                $input = rep;
-             })
-        ).append($("<label/>").text("Show")).insertAfter($input);
-    });
-    */
-	
 	// apply jQueryUI elements
 	$( ".tabs" ).tabs();
 	$( "#accordion" ).accordion();
@@ -604,6 +582,22 @@ $(document).ready(function() {
 		text: false
 	});
 	$( "#privacy_radioset" ).buttonset();
+	
+	// put a show toggle button on password fields that want one
+	// this code swaps out the entire input field
+	// adapted from code by Aaron Saray
+	$('#show_privacy_password').click(function() {
+		var inputField = $('#privacy_password');
+		var change = $(this).is(":checked") ? "text" : "password";
+		var rep = $("<input type='" + change + "' />");
+		rep.attr("id", inputField.attr("id"));
+		rep.attr("name", inputField.attr("name"));
+		rep.attr('class', inputField.attr('class'));
+		rep.val(inputField.val());
+		rep.insertBefore(inputField);
+		inputField.remove();
+        inputField = rep;
+    });
 	
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){
