@@ -313,6 +313,9 @@ function collectNewsletterData() {
 			"web": encodeHTML($('#webFooter > textarea').val()),
 			"print": encodeHTML($('#printFooter > textarea').val())
 		},
+		"privacy": $('input:radio[name=privacy]:checked').attr('id'),
+		"privacy_user": encodeHTML($('#privacy_username').val()),
+		"privacy_pass": encodeHTML($('#privacy_password').val()),
 		"mainArticles": [],
 		"sideArticles": []
 	};
@@ -478,6 +481,7 @@ var addRecipientHandler = function(){
 
 // restore form content from JSON
 function restore(jsonData) {
+	//debugger;
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
@@ -499,17 +503,12 @@ function restore(jsonData) {
 	$('#emailFooter > textarea').val(decodeHTML(jsonData.footer.email));
 	$('#webFooter > textarea').val(decodeHTML(jsonData.footer.web));
 	$('#printFooter > textarea').val(decodeHTML(jsonData.footer.print));
+	$('#' + jsonData.privacy).attr('checked', true).button("refresh");
+	$('#privacy_username').val(decodeHTML(jsonData.privacy_user));
+	$('#privacy_password').val(decodeHTML(jsonData.privacy_pass));
+	if (jsonData.privacy === 'privacy_protected') $('#privacy_credentials').show();
 	buildArticles(jsonData.mainArticles, $('#leftPanel .addArticle'));
 	buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
-}
-function restorePersonal(jsonData) {
-	$('#address_line_1').val(decodeHTML(jsonData.addressLine1));
-	$('#address_line_2').val(decodeHTML(jsonData.addressLine2));
-	$('#phone').val(decodeHTML(jsonData.phone));
-	$('#skype').val(decodeHTML(jsonData.skype));
-	$('#personal_web').val(decodeHTML(jsonData.website));
-	$('#org_name').val(decodeHTML(jsonData.org));
-	$('#org_web').val(decodeHTML(jsonData.websiteOrg));
 }
 function restoreSend(jsonData) {
 	$('#from').val(jsonData.from);
