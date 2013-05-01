@@ -623,7 +623,6 @@ $(document).ready(function() {
 		rep.attr('class', inputField.attr('class'));
 		rep.val(inputField.val());
 		rep.change(htaccessSetUnset);
-		rep.blur(htaccessSetUnset);
 		rep.insertBefore(inputField);
 		inputField.remove();
         inputField = rep;
@@ -743,10 +742,16 @@ $(document).ready(function() {
 	
 	// bind the privacy fields to call the script that creates or deletes the .htaccess files
 	$('#privacy_radioset input').change(function(){
-		alert($('#privacy_radioset input:checked').id());
+		if($('#privacy_radioset input:checked')[0].id === 'privacy_public')
+		{
+			$('#privacy_msg').load('htaccess.php', {'action':'unset'});
+		}
+		if($('#privacy_radioset input:checked')[0].id === 'privacy_protected')
+		{
+			htaccessSetUnset();
+		}
 	});
 	$('#privacy_username, #privacy_password').change(htaccessSetUnset);
-	$('#privacy_username, #privacy_password').blur(htaccessSetUnset);
 	
 	// once the data is entered into the form the user can click to generate the html newsletter
 	$('#generate').click(function(){
