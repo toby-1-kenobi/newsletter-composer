@@ -536,6 +536,35 @@ function restoreSend(jsonData) {
 	}
 }
 
+//TODO: provide feedback to users about when they are entering a valid or invalid username or password
+
+function validPrivacyUsername(username) {
+	if (username.length == 0) return false;
+	// username cannot start with a hash or it will be a comment in the .htpasswd file
+	if (username.charAt(0) == '#') return false;
+	// username cannot contain a colon as this has special meaning in the .htpasswd file
+	if (username.indexOf(':') >= 0) return false;
+	return true;
+}
+
+function validPrivacyPassword(password) {
+	if (password.length == 0) return false;
+	return true;
+}
+
+var htaccessSetUnset = function() {
+	var username = jQuery.trim($('#privacy_username').val());
+	var password = jQuery.trim($('#privacy_password').val());
+	if (validPrivacyUsername(username) && validPrivacyPassword(password))
+	{
+		$('#privacy_msg').load('htaccess.php', {'username': username, 'password':password, 'action':'set'});
+	}
+	else
+	{
+		$('#privacy_msg').load('htaccess.php', {'action':'unset'});
+	}
+};
+
 var sendScript = "send_newsletter.php";
 var sendEmail = function(recipient) {
 	var greeting;
@@ -593,6 +622,8 @@ $(document).ready(function() {
 		rep.attr("name", inputField.attr("name"));
 		rep.attr('class', inputField.attr('class'));
 		rep.val(inputField.val());
+		rep.change(htaccessSetUnset);
+		rep.blur(htaccessSetUnset);
 		rep.insertBefore(inputField);
 		inputField.remove();
         inputField = rep;
@@ -609,6 +640,7 @@ $(document).ready(function() {
 	
 	$('#privacy_public').click(function(){
 		$('#privacy_credentials').hide();
+		$('#privacy_msg').load('htaccess.php', {'action':'unset'});
 	});
 	
 	// bind button to bring up file upload controls for logo and mugshot
@@ -708,6 +740,13 @@ $(document).ready(function() {
 		$('.input-issue').clearForm();
 		$('.article').remove();
 	});
+	
+	// bind the privacy fields to call the script that creates or deletes the .htaccess files
+	$('#privacy_radioset input').change(function(){
+		alert($('#privacy_radioset input:checked').id());
+	});
+	$('#privacy_username, #privacy_password').change(htaccessSetUnset);
+	$('#privacy_username, #privacy_password').blur(htaccessSetUnset);
 	
 	// once the data is entered into the form the user can click to generate the html newsletter
 	$('#generate').click(function(){

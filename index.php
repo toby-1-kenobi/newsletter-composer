@@ -297,6 +297,7 @@ can say what they want.
 		<br />
 		<label for="privacy_pass">Password</label><input type="password" id="privacy_password" name="privacy_pass" />
 		<input type="checkbox" id="show_privacy_password" class="button" /><label for="show_privacy_password">Show</label>
+		<div id="privacy_msg"></div>
 	</div>
 	</fieldset>
   <button id="generate" name="generate">Generate Newsletter</button>
