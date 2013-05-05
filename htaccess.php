@@ -20,7 +20,7 @@ if (login_ok() == 1) {
 		fclose($access_file);
 		chmod("{$_ENV['DOCUMENT_ROOT']}/{$rel_user_path}.htaccess", 0644);
 		
-		$htpasswd_text = $_POST['username'] . ':{SHA}' . base64_encode(sha1($_POST['password'], TRUE));
+		$htpasswd_text = $_POST['username'] . ':{SHA}' . base64_encode(sha1($_POST['password'], TRUE)) . "\n";
 		$password_file = fopen("{$_ENV['DOCUMENT_ROOT']}/{$rel_user_path}.htpasswd", 'w');
 		fputs($password_file, $htpasswd_text);
 		fclose($password_file);
