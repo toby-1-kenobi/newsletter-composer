@@ -557,11 +557,15 @@ var htaccessSetUnset = function() {
 	var password = jQuery.trim($('#privacy_password').val());
 	if (validPrivacyUsername(username) && validPrivacyPassword(password))
 	{
-		$('#privacy_msg').load('htaccess.php', {'username': username, 'password':password, 'action':'set'});
+		$('#privacy_msg').load('htaccess.php', {'username': username, 'password':password, 'action':'set'}, function(){
+			$('#privacy_msg').show().fadeOut(3000);
+		});
 	}
 	else
 	{
-		$('#privacy_msg').load('htaccess.php', {'action':'unset'});
+		$('#privacy_msg').load('htaccess.php', {'action':'unset'}, function(){
+			$('#privacy_msg').show().fadeOut(3000);
+		});
 	}
 };
 
@@ -744,7 +748,9 @@ $(document).ready(function() {
 	$('#privacy_radioset input').change(function(){
 		if($('#privacy_radioset input:checked')[0].id === 'privacy_public')
 		{
-			$('#privacy_msg').load('htaccess.php', {'action':'unset'});
+			$('#privacy_msg').load('htaccess.php', {'action':'unset'}, function(){
+				$('#privacy_msg').show().fadeOut(3000);
+			});
 		}
 		if($('#privacy_radioset input:checked')[0].id === 'privacy_protected')
 		{
