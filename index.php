@@ -307,10 +307,11 @@ can say what they want.
 </div>
 <h3>Send Newsletter</h3>
 <div>
-  <fieldset><legend>Send out newsletter</legend>
-  <div><label for="greeting">Generic greeting:<br />
-  <span class="small">will appear below "dear recipient" in the head of the email</span></label>
-  <input class="input-send save" type="text" name="greeting" id="greeting" size="50" /></div>
+  <fieldset><legend>Mail Recipients</legend>
+  <div><label for="generic_a">Generic messages:<br />
+  <span class="small">Used in the place of personal messages for recipients that don't have them.</span></label>
+  <textarea class="input-send save"  name="generic_a" id="generic_a" cols="30" rows="3"></textarea>
+  <textarea class="input-send save"  name="generic_b" id="generic_b" cols="30" rows="3"></textarea></div>
   
   
   <div id="sent" class="right">
@@ -323,7 +324,7 @@ can say what they want.
   
   <div id="sendTo">
   <table summary="Email recipients names and email addresses" >
-    <thead><tr><td>Dear...</td><td>email</td><td>personal greeting</td></tr></thead>
+    <thead><tr><td>Dear...</td><td>email</td><td>personal greeting A</td><td>personal greeting B</td></tr></thead>
     <tbody id="all_recipients">
 <?php
 //Сheck that we have a file to import recipients from
@@ -349,7 +350,8 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
    	echo "<tr class=\"recipient\"><td><input type=\"text\" class=\"name\" value=\"$name\" /></td>\n";
    	echo "<td><input type=\"text\" class=\"email\" value=\"$email\" /></td>\n";
    	echo "<td><button class=\"addGreeting\">Add personal greeting</button>";
-   	echo "<input type=\"text\" class=\"greeting\" /></td>\n";
+   	echo "<textarea  class=\"greeting\" rows=\"30\" cols=\"3\"></textarea></td>\n";
+   	echo "<td><textarea  class=\"greeting\" rows=\"30\" cols=\"3\"></textarea></td>\n";
    	echo "<td class=\"controls\"><img class=\"delete\" src=\"images/delete.png\" /></td></tr>\n";
     }
 }
@@ -367,14 +369,25 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
     <input type="submit" value="Go" />
   </form></div>
   </div>
+  </fieldset>
+  <fieldset><legend>Other Email Headers</legend>
   <div>
     <label for="from">From address: </label>
     <input  type="text" name="from" id="from" class="input-send save" />
     <label for="subject">Email subject line: </label>
     <input  type="text" name="subject" id="subject" class="input-send save" />
+    <!--TODO: add a reply-to field -->
   </div>
+  </fieldset>
+  <fieldset><legend>Outgoing Mail Server</legend>
   <div>
-    <label for="smtpHost">SMTP host: <span class="small">e.g. ssl://mail.jaars.org</span></label>
+    <label for="smtpProtocol">SMTP Protocol:</label>
+    <select name="smtpProtocol" id="smtpProtocol" class="input-send save">
+      <option value="ssl" selected="selected">ssl</option>
+      <option value="tls">tls</option>
+    </select>
+    <!-- join like smtpProtocol + '://' + smtpHost -->
+    <label for="smtpHost">SMTP host: <span class="small">e.g. mail.jaars.org</span></label>
     <input type="text" name="smtpHost" id="smtpHost" class="input-send save" />
     <label for="smtpPort"><span class="small">e.g. 465</span>SMTP port number: </label>
     <input type="text" name="smtpPort" id="smtpPort" class="input-send save" /></div>
