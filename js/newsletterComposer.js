@@ -229,8 +229,8 @@ var recipientRow = "<tr class=\"newRecipient\">\n";
 recipientRow += "<td><input type=\"text\" class=\"name input-send save\" /></td>\n";
 recipientRow += "<td><input type=\"text\" class=\"email input-send save\" /></td>\n";
 recipientRow += "<td><button class=\"addGreeting\">Add personal greeting</button>\n";
-recipientRow += "<textarea  class=\"greeting\" rows=\"30\" cols=\"3\"></textarea></td>\n";
-recipientRow += "<td><textarea  class=\"greeting\" rows=\"30\" cols=\"3\"></textarea></td></tr>\n";
+recipientRow += "<textarea  class=\"greeting greetingA hidden\" rows=\"3\" cols=\"30\"></textarea></td>\n";
+recipientRow += "<td><textarea  class=\"greeting greetingB hidden\" rows=\"3\" cols=\"30\"></textarea></td></tr>\n";
 // the delete button added when the row is not the "new" one at the bottom that triggers new rows to be added
 recipientControl = "<td class=\"controls\"><img class=\"delete\" src=\"images/delete.png\" /></td>\n";
 
@@ -372,7 +372,8 @@ function collectSendData() {
 		data.recipients.push({
 		   "name": $(this).find('.name').val(),
 		   "email": $(this).find('.email').val(),
-		   "greeting": $(this).find('.greeting').val()
+		   "greetingA": $(this).find('.greetingA').val(),
+		   "greetingB": $(this).find('.greetingB').val()
 		});
 	});
 	return data;
@@ -468,9 +469,9 @@ function buildArticles(array, followingElement) {
 var addRecipientHandler = function(){
 		$("tr.newRecipient > td > input").unbind('change.addRecipient');
 		var addedRow = $(recipientRow);
-		addedRow.find('input.greeting').hide();
+		addedRow.find('textarea.greeting').hide();
 		addedRow.find('button.addGreeting').click(function(){
-			$(this).parent().parent().find('input.greeting').show();
+			$(this).parent().parent().find('textarea.greeting').show();
 			$(this).hide();
 		});
 		$("tr.newRecipient").after(addedRow);
@@ -525,12 +526,14 @@ function restoreSend(jsonData) {
 		row.append(recipientControl);
 		row.find('.name').val(jsonData.recipients[a].name);
 		row.find('.email').val(jsonData.recipients[a].email);
-		if (jsonData.recipients[a].greeting)
+		if (jsonData.recipients[a].greetingA || jsonData.recipients[a].greetingB)
 		{
 			row.find('.addGreeting').hide();
-		   row.find('.greeting').val(jsonData.recipients[a].greeting);
+			row.find('.greetingA').val(jsonData.recipients[a].greetingA);
+			row.find('.greetingB').val(jsonData.recipients[a].greetingB);
 		} else {
-			row.find('.greeting').hide();
+			row.find('.greetingA').hide();
+			row.find('.greetingB').hide();
 		}
 		row.addClass('recipient').removeClass('newRecipient').find('.input-send.save').change(setSendCookie);
 		$('.newRecipient').before(row);
@@ -572,14 +575,23 @@ var htaccessSetUnset = function() {
 
 var sendScript = "send_newsletter.php";
 var sendEmail = function(recipient) {
-	var greeting;
-	if (recipient.find('.greeting').val() == '') greeting = $('#greeting').val();
-	else greeting = recipient.find('.greeting').val()
+	
+	var greetingA;
+	if (recipient.find('.greetingA').val() == '') greetingA = $('#generic_a').val();
+	else greetingA = recipient.find('.greetingA').val();
+	
+	var greetingB;
+	if (recipient.find('.greetingB').val() == '') greetingB = $('#generic_b').val();
+	else greetingB = recipient.find('.greetingB').val();
+	
+	//TODO: if online content is protected add username and password to email_file
+	
 	var data = {
 			to_address: recipient.find('.email').val(),
 			from_address: $('#from').val(),
 			name: encodeURIComponent(recipient.find('.name').val()),
-			greeting: encodeURIComponent(greeting),
+			greetingA: encodeURIComponent(greetingA),
+			greetingB: encodeURIComponent(greetingB),
 			email_file: $('#newsletter_file_name').val(),
 			//email_content: file_get_contents($('#newsletter_file_name').val()),
 			subject_line: encodeURIComponent($('#subject').val()),
@@ -793,7 +805,7 @@ $(document).ready(function() {
 			// hide the "add greeting" button once it is used
 			$(this).hide();
 			// show the personal greeting field.
-			$(this).parent().parent().find('input.greeting').show();
+			$(this).parent().parent().find('textarea.greeting').show();
 	});
 	
 	$('#send').click(function(){
