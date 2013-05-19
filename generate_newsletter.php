@@ -120,6 +120,7 @@ function splitText($text)
 	$output = array();
 	foreach (explode('&#10;', $text) as $line)
 	{
+		echo "$line<br />";
 		if (startsWith($line, '- '))
 		{
 			if (strlen($buffer) > 0) {

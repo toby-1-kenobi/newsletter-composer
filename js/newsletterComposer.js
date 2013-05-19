@@ -293,6 +293,7 @@ function collectPersonalData() {
 // harvest the data entered for the newsletter
 function collectNewsletterData() {
 	// make a JSON object for the form data
+	//debugger;
 	var logo = '';
 	var mugshot = '';
 	if ($('#logo .imageLoaded').length > 0) logo = $('#logo .imageLoaded').val();
@@ -331,7 +332,7 @@ function collectNewsletterData() {
 			else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
-			itemValue = $(this).val();
+			itemValue = encodeHTML($(this).val());
 			var item = {"type": itemType, "value": itemValue};
 			article.article.push(item);
 		});
@@ -346,7 +347,7 @@ function collectNewsletterData() {
 			else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
-			itemValue = $(this).val();
+			itemValue = encodeHTML($(this).val());
 			var item = {"type": itemType, "value": itemValue};
 			article.article.push(item);
 		});
