@@ -788,6 +788,7 @@ $(document).ready(function() {
 				// once it's done get ready to send the newsletter
 				$('#newsletter_file_name').val($('#email_file').attr('href'));
 				$('#send').removeAttr('disabled');
+				$('#send').removeAttr('aria-disabled');
 			}
 		});
 		
