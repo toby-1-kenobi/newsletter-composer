@@ -475,6 +475,7 @@ var addRecipientHandler = function(){
 			$(this).parent().parent().find('textarea.greeting').show();
 			$(this).hide();
 		});
+		addedRow.find('.button').button();
 		$("tr.newRecipient").after(addedRow);
 		$("tr.newRecipient:first").append(recipientControl);
 		$("tr.newRecipient:first").addClass('recipient').removeClass('newRecipient').find('.input-send.save').change(setSendCookie);
@@ -524,9 +525,9 @@ function restoreSend(jsonData) {
 	// if there are already recipients in the table insert these new ones before those
 	// otherwise just put them before the newRecipient field
 	var following;
-	if ($('#all_recipients.recipient').length)
+	if ($('#all_recipients .recipient').length)
 	{
-		following = $('#all_recipients.recipient').first();
+		following = $('#all_recipients .recipient').first();
 	}
 	else
 	{

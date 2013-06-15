@@ -372,7 +372,7 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
 <form enctype="multipart/form-data" action="index.php" method="post">
     <label for="recipientsFile">Get recipients from an Excel file: </label>
     <input type="file" id="recipientsFile" name="recipientsFile" />
-    <input type="submit" class="button" value="Go" />
+    <input type="submit" class="button" value="Import" />
   </form></div>
   </div>
   </fieldset>
