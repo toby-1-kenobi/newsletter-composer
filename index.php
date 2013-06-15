@@ -353,8 +353,8 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
         if ($space === false) $name = $fullName;
         else $name = substr($fullName, 0, $space);
       }
-   	echo "<tr class=\"recipient\"><td><input type=\"text\" class=\"name\" value=\"$name\" /></td>\n";
-   	echo "<td><input type=\"text\" class=\"email\" value=\"$email\" /></td>\n";
+   	echo "<tr class=\"recipient\"><td><input type=\"text\" class=\"name input-send save\" value=\"$name\" /></td>\n";
+   	echo "<td><input type=\"text\" class=\"email input-send save\" value=\"$email\" /></td>\n";
    	echo "<td><button class=\"addGreeting\">Add personal greeting</button>";
    	echo "<textarea  class=\"greeting greetingA hidden\" rows=\"3\" cols=\"30\"></textarea></td>\n";
    	echo "<td><textarea  class=\"greeting greetingB hidden\" rows=\"3\" cols=\"30\"></textarea></td>\n";
@@ -369,10 +369,10 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
     </tbody>
   </table>
   <div>
-<form enctype="multipart/form-data" action="composer.php" method="post">
+<form enctype="multipart/form-data" action="index.php" method="post">
     <label for="recipientsFile">Get recipients from an Excel file: </label>
     <input type="file" id="recipientsFile" name="recipientsFile" />
-    <input type="submit" value="Go" />
+    <input type="submit" class="button" value="Go" />
   </form></div>
   </div>
   </fieldset>
@@ -402,7 +402,7 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
     <label for="SMTPpass">Mail password: </label>
     <input type="password" name="smtpPass" id="smtpPass" class="input-send save" /></div>
     <div><input type="hidden" id="newsletter_file_name" />
-    <button id="send" name="send" disabled="disabled">Send</button>
+    <button id="send" name="send">Send</button>
   </div>
   
   </fieldset>
