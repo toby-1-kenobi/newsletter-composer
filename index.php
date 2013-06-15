@@ -324,13 +324,13 @@ can say what they want.
   
   <div id="sendTo">
   <table summary="Email recipients names and email addresses" >
-    <thead><tr><td>Dear...</td><td>email</td><td>personal message A</td><td>personal message B</td></tr></thead>
     <thead><tr>
 		<td>Generic messages</td>
 		<td><span class="small">Used in the place of personal messages for recipients that don't have them.</span></td>
-		<td><textarea class="input-send save"  name="generic_a" id="generic_a" cols="30" rows="3"></textarea></td>
-		<td><textarea class="input-send save"  name="generic_b" id="generic_b" cols="30" rows="3"></textarea></td>
+		<td><textarea class="input-send save" name="generic_a" id="generic_a" cols="30" rows="3" placeholder="Generic message A"></textarea></td>
+		<td><textarea class="input-send save" name="generic_b" id="generic_b" cols="30" rows="3" placeholder="Generic message B"></textarea></td>
 	</tr></thead>
+    <thead><tr><td>Dear...</td><td>email</td><td>personal message A</td><td>personal message B</td></tr></thead>
     <tbody id="all_recipients">
 <?php
 //Сheck that we have a file to import recipients from
