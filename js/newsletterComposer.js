@@ -475,11 +475,11 @@ var addRecipientHandler = function(){
 			$(this).parent().parent().find('textarea.greeting').show();
 			$(this).hide();
 		});
-		addedRow.find('.button').button();
+		addedRow.find('button').button();
 		$("tr.newRecipient").after(addedRow);
 		$("tr.newRecipient:first").append(recipientControl);
 		$("tr.newRecipient:first").addClass('recipient').removeClass('newRecipient').find('.input-send.save').change(setSendCookie);
-		$("tr.newRecipient > td > input").bind('change.addRecipient', addRecipientHandler);
+		$("tr.newRecipient > td > input").bind('change.addRecipient', addRecipientHandler);	
 		setSendCookie();
 };
 
@@ -716,6 +716,11 @@ $(document).ready(function() {
 	} catch(e) {
 		alert('Cannot restore send data. ' + e.message)
 	}
+	
+	
+	
+	// in case user has just imported recipients from a file
+	setSendCookie();
 	
 	// bind changes to the newsletter to get saved in cookies
 	$('.input-issue.save').change(setNewsletterCookie);
