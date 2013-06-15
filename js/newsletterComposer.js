@@ -521,6 +521,17 @@ function restoreSend(jsonData) {
 	$('#smtpPort').val(jsonData.smtp_port);
 	$('#smtpUser').val(jsonData.smtp_user);
 	$('#smtpPass').val(jsonData.smtp_pass);
+	// if there are already recipients in the table insert these new ones before those
+	// otherwise just put them before the newRecipient field
+	var following;
+	if ($('#all_recipients.recipient').length)
+	{
+		following = $('#all_recipients.recipient').first();
+	}
+	else
+	{
+		following = $('.newRecipient');
+	}
 	for (var a = 0; a < jsonData.recipients.length; ++a)
 	{
 		var row = $(recipientRow);
@@ -537,7 +548,7 @@ function restoreSend(jsonData) {
 			row.find('.greetingB').hide();
 		}
 		row.addClass('recipient').removeClass('newRecipient').find('.input-send.save').change(setSendCookie);
-		$('.newRecipient').before(row);
+		following.before(row);
 	}
 }
 
@@ -601,10 +612,12 @@ var sendEmail = function(recipient) {
 			smtp_user: $('#smtpUser').val(),
 			smtp_pass: $('#smtpPass').val()
 	};
-	alert(data);
 	
-	jQuery.post(sendScript, data, function(returnData){
+	jQuery.post(sendScript, data).done(function(returnData){
 		$('#sentEmails').append(returnData);
+		alert(returnData);
+	}).fail(function(jqXHR, textStatus){
+		alert('Sending error: ' . textStatus);
 	});
 		  
 };
@@ -787,8 +800,8 @@ $(document).ready(function() {
 			} else {
 				// once it's done get ready to send the newsletter
 				$('#newsletter_file_name').val($('#email_file').attr('href'));
-				$('#send').removeAttr('disabled');
-				$('#send').removeAttr('aria-disabled');
+				//$('#send').removeAttr('disabled');
+				//$('#send').removeAttr('aria-disabled');
 			}
 		});
 		
@@ -811,6 +824,7 @@ $(document).ready(function() {
 	});
 	
 	$('#send').click(function(){
+		//TODO: add mode to check all is ready before sending
 		$('#sendMessage').html('Sending...');
 		var recipients = $('.recipient');
 		var index = 0;
