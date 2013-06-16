@@ -324,6 +324,11 @@ can say what they want.
   
   <div id="sendTo">
   <table summary="Email recipients names and email addresses" >
+	  <col width="20%" />
+	  <col width="25%" />
+	  <col width="25%" />
+	  <col width="25%" />
+	  <col width="5%" />
     <thead><tr>
 		<td>Generic messages</td>
 		<td><span class="small">Used in the place of personal messages for recipients that don't have them.</span></td>
