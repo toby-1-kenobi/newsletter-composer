@@ -551,6 +551,8 @@ function restoreSend(jsonData) {
 		row.addClass('recipient').removeClass('newRecipient').find('.input-send.save').change(setSendCookie);
 		following.before(row);
 	}
+	
+	$( "button" ).button();
 }
 
 //TODO: provide feedback to users about when they are entering a valid or invalid username or password
@@ -716,8 +718,6 @@ $(document).ready(function() {
 	} catch(e) {
 		alert('Cannot restore send data. ' + e.message)
 	}
-	
-	
 	
 	// in case user has just imported recipients from a file
 	setSendCookie();
