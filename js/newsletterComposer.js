@@ -239,6 +239,7 @@ recipientControl = "<td class=\"controls\"><img class=\"delete\" src=\"images/de
 var deleteElement = function() {
 	$(this).parent().parent().remove();
 	setNewsletterCookie();
+	setSendCookie();
 };
 var moveUp = function() {
 	$(this).parent().parent().insertBefore($(this).parent().parent().prev());
