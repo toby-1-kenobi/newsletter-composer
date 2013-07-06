@@ -334,8 +334,9 @@ can say what they want.
 		<td><span class="small">Used in the place of personal messages for recipients that don't have them.</span></td>
 		<td><textarea class="input-send save" name="generic_a" id="generic_a" cols="30" rows="3" placeholder="Generic message A"></textarea></td>
 		<td><textarea class="input-send save" name="generic_b" id="generic_b" cols="30" rows="3" placeholder="Generic message B"></textarea></td>
+		<td></td>
 	</tr></thead>
-    <thead><tr><td>Dear...</td><td>email</td><td>personal message A</td><td>personal message B</td></tr></thead>
+    <thead><tr><td>Dear...</td><td>Email</td><td>Personal message A</td><td>Personal message B</td><td>Send results</td></tr></thead>
     <tbody id="all_recipients">
 <?php
 //Сheck that we have a file to import recipients from
@@ -363,6 +364,7 @@ if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] ==
    	echo "<td><button class=\"addGreeting\">Add personal greeting</button>";
    	echo "<textarea  class=\"greeting greetingA hidden\" rows=\"3\" cols=\"30\"></textarea></td>\n";
    	echo "<td><textarea  class=\"greeting greetingB hidden\" rows=\"3\" cols=\"30\"></textarea></td>\n";
+   	echo "<td class=\"send_result\"></td>\n";
    	echo "<td class=\"controls\"><img class=\"delete\" src=\"images/delete.png\" /></td></tr>\n";
     }
 }

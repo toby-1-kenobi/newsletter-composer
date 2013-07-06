@@ -230,7 +230,8 @@ recipientRow += "<td><input type=\"text\" class=\"name input-send save\" /></td>
 recipientRow += "<td><input type=\"text\" class=\"email input-send save\" /></td>\n";
 recipientRow += "<td><button class=\"addGreeting\">Add personal greeting</button>\n";
 recipientRow += "<textarea  class=\"greeting greetingA hidden\" rows=\"3\" cols=\"30\"></textarea></td>\n";
-recipientRow += "<td><textarea  class=\"greeting greetingB hidden\" rows=\"3\" cols=\"30\"></textarea></td></tr>\n";
+recipientRow += "<td><textarea  class=\"greeting greetingB hidden\" rows=\"3\" cols=\"30\"></textarea></td>n";
+recipientRow += "<td class=\"send_result\"></td></tr>\n";
 // the delete button added when the row is not the "new" one at the bottom that triggers new rows to be added
 recipientControl = "<td class=\"controls\"><img class=\"delete\" src=\"images/delete.png\" /></td>\n";
 
