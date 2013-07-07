@@ -620,9 +620,12 @@ var sendEmail = function(recipient) {
 	
 	jQuery.post(sendScript, data).done(function(returnData){
 		$('#sentEmails').append(returnData);
-		alert(returnData);
+		if (returnData.indexOf('Fail' >= 0)) {recipient.addClass('send_fail');}
+		else {recipient.addClass('send_succeed');}
+		//alert(returnData);
 	}).fail(function(jqXHR, textStatus){
-		alert('Sending error: ' . textStatus);
+		//alert('Sending error: ' . textStatus);
+		recipient.addClass('send_fail');
 	});
 		  
 };
@@ -833,8 +836,11 @@ $(document).ready(function() {
 	
 	$('#send').click(function(){
 		//TODO: add mode to check all is ready before sending
-		$('#sendMessage').html('Sending...');
+		//$('#sendMessage').html('Sending...');
 		var recipients = $('.recipient');
+		// remove all send_fail and send_succeed classes that might be there from a previous send
+		recipients.removeClass('send_fail');
+		recipients.removeClass('send_succeed');
 		var index = 0;
 		// wait a second before sending each email out.
 		// I think it's only polite not to flood the mail server
@@ -847,7 +853,7 @@ $(document).ready(function() {
 			if (index == recipients.length) {
 				clearInterval(sendIntervalID);
 				recipients.eq(index - 1).removeClass('sending');
-				$('#sendMessage').html('Sent');
+				//$('#sendMessage').html('Sent');
 			}
 		}, 1000);
 		
