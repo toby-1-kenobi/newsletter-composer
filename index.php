@@ -57,8 +57,8 @@ if (isset($uid)) {
 
 
 <?php
-$sess_id = session_id();
-echo "<p>debug $sess_id</p>";
+//$sess_id = session_id();
+//echo "<p>debug $sess_id</p>";
 
 // connect to the database
 $dbh = dbConnect();
@@ -135,7 +135,7 @@ else { // the user is logged in or attempting to log in
 		//echo '<p>debug J</p>';
 		$_SESSION['uid'] = $uid;
 		$_SESSION['pwd'] = $pwd;
-		echo "<p>debug uid {$_SESSION['uid']}</p>";
+		//echo "<p>debug uid {$_SESSION['uid']}</p>";
 		
 		if (isset($_POST['ch_pwd'])) { //  user has submitted the change password form
 			$q_ch_pwd = $dbh->prepare("UPDATE Users SET password=MD5(:password) WHERE name=:name");
