@@ -20,9 +20,9 @@ without having to open any attachments).</p>
 <p>This is the process:</p>
 <ol>
 <li>You type the content of your newsletter into the online form.</li>
-<li>This content is used with a template to automatically generate two HTML files which you can look at:
-<ul><li>One to be sent as an email</li><li>One to be hosted online</li></ul>
-(The email links to the online one, for people having trouble viewing the email)</li>
+<li>This content is used with a template to automatically generate HTML files which you can look at:
+<ul><li>One to be sent as an email</li><li>One to be hosted online</li><li>One to be printed</li></ul>
+</li>
 <li>You input the names and email addresses of recipients or import them from a spreadsheeet,
 adding any personal greetings to individuals that you want.</li>
 <li>The email gets automatically personalised for each individual and sent to them using
@@ -30,42 +30,41 @@ a mail server that you specify.</li>
 </ol>
 <p><strong>Note: Newsletter Composer does not work in Internet Explorer</strong> Try downloading a stable
 secure standards-compliant browser such as <a href="http://www.google.com/chrome">Chrome</a> or <a href="http://www.mozilla.org/en-US/firefox/" >Firefox</a></p>
-<h2>Personal Details</h2>
-<p>The first section of the form is for details about you and your organisation.
-These are optional and can be left blank. If you do choose to include them they may be inserted into
-the headers or footers of the HTML files that are generated. The template decides which details should
-be inserted into particular files. For example the Cool template will put your postal address and phone
-number(s) into the footer of the email, but not into the web version.</p>
-<p>All content entered here is remembered by the browser for up to one year.</p>
+
 <h2>Newsletter Content</h2>
-<p>The second part of the form is where you enter content for your newsletter.</p>
+<p>The first part of the form is where you enter content for your newsletter.</p>
 <p>The clear button allows you to clear all existing content.</p>
 <p>Currently there is only one template available, which determines the appearance of the generated newsletter.</p>
-<p>The subscribe and unsubscribe addresses allow you to direct the reader to somewhere they can sign up or
-unsubscribe from your newsletter. The subscribe link will be used in the online version, and the unsubscribe in the email.
-It is easy with a Google account to set up a form in Google Docs that lets people enter information that gets dropped into
-a spreadsheet that you can see. This is one simple way to set up online subscribe and unsubscribe forms.</p>
+<p>The header and footer sections each have three tabs. One for each format type that gets generated. This will allow you to have different
+content in the header and footer for each type of file format. For example you might like to put your postal address in the printed newsletter
+and a link to your blog in the web and email versions, etc.</p>
+<p>Below the header you should enter a title for the newsletter and an issue number. You may also enter a date for the issue (you can put that date in any format you like).
+When the newsletter is generated the names of the HTML files that are produced are based on the newsletter title and issue number. This means if you generate a newsletter
+with the same title AND issue number as a previous newsletter the files for that previous one will be overwritten.</p>
+<p>To the right are some button you may optionaly use to upload a logo image for your organisation and a photo of yourself or family.</p>
 <p>The newsletter is arranged in two columns. To add an article to the left column use the left-hand Add Article button
 and to add an article to the right column use the right-hand one.</p>
-<p>once an article is added four buttons appear within the article. These buttons can be used to add any number of titles,
-paragraphs, list items or images to the articles.</p>
-<p>Items added to an article can be moved up or down with relation to each other or deleted using the blue controls that
+<p>once an article is added There is space to put a title for the article. This is optional and if you leave it out the template should be clever enough to not leave
+an empty space in the HTML files where the title would have been. Also there are two button one for adding text to the article and one for adding images. You may use
+those buttons as many times as you like for each article to interdisperse the images with the text.</p>
+<p>Items added to an article can be moved up or down with relation to each other or deleted using the controls that
 appear to the top-right of the item. There are also controls that allow the same actions for whole articles too.</p>
 <p>Large images are automatically resized to a width of 600 pixels before they are uploaded to the server. After they are
 uploaded you can see a preview at 200 pixels.</p>
-<p>All content entered here is remembered by the browser for up to one year, so you can leave the page and return again
+<p>All content entered into the newsletter is remembered by the browser for up to one year, so you can leave the page and return again
 without loosing your content. If you return to the page from a different computer or browser your content will not be
-restored. However there is the ability to save the content of the newsletter into a file using the Save button, and to
+restored. (I hope to change this behaviour in the near future) However there is the ability to save the content of the newsletter into a file using the Save button, and to
 load it from that file using the Load button. In this way to form content can be transfered between computers.</p>
 <h2>Generate Newsletter</h2>
 <p>Once you have finished inputing the content of the newsletter use the Generate Newsletter button to generate
-the HTML files. One is for hosting online, another is to be emailed to your recipients. Soon there will be a third
-file for printing, but this feature is not implemented yet.</p>
+the HTML files. All generated files are stored online. The default is to have these files stored publicall, but above the Generate button there is an option to password-protect
+all online content. You get to choose a username and password that will be needed to see any of your newsletters in a web browser. It will still be possible to see uploaded images
+without the password, but only out of context - this is necessary because the emails that get sent out link to these images and the emails wouldn't display porperly if the images themselves
+are password-protected. If you password protect your online content and you also link to the web version from the eail version, then it might be a good idea to provide the username and
+password in the email version too.</p>
 <p>When the files are generated links to them will appear below the button so you can preview them. Make any
-changes you want and generate them again.</p>
-<p>Once the files are generated they exist on the server and can be viewed by anyone. Regenerating the newsletter
-Overwrites the existing files, except when you change the name or issue number of the newsletter, then new files
-are created.</p>
+changes you want and generate them again. You can generate them as many times as you like. Each time you press the generate button the old files are overwritten unless you changes the issue
+number or title of the newsletter.</p>
 <p>Whenever the page is refreshed the links to the generated files disappears, but the files are still there. Regenerate
 to get the links back.</p>
 <h2>Sending the Newsletter</h2>
