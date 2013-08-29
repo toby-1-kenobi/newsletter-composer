@@ -56,7 +56,7 @@ if ($content) {
 	$sent = $smtp->send($_POST['to_address'], $headers, $content);
 	
 	if (PEAR::isError($sent)) {
-		$result = 'Fail: ' . $sent->getMessage();
+		$result = $_POST['to_address'] . ' ' . $sent->getMessage();
 	} else {
 		$result = 'Sent.';
 	}
@@ -72,6 +72,6 @@ $name = addcslashes($_POST['name'], '&');
 $command = "cat {$_POST['emailFile']} | sed 's/%SALUTATION%/$name/g' | ./sendEmail -f {$_POST['from_address']} -t {$_POST['to_address']} -u {$_POST['subject_line']} -s smtp.gmail.com -o tls=yes -xu {$_POST['google_name']} -xp {$_POST['google_pass']}";
 exec($command);
 */
-// format row to add to a table in the user interface
-echo "<tr><td>{$_POST['name']}</td><td>{$_POST['to_address']}</td><td>$result</td></tr>\n";
+
+echo "$result";
 ?>
