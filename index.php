@@ -1,6 +1,6 @@
 <?php
 require_once 'Excel/reader.php';
-require_once '../php/db.php';
+require_once 'db.php';
 
 ?>
 <!DOCTYPE html>
@@ -25,7 +25,7 @@ require_once '../php/db.php';
 
 <?php
 
-//session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
+session_save_path('/home/users/web/b1356/ipg.newslettercomposerne/cgi-bin/tmp');
 session_start();
 
 // get the user credentials from either the existing session or the login post
@@ -57,8 +57,8 @@ if (isset($uid)) {
 
 
 <?php
-//$sess_id = session_id();
-//echo "<p>debug $sess_id</p>";
+$sess_id = session_id();
+echo "<p>debug $sess_id</p>";
 
 // connect to the database
 $dbh = dbConnect();
@@ -110,7 +110,7 @@ if (isset($_POST['rego'])) {
 	
 	
 if (!isset($uid)) {
-	echo '<p>debug G</p>';
+	//echo '<p>debug G</p>';
 	// if the user is not logged in provide login or rego form
 	include_once 'login_form.inc';
 }
@@ -135,7 +135,7 @@ else { // the user is logged in or attempting to log in
 		//echo '<p>debug J</p>';
 		$_SESSION['uid'] = $uid;
 		$_SESSION['pwd'] = $pwd;
-		//echo "<p>debug uid {$_SESSION['uid']}</p>";
+		echo "<p>debug uid {$_SESSION['uid']}</p>";
 		
 		if (isset($_POST['ch_pwd'])) { //  user has submitted the change password form
 			$q_ch_pwd = $dbh->prepare("UPDATE Users SET password=MD5(:password) WHERE name=:name");

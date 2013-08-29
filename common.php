@@ -1,14 +1,16 @@
 <?php
 
-require_once '../php/db.php';
+require_once 'db.php';
 
 // make sure the user is logged in
 function login_ok() {
 	
-	//session_save_path(realpath(dirname($_SERVER['DOCUMENT_ROOT']) . '/../sessions'));
+	session_save_path('/home/users/web/b1356/ipg.newslettercomposerne/cgi-bin/tmp');
 	session_start();
 	
+	//echo "<p>debug login A {$_SESSION['uid']}</p>";
 	if (!isset($_SESSION['uid'])) return false;
+	//echo '<p>debug login B</p>';
 	
 	$dbh = dbConnect();
 	
