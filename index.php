@@ -52,7 +52,7 @@ if (isset($uid)) {
 
 <h1>Newsletter Composer</h1>
 
-<p><a href="instructions.html" >Instructions</a></p>
+<p><a href="instructions.html" >Instructions</a> <a href="https://docs.google.com/forms/d/1cQoTwTyWFGSvBKeUTcjtb49GQYtXFtv7WyYdrovoFHE/viewform">Feedback</a></p>
 
 
 
