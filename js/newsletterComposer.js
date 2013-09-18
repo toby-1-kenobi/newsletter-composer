@@ -194,9 +194,9 @@ var imageUploadHandler = function(event){
 
 // a whole bunch of html is inserted dynamically. It's defined here.
 var controls = '<div class="controls">';
-controls += '<img class="up" src="images/move_up.png" />';
-controls += '<img class="down" src="images/move_down.png" />';
-controls += '<img class="delete" src="images/delete.png" />';
+controls += '<button class="up">Move it up</button>';
+controls += '<button class="down">Move it down</button>';
+controls += '<button class="delete">Remove this</button>';
 controls += '</div>';
 
 //var addTitleButton = '<button class="addTitle">Add title</button>';
@@ -233,7 +233,7 @@ recipientRow += "<textarea  class=\"greeting greetingA hidden\" rows=\"3\" cols=
 recipientRow += "<td><textarea  class=\"greeting greetingB hidden\" rows=\"3\" cols=\"30\"></textarea></td>n";
 recipientRow += "<td class=\"send_result\"></td></tr>\n";
 // the delete button added when the row is not the "new" one at the bottom that triggers new rows to be added
-recipientControl = "<td class=\"controls\"><img class=\"delete\" src=\"images/delete.png\" /></td>\n";
+recipientControl = "<td class=\"controls\"><button class=\"delete\">Remove recipient</button></td>\n";
 
 
 // functions for controls
@@ -251,9 +251,9 @@ var moveDown = function() {
 	setNewsletterCookie();
 };
 function bindControls(elements) {
-	elements.find('.up').click(moveUp);
-	elements.find('.down').click(moveDown);
-	elements.find('.delete').click(deleteElement);
+	elements.find('button.up').button({icons:{primary: "ui-icon-arrowthick-1-n"},text:false}).click(moveUp);
+	elements.find('button.down').button({icons:{primary: "ui-icon-arrowthick-1-s"},text:false}).click(moveDown);
+	elements.find('button.delete').button({icons:{primary: "ui-icon-trash"},text:false}).click(deleteElement);
 }
 
 function logoMugshotHandler(container) {
@@ -401,20 +401,8 @@ var setSendCookie = function() {
 
 // when content is added dynamically we have to remember to also bind event handlers, etc
 function bindArticleButtons(article) {
-	article.find('.addTitle').click(function(){
-		var field = $(titleField);
-		bindControls(field);
-		field.find('.input-issue.save').change(setNewsletterCookie);
-		field.insertBefore($(this).parent());
-	});
 	article.find('.addPara').click(function(){
 		var field = $(paraField);
-		bindControls(field);
-		field.find('.input-issue.save').change(setNewsletterCookie);
-		field.insertBefore($(this).parent());
-	});
-	article.find('.addLI').click(function(){
-		var field = $(lIField);
 		bindControls(field);
 		field.find('.input-issue.save').change(setNewsletterCookie);
 		field.insertBefore($(this).parent());
@@ -480,6 +468,7 @@ var addRecipientHandler = function(){
 		addedRow.find('button').button();
 		$("tr.newRecipient").after(addedRow);
 		$("tr.newRecipient:first").append(recipientControl);
+		bindControls($("tr.newRecipient"));
 		$("tr.newRecipient:first").addClass('recipient').removeClass('newRecipient').find('.input-send.save').change(setSendCookie);
 		$("tr.newRecipient > td > input").bind('change.addRecipient', addRecipientHandler);	
 		setSendCookie();
@@ -517,6 +506,7 @@ function restore(jsonData) {
 	buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
 }
 function restoreSend(jsonData) {
+	
 	$('#from').val(jsonData.from);
 	$('#subject').val(jsonData.subject);
 	$('#greeting').val(jsonData.greeting);
@@ -524,7 +514,8 @@ function restoreSend(jsonData) {
 	$('#smtpPort').val(jsonData.smtp_port);
 	$('#smtpUser').val(jsonData.smtp_user);
 	$('#smtpPass').val(jsonData.smtp_pass);
-	// if there are already recipients in the table insert these new ones before those
+	
+	// if there are already recipients in the table (from an import) insert these new ones before those
 	// otherwise just put them before the newRecipient field
 	var following;
 	if ($('#all_recipients .recipient').length)
@@ -535,6 +526,7 @@ function restoreSend(jsonData) {
 	{
 		following = $('.newRecipient');
 	}
+	
 	for (var a = 0; a < jsonData.recipients.length; ++a)
 	{
 		var row = $(recipientRow);
@@ -555,6 +547,13 @@ function restoreSend(jsonData) {
 	}
 	
 	$( "button" ).button();
+	
+	$( "button.delete" ).button({
+		icons: {
+			primary: "ui-icon-trash"
+		},
+		text: false
+	});
 }
 
 //TODO: provide feedback to users about when they are entering a valid or invalid username or password

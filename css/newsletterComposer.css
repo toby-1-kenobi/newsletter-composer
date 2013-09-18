@@ -195,6 +195,7 @@ div.controls:hover {
 	opacity: 1;
 }
 
+/*
 .controls img {
 	width: 20px;
 	height: 20px;
@@ -203,6 +204,7 @@ div.controls:hover {
 .controls img:hover {
 	cursor: pointer;
 }
+*/
 
 tr.sending {
 	background-color: #b7ddf2;
