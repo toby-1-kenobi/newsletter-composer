@@ -613,6 +613,23 @@ $template['print']['begin']['main']['container'] = <<<PRINTMAINBEGIN
                                 <td valign="top" style="border: solid 1px #444444; border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -khtml-border-radius: 8px;">
 PRINTMAINBEGIN;
 
+
+$template['print']['begin']['main']['article'] = '<!--main article--><h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; color: #111111;"><!--ARTICLE TITLE--></h2>';
+
+
+$template['print']['between']['main']['article-article'] = <<<PRINTMAINARTICLEBETWEEN
+	                        </td>
+	                    </tr>
+	                </table>
+	                <table width="100%" border="0" cellspacing="0" cellpadding="0">
+	                    <tr><td height="10"></td></tr>
+	                </table>
+	                <table width="100%" border="0" cellpadding="20" cellspacing="0">
+	                    <tr>
+	                        <td valign="top"  style="border: solid 1px #444444; border-radius: 8px; -moz-border-radius: 8px; -webkit-border-radius: 8px; -khtml-border-radius: 8px;">
+PRINTMAINARTICLEBETWEEN;
+
+
 // include title in secondary article beginning
 $template['print']['begin']['secondary']['article'] = <<<PRINTSECONDARYARTICLEBEGIN
 <!--section-->
@@ -646,10 +663,9 @@ $template['print']['begin']['secondary']['article'] = <<<PRINTSECONDARYARTICLEBE
                                                                 <tr>
                                                                     <td>&nbsp;</td>
                                                                     <td>
-                                                                        <p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #1f2d41; font-size: 14px; font-weight: bold;"><!--TITLE--></p>
+                                                                        <p style="font-family: Helvetica, Arial, sans-serif; font-size: 13px; margin-top: 0px; margin-bottom: 0px; padding: 0px; color: #1f2d41; font-size: 14px; font-weight: bold;"><!--ARTICLE TITLE--></p>
                                                                     </td>
-                                                                    <td>&nbsp;<img style="margin: 0; padding: 0; display: block;" src="images/i.png" width="18" height="20" alt="info"></td>
-                                                                </tr>
+                                                                    </tr>
                                                                 <tr>
                                                                     <td width="10"></td>
                                                                     <td height="6"></td>
@@ -660,7 +676,7 @@ PRINTSECONDARYARTICLEBEGIN;
 
 // and article may not have a title
 // TODO: check this looks right
-$template['print']['begin']['secondary']['srticleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGINPRINT
+$template['print']['begin']['secondary']['articleNoTitle'] = <<<SECONDARYARTICLENOTITLEBEGINPRINT
 
 <!--section-->
                         <table width="100%" border="0" cellspacing="0" cellpadding="0">
