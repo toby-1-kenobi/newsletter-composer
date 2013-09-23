@@ -385,10 +385,15 @@ function collectSendData() {
 // these functions save the form data so the user can come back to it
 var setNewsletterCookie = function() {
 	var saveData = collectNewsletterData();
+	// save it in the database using the php code that acts as a db interface
+	jQuery.post('db_interface_newsletters.php', {task: "save", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
+		if (data.indexOf('Fail') >= 0) {alert (data);}
+		else {alert (data);}
+	});
 	// save it all in one cookie
-	jQuery.cookies.set($('#newsletterTitle').val() + '_' + $('#issuenum').val(), saveData);
+	//jQuery.cookies.set($('#newsletterTitle').val() + '_' + $('#issuenum').val(), saveData);
 	// also set a cookie to tell us the name of the cookie containing the most recent saved
-	jQuery.cookies.set('latest', $('#newsletterTitle').val() + '_' + $('#issuenum').val());
+	//jQuery.cookies.set('latest', $('#newsletterTitle').val() + '_' + $('#issuenum').val());
 };
 var setPersonalCookie = function() {
 	var saveData = collectPersonalData();
@@ -701,6 +706,16 @@ $(document).ready(function() {
 	    else return false;  
 	}); 
 	
+	// get existing conent from db
+	jQuery.post('db_interface_newsletters.php', {task: "restore", title: $('#newsletterTitle').val(), issue: $('#issuenum').val()}, function(data) {
+		if (data.indexOf('Fail') >= 0) {alert (data);}
+		else if (data === '') {
+			// do nothing if there's no data to get
+			}
+		else {restore(data);}
+	});
+	
+	/*
 	// get content already in form from cookie
 	try {
 		var latest = jQuery.cookies.get('latest');
@@ -708,14 +723,7 @@ $(document).ready(function() {
 	} catch(e) {
 		alert('Cannot restore newsletter content. ' + e.message)
 	}
-	/* this data isn't there now
-	try {
-		var personalData = jQuery.cookies.get('personal');
-		if (personalData) restorePersonal(personalData);
-	} catch(e) {
-		alert('Cannot restore personal content. ' + e.message)
-	}
-	*/
+*/
 	try {
 		var sendData = jQuery.cookies.get('send');
 		if (sendData) restoreSend(sendData);
