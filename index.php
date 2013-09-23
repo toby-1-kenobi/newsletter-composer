@@ -150,8 +150,10 @@ else { // the user is logged in or attempting to log in
 				echo '<p>Password Update Failed!</p>';
 			}
 		}
+		
+	$dbh = null;
  ?> 
-<!--<div id="loading_splash">Please Wait ...</div>-->
+
 
 <div class="ui-widget"> <!-- logout or change password -->
 
