@@ -84,6 +84,27 @@ if (login_ok() == 1) {
 		}
 	}
 	
+	else if (strcmp($_POST['task'], 'save_instance') == 0)
+	{
+		// this will save a copy of the newsletter that is not current. It will insert a new record into the database that will not be overwritten
+		// an instance can be restored later by the user
+		$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,current_revision,current_newsletter,user) VALUES (:newsletter_name,:issue,:content,0,0,:user)");
+		$q_save_newsletter->bindParam(':newsletter_name', $_POST['title']);
+		$q_save_newsletter->bindParam(':issue', $_POST['issue']);
+		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
+		$q_save_newsletter->bindParam(':user', $db_uid);
+		$q_save_newsletter->execute();
+		$save_affected = $q_save_newsletter->rowCount();
+		if ($save_affected == 1)
+		{
+			echo 'Newsletter saved';
+		}
+		else
+		{
+			echo "Save Failed: $save_affected records made/modified (expecting 1)";
+		}
+	}
+	
 	else if (strcmp($_POST['task'], 'restore') == 0)
 	{
 		// get the saved record of the current newsletter

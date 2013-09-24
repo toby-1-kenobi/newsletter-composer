@@ -716,15 +716,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	/*
-	// get content already in form from cookie
-	try {
-		var latest = jQuery.cookies.get('latest');
-		if (latest) restore(jQuery.cookies.get(latest));
-	} catch(e) {
-		alert('Cannot restore newsletter content. ' + e.message)
-	}
-*/
 	try {
 		var sendData = jQuery.cookies.get('send');
 		if (sendData) restoreSend(sendData);
@@ -747,33 +738,22 @@ $(document).ready(function() {
 		newArticle.insertBefore($(this));
 	});
 	
-	// bind the "save issue" buttons to allow the user to receive the form data in a file
+	// bind the "save issue" buttons to allow the user to save this revision for later retrieval
 	$('.saveIssue').click(function() {
 		var saveData = collectNewsletterData();
-		var saveFileName = $('#newsletterTitle').val() + ' ' +$('#issuenum').val() + '.txt';
-		// As far as I can tell you have to send with a form to get the client to receive the file.
-		var form = $('<form method="post" action="giveFileToClient.php"></form>');
-		form.append($('<input type="hidden" name="type" value="text/plain" />'));
-		form.append($('<input type="hidden" name="filename" value="' + saveFileName +'" />'));
-		// it doesn't work unless the content is URI encoded.
-		form.append($('<input type="hidden" name="content" value="' + encodeURIComponent(JSON.stringify(saveData)) +'" />'));
-		form.trigger('submit');
-		// TODO: Try to work out some way of letting the user choose where to save the file.
+		jQuery.post('db_interface_newsletters.php', {task: "save_instance", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
+			alert (data);
+		});
 	});
 	
-	// bind the "load issue" buttons to allow the user to restore form data from a file
+	/*
+	// bind the "load issue" buttons to allow the user to restore form data from a previous save
 	$('.loadIssue').change(function() {
 		$('.input-issue').clearForm();
 		$('.article').remove();
-		var file = $(this)[0].files[0]; // get file from file selector input that triggered this
-		// use a fileReader to read the file
-		var reader = new FileReader(); // HTML 5 goodness
-		reader.onload = function(e) {
-			// when the reader has read the file decode it, parse it as JSON and use it to restore the form data
-			restore(JSON.parse(decodeURIComponent(e.target.result)));
-		}
-		reader.readAsText(file);
+
 	});
+	*/
 	
 	// fix up the hover over the sneaky file input
 	$('.sneaky-file-input input').mouseenter(function() {
