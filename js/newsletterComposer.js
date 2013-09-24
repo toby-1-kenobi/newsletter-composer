@@ -395,10 +395,7 @@ var setNewsletterCookie = function() {
 	// also set a cookie to tell us the name of the cookie containing the most recent saved
 	//jQuery.cookies.set('latest', $('#newsletterTitle').val() + '_' + $('#issuenum').val());
 };
-var setPersonalCookie = function() {
-	var saveData = collectPersonalData();
-	jQuery.cookies.set('personal', saveData);
-}
+
 var setSendCookie = function() {
 	var saveData = collectSendData();
 	jQuery.cookies.set('send', saveData);
@@ -479,9 +476,10 @@ var addRecipientHandler = function(){
 		setSendCookie();
 };
 
-// restore form content from JSON
-function restore(jsonData) {
+// restore form content from JSON text
+function restore(jsonText) {
 	//debugger;
+	var jsonData = jQuery.parseJSON(jsonText);
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
@@ -712,7 +710,10 @@ $(document).ready(function() {
 		else if (data === '') {
 			// do nothing if there's no data to get
 			}
-		else {restore(data);}
+		else {
+			alert (data);
+			restore(data);
+		}
 	});
 	
 	/*
@@ -734,9 +735,8 @@ $(document).ready(function() {
 	// in case user has just imported recipients from a file
 	setSendCookie();
 	
-	// bind changes to the newsletter to get saved in cookies
+	// bind changes to the newsletter to get saved
 	$('.input-issue.save').change(setNewsletterCookie);
-	$('.input-personal.save').change(setPersonalCookie);
 	$('.input-send.save').change(setSendCookie);
 	
 	// bind the new article buttons
