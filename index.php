@@ -151,7 +151,7 @@ else { // the user is logged in or attempting to log in
 			}
 		}
 		
-	$dbh = null;
+		$dbh = null;
  ?> 
 
 
@@ -176,37 +176,15 @@ else { // the user is logged in or attempting to log in
 
 </div>
 
-<!-- The whole personal details section is not needed any more
-That's because it was for inserting various info into the headers and footers
-that are already in the template.
-It's better to allow the user to write their own headers and footers so they
-can say what they want.
-
-
-  <fieldset><legend>Personal details</legend>
-  <div><label for="address_line_1">Address line 1: </label>
-  <input class="input-personal save" type="text" size="30" name="address_line_1" id="address_line_1"/>
-  <label for="address_line_2">Address line 2: </label>
-  <input class="input-personal save" type="text" size="30" name="address_line_2" id="address_line_2"/></div>
-  <div><label for="phone">Phone number(s): </label>
-  <input class="input-personal save" type="text" size="30" name="phone" id="phone"/>
-  <label for="skype">Skype address(es): </label>
-  <input class="input-personal save" type="text" size="30" name="skype" id="skype"/></div>
-  <div><label for="personal_web">Personal Website: </label>
-  <input class="input-personal save" type="text" size="30" name="personal_web" id="personal_web"/></div>
-  <div><label for="org_name">Organisation Name: </label>
-  <input class="input-personal save" type="text" size="30" name="org_name" id="org_name"/>
-  <label for="org_web">Organisation Website: </label>
-  <input class="input-personal save" type="text" size="30" name="org_web" id="org_web"/></div>
-  </fieldset>
--->
 <div id="accordion">  
   <h3>Compose Newsletter</h3>
   <div>
   <!--fieldset><legend>Newsletter</legend-->
   
-  <button class="saveIssue right">Save to file</button>
-  <div class="right sneaky-file-input"><button>Load from file</button><input type="file" class="loadIssue" /></div>
+  <button class="saveIssue right">Save this revision</button>
+  <select class="load_revision">
+	  <option value="default" selected>Load previous revision</option>
+  </select>
   <button class="clear left">Clear</button>
   
   <label for="template">Template: </label>
@@ -282,7 +260,7 @@ can say what they want.
 	</div>
 </div>
 
-<button class="saveIssue right">Save to file</button>
+<button class="saveIssue right">Save this revision</button>
 <button class="clear left">Clear</button>
   
 <!--/fieldset-->

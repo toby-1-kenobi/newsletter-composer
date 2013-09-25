@@ -459,6 +459,24 @@ function buildArticles(array, followingElement) {
 	
 }
 
+function populateLoadRevisions()
+{
+	jQuery.post('db_interface_newsletters.php', {task: "get_all_instances", title: $('#newsletterTitle').val(), issue: $('#issuenum').val()}, function(data) {
+		
+		alert (data);
+		// first empty the select box
+		$('option.revision').remove();
+		
+		// then fill it with the revisions
+		var instances = jQuery.parseJSON(data);
+		for (var i = 0; i < instances.length; ++i)
+		{
+			$('.load_revision').append("<option class=\"revision\" value=\"" + instances[i]['id'] + "\">" + instances[i]['timestamp'] + "</option>");
+		}
+		
+	});
+}
+
 var addRecipientHandler = function(){
 		$("tr.newRecipient > td > input").unbind('change.addRecipient');
 		var addedRow = $(recipientRow);
@@ -507,6 +525,9 @@ function restore(jsonText) {
 	if (jsonData.privacy === 'privacy_protected') $('#privacy_credentials').show();
 	buildArticles(jsonData.mainArticles, $('#leftPanel .addArticle'));
 	buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
+	
+	// populate the load revision select box with previously saved newsletters
+	populateLoadRevisions();
 }
 function restoreSend(jsonData) {
 	
@@ -705,13 +726,14 @@ $(document).ready(function() {
 	}); 
 	
 	// get existing conent from db
-	jQuery.post('db_interface_newsletters.php', {task: "restore", title: $('#newsletterTitle').val(), issue: $('#issuenum').val()}, function(data) {
+	jQuery.post('db_interface_newsletters.php', {task: "restore"}, function(data) {
 		if (data.indexOf('Fail') >= 0) {alert (data);}
 		else if (data === '') {
 			// do nothing if there's no data to get
-			}
-		else {
-			alert (data);
+		}
+		else 
+		{
+			//alert (data);
 			restore(data);
 		}
 	});
@@ -743,6 +765,8 @@ $(document).ready(function() {
 		var saveData = collectNewsletterData();
 		jQuery.post('db_interface_newsletters.php', {task: "save_instance", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
 			alert (data);
+			// populate the load revision select box so it includes the new save
+			populateLoadRevisions();
 		});
 	});
 	
