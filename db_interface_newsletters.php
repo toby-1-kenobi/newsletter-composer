@@ -136,6 +136,27 @@ if (login_ok() == 1) {
 		}
 	}
 	
+	else if (strcmp($_POST['task'], 'restore_from_id') == 0)
+	{
+		// get the saved record of the identified newsletter
+		// also match the user id in the query to make certain one user can't restore another user's newsletter
+		$q_get_newsletter = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND id=:id");
+		$q_get_newsletter->bindParam(':user', $db_uid);
+		$q_get_newsletter->bindParam(':id', $_POST['newsletter_id']);
+		$q_get_newsletter->execute();
+		$newsletter = $q_get_newsletter->fetchAll(PDO::FETCH_ASSOC);
+		
+		if (sizeof($newsletter) > 0)
+		{
+			echo $newsletter[0]['content'];
+		}
+		else
+		{
+			// do nothing if there is no data to load from db
+			// The js that calls this file will get back an empty string
+		}
+	}
+	
 	else
 	{
 		echo "<p>Fail. unrecognised task: {$_POST['task']}</p>";

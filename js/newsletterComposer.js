@@ -204,7 +204,7 @@ var addParaButton = '<button class="addPara" title="Add some text">Add text</but
 //var addListItemButton = '<button class="addLI">Add list item</button>';
 var addImageButton = '<button class="addImage" title="Add an image">Add image</button>';
 var articleField = "<fieldset class=\"article moveable ui-corner-all\"><legend>Article</legend>\n";
-articleField += '<div><label>Title</label> <input type="text" class="articleTitle" /></div>';
+articleField += '<div><label>Title</label> <input type="text" class="articleTitle input-issue save" /></div>';
 articleField += controls + "\n";
 articleField += "<div class=\"article_buttons\">\n";
 //articleField += addTitleButton + "\n";
@@ -214,11 +214,7 @@ articleField += addParaButton + "\n";
 articleField += addImageButton + "\n";
 articleField += "</div>\n</fieldset>\n";
 
-var titleField = '<div class="moveable">' + controls + '<label>Title</label> <input type="text" class="articleTitle input-issue save" /></div>';
-
 var paraField = '<div class="moveable">' + controls + '<textarea class="articlePara input-issue save" rows="8" cols="40"></textarea></div>';
-
-var lIField = '<div class="moveable">' + controls + '<img src="images/li.png" alt="bullet" /><textarea class="articleList input-issue save" rows="8" cols="40"></textarea></div>';
 
 var imageField = '<div class="moveable">' + controls + "\n";
 imageField += "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
@@ -276,21 +272,6 @@ function logoMugshotHandler(container) {
 			setNewsletterCookie();
 		});
 };
-
-/*/ harvest the personal data entered
-function collectPersonalData() {
-	var data = {
-		"addressLine1": encodeHTML($('#address_line_1').val()),
-		"addressLine2": encodeHTML($('#address_line_2').val()),
-		"phone": encodeHTML($('#phone').val()),
-		"skype": encodeHTML($('#skype').val()),
-		"website": encodeHTML($('#personal_web').val()),
-		"org": encodeHTML($('#org_name').val()),
-		"websiteOrg": encodeHTML($('#org_web').val())
-	};
-	return data;
-}
-*/
 	
 // harvest the data entered for the newsletter
 function collectNewsletterData() {
@@ -770,21 +751,20 @@ $(document).ready(function() {
 		});
 	});
 	
-	/*
-	// bind the "load issue" buttons to allow the user to restore form data from a previous save
-	$('.loadIssue').change(function() {
-		$('.input-issue').clearForm();
-		$('.article').remove();
-
-	});
-	*/
-	
-	// fix up the hover over the sneaky file input
-	$('.sneaky-file-input input').mouseenter(function() {
-		$(this).siblings('button').addClass('hover');
-	});
-	$('.sneaky-file-input input').mouseleave(function() {
-		$(this).siblings('button').removeClass('hover');
+	$('select.load_revision').change( function() {
+		jQuery.post('db_interface_newsletters.php', {task: "restore_from_id", newsletter_id: $(this).val()}, function(data) {
+			if (data.indexOf('Fail') >= 0) {alert (data);}
+			else if (data === '') {
+				// do nothing if there's no data to get
+			}
+			else
+			{
+				//alert (data);
+				$('.input-issue').clearForm();
+				$('.article').remove();
+				restore(data);
+			}
+		});
 	});
 	
 	// bind the clear form buttons
