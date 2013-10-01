@@ -49,7 +49,7 @@ if (login_ok() == 1) {
 		
 		if (sizeof($current_revision) > 0)
 		{
-			echo 'existing save found ';
+			//echo 'existing save found ';
 			// first clear the current newsletter flag for this user
 			$q_clear_current_newsletter->execute();
 			
@@ -76,7 +76,8 @@ if (login_ok() == 1) {
 		$save_affected = $q_save_newsletter->rowCount();
 		if ($save_affected == 1)
 		{
-			echo 'Newsletter saved';
+			// return the datetime of the successful save in UTC
+			echo gmdate('Y-m-d H:i:s'), ' UTC';
 		}
 		else
 		{
@@ -97,7 +98,9 @@ if (login_ok() == 1) {
 		$save_affected = $q_save_newsletter->rowCount();
 		if ($save_affected == 1)
 		{
-			echo 'Newsletter saved';
+			//echo 'Newsletter saved';
+			// return the datetime of the successful save in UTC
+			echo gmdate('Y-m-d H:i:s'), ' UTC';
 		}
 		else
 		{
@@ -114,6 +117,11 @@ if (login_ok() == 1) {
 		$q_get_revisions->bindParam(':issue', $_POST['issue']);
 		$q_get_revisions->execute();
 		$revisions = $q_get_revisions->fetchAll(PDO::FETCH_ASSOC);
+		// convert all the dates to UTC
+		foreach ($revisions as $rev_i => $revision)
+		{
+			$revisions[$rev_i]['timestamp'] = gmdate('Y-m-d H:i:s', date_timestamp_get(date_create($revisions[$rev_i]['timestamp']))) . ' UTC';
+		}
 		echo json_encode($revisions);
 	}
 	

@@ -181,7 +181,8 @@ else { // the user is logged in or attempting to log in
   <div>
   <!--fieldset><legend>Newsletter</legend-->
   
-  <button class="saveIssue right">Save this revision</button>
+  <button class="saveIssue">Save this revision</button>
+  Last save: <span class="last_save_date"></span>
   <select class="load_revision">
 	  <option value="default" selected>Load previous revision</option>
   </select>

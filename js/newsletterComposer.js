@@ -36,6 +36,13 @@ function pad(number, length)
     return str;
 }
 
+// javascript Date objects don't allow you to easily format the string for the date
+// so do that here
+//function dateToString(d) {
+//	var month = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getMonth()];
+//	return month + ' ' + d.getDate() + ' ' + d.getFullYear() + ' ' + d.getHours() + ':' + d.getMinutes() + ':' + d.getSeconds();
+//}
+
 // encode string for HTML
 /*Author: R Reid
  * source: http://www.strictly-software.com/htmlencode
@@ -107,33 +114,6 @@ jQuery.cookies.setOptions({expiresAt: oneYear});
 
 var MAX_WIDTH = 600; // for image uploaded to server
 var MAX_WIDTH_UI = 200; // for preview of image displayed in the user interface
-
-/*
- * I've decided I don't need to use TinyMCE - it's not that "tiny"
- * It's far to big for the simple task I require,
- * and it's limited to working on text areas, not text fields.
- * I'll use a simple wiki-type syntax instead.
-// settings for TinyMCE editors
-var TMCEsettings = {
-			// Location of TinyMCE script
-			script_url : 'js/tiny_mce/tiny_mce.js',
-
-			// General options
-			theme : "advanced",
-		   onchange_callback : setNewsletterCookie,
-
-			// Theme options
-			theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,link,unlink,",
-			theme_advanced_buttons2 : "",
-			theme_advanced_buttons3 : "",
-			theme_advanced_toolbar_location : "top",
-			theme_advanced_toolbar_align : "left",
-			theme_advanced_resizing : true,
-
-			// Example content CSS (should be your site CSS)
-			content_css : "css/newsletterComposer.css"
-		};
-*/
 
 // read image data from file, then use canvas element to set max size then upload and save on server
 var imageUploadHandler = function(event){
@@ -308,11 +288,11 @@ function collectNewsletterData() {
 	// now we need to gather the data from the articles
 	$('#leftPanel').find('.article').each(function() {
 		var article = {"title": encodeHTML($(this).find('.articleTitle').val()), "article": []};
-		$(this).find('.save').each(function() {
+		$(this).find('.save').not('.articleTitle').each(function() {
 			var itemType = '';
 			var itemValue = '';
 			if ($(this).hasClass('articlePara')) { itemType = "para"; }
-			else if ($(this).hasClass('articleList')) { itemType = "list"; }
+			//else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
 			itemValue = encodeHTML($(this).val());
@@ -323,11 +303,11 @@ function collectNewsletterData() {
 	});
 	$('#rightPanel').find('.article').each(function() {
 		var article = {"title": encodeHTML($(this).find('.articleTitle').val()), "article": []};
-		$(this).find('.save').each(function() {
+		$(this).find('.save').not('.articleTitle').each(function() {
 			var itemType = '';
 			var itemValue = '';
 			if ($(this).hasClass('articlePara')) { itemType = "para"; }
-			else if ($(this).hasClass('articleList')) { itemType = "list"; }
+			//else if ($(this).hasClass('articleList')) { itemType = "list"; }
 			else if ($(this).hasClass('imageLoaded')) { itemType = "image"; }
 			else { itemType = "undefined" }
 			itemValue = encodeHTML($(this).val());
@@ -369,7 +349,13 @@ var setNewsletterCookie = function() {
 	// save it in the database using the php code that acts as a db interface
 	jQuery.post('db_interface_newsletters.php', {task: "save", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
 		if (data.indexOf('Fail') >= 0) {alert (data);}
-		else {alert (data);}
+		else {
+			//alert (data);
+			// data should be a date string in UTC
+			// convert it to local time and display
+			var lastSaveDate = new Date(data);
+			$('.last_save_date').text(lastSaveDate.toLocaleString());
+		}
 	});
 	// save it all in one cookie
 	//jQuery.cookies.set($('#newsletterTitle').val() + '_' + $('#issuenum').val(), saveData);
@@ -405,6 +391,7 @@ function bindArticleButtons(article) {
 // insert them all before the following element
 function buildArticles(array, followingElement) {
 	// go through each article in the array
+	debugger;
 	for (var a = 0; a < array.length; ++a) {
 		var art = $(articleField);
 		// put the title in first
@@ -444,7 +431,7 @@ function populateLoadRevisions()
 {
 	jQuery.post('db_interface_newsletters.php', {task: "get_all_instances", title: $('#newsletterTitle').val(), issue: $('#issuenum').val()}, function(data) {
 		
-		alert (data);
+		//alert (data);
 		// first empty the select box
 		$('option.revision').remove();
 		
@@ -452,7 +439,9 @@ function populateLoadRevisions()
 		var instances = jQuery.parseJSON(data);
 		for (var i = 0; i < instances.length; ++i)
 		{
-			$('.load_revision').append("<option class=\"revision\" value=\"" + instances[i]['id'] + "\">" + instances[i]['timestamp'] + "</option>");
+			// timestamp comes through as a UTC datetime so convert it to local time by making a date object
+			var datetime = new Date(instances[i]['timestamp']);
+			$('.load_revision').append("<option class=\"revision\" value=\"" + instances[i]['id'] + "\">" + datetime.toLocaleString() + "</option>");
 		}
 		
 	});
@@ -745,7 +734,17 @@ $(document).ready(function() {
 	$('.saveIssue').click(function() {
 		var saveData = collectNewsletterData();
 		jQuery.post('db_interface_newsletters.php', {task: "save_instance", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
-			alert (data);
+			if (data.indexOf('Fail') >= 0) {
+				alert (data);
+			}
+			else
+			{
+				// data should be a date string in UTC
+				// convert it to local time and display
+				var lastSaveDate = new Date(data);
+				$('.last_save_date').text(lastSaveDate.toLocaleString());
+				
+			}
 			// populate the load revision select box so it includes the new save
 			populateLoadRevisions();
 		});
