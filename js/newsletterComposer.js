@@ -748,6 +748,14 @@ $(document).ready(function() {
 	});
 	
 	$('select.load_revision').change( function() {
+		// before loading a new revision we should save this one
+		jQuery.post('db_interface_newsletters.php', {task: "save_instance", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
+			if (data.indexOf('Fail') >= 0) {
+				// if the save fails then just alert the error and keep going
+				alert (data);
+			}
+		});
+		// now load the selected revision
 		jQuery.post('db_interface_newsletters.php', {task: "restore_from_id", newsletter_id: $(this).val()}, function(data) {
 			if (data.indexOf('Fail') >= 0) {alert (data);}
 			else if (data === '') {

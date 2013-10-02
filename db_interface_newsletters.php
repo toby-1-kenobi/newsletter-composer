@@ -49,7 +49,8 @@ if (login_ok() == 1) {
 		
 		if (sizeof($current_revision) > 0)
 		{
-			//echo 'existing save found ';
+			//TODO: don't allow old data to overwrite more recent data
+			
 			// first clear the current newsletter flag for this user
 			$q_clear_current_newsletter->execute();
 			
@@ -155,7 +156,7 @@ if (login_ok() == 1) {
 		$newsletter = $q_get_newsletter->fetchAll(PDO::FETCH_ASSOC);
 		
 		if (sizeof($newsletter) > 0)
-		{
+		{		
 			echo $newsletter[0]['content'];
 		}
 		else
