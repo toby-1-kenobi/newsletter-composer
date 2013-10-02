@@ -358,15 +358,66 @@ var setNewsletterCookie = function() {
 			$('.last_save_date').text(lastSaveDate.toLocaleString());
 		}
 	});
-	// save it all in one cookie
-	//jQuery.cookies.set($('#newsletterTitle').val() + '_' + $('#issuenum').val(), saveData);
-	// also set a cookie to tell us the name of the cookie containing the most recent saved
-	//jQuery.cookies.set('latest', $('#newsletterTitle').val() + '_' + $('#issuenum').val());
+	// save it also in a cookie for use of undo and redo
+	try {
+		var currentNewsletterDo = ParseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+	} catch(e) {
+		var currentNewsletterDo = 0;
+	}
+	++currentNewsletterDo;
+	jQuery.cookies.set('newsletter_do_' + currentNewsletterDo, saveData);
+	jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
+	jQuery.cookies.set('newsletter_available_redo', 0);
+	//TODO: disable the redo button
 };
 
 var setSendCookie = function() {
 	var saveData = collectSendData();
 	jQuery.cookies.set('send', saveData);
+}
+
+function newsletterUndo()
+{
+	try {
+		var currentNewsletterDo = ParseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+		var data = jQuery.cookies.get('newsletter_do_' + currentNewsletterDo);
+		restore(data);
+		--currentNewsletterDo;
+		jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
+		var availableRedo = ParseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
+		jQuery.cookies.set('newsletter_available_redo', ++availableRedo);
+		//TODO: enable the redo button
+		if (currentNewsletterDo == 0)
+		{
+			//TODO: disable the undo button
+		}
+	} catch(e) {
+		// if something goes wrong we should just accept the fact that we're unable to undo from here
+		//TODO: and disable the button
+	}
+}
+
+function newsletterRedo()
+{
+	try {
+		var availableRedo = ParseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
+		if (availableRedo > 0) {
+			var currentNewsletterDo = ParseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+			++currentNewsletterDo;
+			var data = jQuery.cookies.get('newsletter_do_' + currentNewsletterDo);
+			restore(data);
+			jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
+			jQuery.cookies.set('newsletter_available_redo', --availableRedo);
+			//TODO: enable the undo button
+		}
+		else
+		{
+			//TODO: disable the button
+		}
+	} catch(e) {
+		// if something goes wrong we should just accept the fact that we're unable to redo from here
+		//TODO: and disable the button
+	}
 }
 
 // when content is added dynamically we have to remember to also bind event handlers, etc
