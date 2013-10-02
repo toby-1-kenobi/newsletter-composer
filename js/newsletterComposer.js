@@ -345,6 +345,7 @@ function collectSendData() {
 
 // these functions save the form data so the user can come back to it
 var setNewsletterCookie = function() {
+	//alert ('save newsletter');
 	var saveData = collectNewsletterData();
 	// save it in the database using the php code that acts as a db interface
 	jQuery.post('db_interface_newsletters.php', {task: "save", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
@@ -391,7 +392,7 @@ function bindArticleButtons(article) {
 // insert them all before the following element
 function buildArticles(array, followingElement) {
 	// go through each article in the array
-	debugger;
+	//debugger;
 	for (var a = 0; a < array.length; ++a) {
 		var art = $(articleField);
 		// put the title in first
@@ -403,11 +404,6 @@ function buildArticles(array, followingElement) {
 				bindControls(paragraph);
 				paragraph.find('textarea').text(decodeHTML(array[a].article[i].value));
 				art.find('.article_buttons').before(paragraph);
-			//} else if (array[a].article[i].type == "list") {
-			//	var listItem = $(lIField)
-			//	bindControls(listItem);
-			//	listItem.find('textarea').text(decodeHTML(array[a].article[i].value));
-			//	art.find('.article_buttons').before(listItem);
 			} else if (array[a].article[i].type == "image") {
 				var image = $(imageField)
 				bindControls(image);
@@ -422,6 +418,7 @@ function buildArticles(array, followingElement) {
 		}
 		bindControls(art);
 		bindArticleButtons(art);
+		art.find('.input-issue.save').change(setNewsletterCookie);
 		followingElement.before(art);
 	}
 	
