@@ -107,10 +107,10 @@ jQuery.fn.clearForm = function() {
   });
 };
 
-// cookies expire 1 year from now.
-var oneYear = new Date();
-oneYear.setDate(oneYear.getDate() + 365);
-jQuery.cookies.setOptions({expiresAt: oneYear});
+// cookies expire 1 day from now.
+var oneDay = new Date();
+oneDay.setDate(oneDay.getDate() + 1);
+jQuery.cookies.setOptions({expiresAt: oneDay});
 
 var MAX_WIDTH = 600; // for image uploaded to server
 var MAX_WIDTH_UI = 200; // for preview of image displayed in the user interface
@@ -360,15 +360,19 @@ var setNewsletterCookie = function() {
 	});
 	// save it also in a cookie for use of undo and redo
 	try {
-		var currentNewsletterDo = ParseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+		//debugger;
+		var currentNewsletterDo = parseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+		if (isNaN(currentNewsletterDo)) currentNewsletterDo = 0;
 	} catch(e) {
+		//alert (e);
 		var currentNewsletterDo = 0;
 	}
 	++currentNewsletterDo;
 	jQuery.cookies.set('newsletter_do_' + currentNewsletterDo, saveData);
 	jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
 	jQuery.cookies.set('newsletter_available_redo', 0);
-	//TODO: disable the redo button
+	$('.newsletter_redo').button('disable');
+	$('.newsletter_undo').button('enable');
 };
 
 var setSendCookie = function() {
@@ -376,47 +380,58 @@ var setSendCookie = function() {
 	jQuery.cookies.set('send', saveData);
 }
 
-function newsletterUndo()
+var newsletterUndo = function()
 {
 	try {
-		var currentNewsletterDo = ParseInt(jQuery.cookies.get('current_newsletter_do'), 10);
-		var data = jQuery.cookies.get('newsletter_do_' + currentNewsletterDo);
-		restore(data);
+		var currentNewsletterDo = parseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+		alert(currentNewsletterDo);
 		--currentNewsletterDo;
+		var data = jQuery.cookies.get('newsletter_do_' + currentNewsletterDo);
+		$('.input-issue').clearForm();
+		$('.article').remove();
+		restore(data, false);
 		jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
-		var availableRedo = ParseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
+		var availableRedo = parseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
 		jQuery.cookies.set('newsletter_available_redo', ++availableRedo);
-		//TODO: enable the redo button
+		$('.newsletter_redo').button('enable');
 		if (currentNewsletterDo == 0)
 		{
-			//TODO: disable the undo button
+			$('.newsletter_undo').button('disable');
 		}
 	} catch(e) {
 		// if something goes wrong we should just accept the fact that we're unable to undo from here
-		//TODO: and disable the button
+		alert (e);
+		$('.newsletter_undo').button('disable');
 	}
 }
 
-function newsletterRedo()
+var newsletterRedo = function()
 {
 	try {
-		var availableRedo = ParseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
+		var availableRedo = parseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
 		if (availableRedo > 0) {
-			var currentNewsletterDo = ParseInt(jQuery.cookies.get('current_newsletter_do'), 10);
+			var currentNewsletterDo = parseInt(jQuery.cookies.get('current_newsletter_do'), 10);
 			++currentNewsletterDo;
 			var data = jQuery.cookies.get('newsletter_do_' + currentNewsletterDo);
-			restore(data);
+			$('.input-issue').clearForm();
+			$('.article').remove();
+			restore(data, false);
 			jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
 			jQuery.cookies.set('newsletter_available_redo', --availableRedo);
-			//TODO: enable the undo button
+			$('.newsletter_undo').button('enable');
+			if (availableRedo == 0)
+			{
+				$('.newsletter_redo').button('disable');
+			}
 		}
 		else
 		{
-			//TODO: disable the button
+			$('.newsletter_redo').button('disable');
 		}
 	} catch(e) {
 		// if something goes wrong we should just accept the fact that we're unable to redo from here
-		//TODO: and disable the button
+		alert(e);
+		$('.newsletter_redo').button('disable');
 	}
 }
 
@@ -512,10 +527,14 @@ var addRecipientHandler = function(){
 		setSendCookie();
 };
 
-// restore form content from JSON text
-function restore(jsonText) {
+// restore form content from JSON 
+function restore(jsonData, isString) {
 	//debugger;
-	var jsonData = jQuery.parseJSON(jsonText);
+	if(typeof(isString)==='undefined') isString = true;
+	if (isString)
+	{
+		jsonData = jQuery.parseJSON(jsonData);
+	}
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
 	$('#issuenum').val(decodeHTML(jsonData.number));
 	$('#issuedate').val(decodeHTML(jsonData.date));
@@ -689,6 +708,18 @@ $(document).ready(function() {
 		},
 		text: false
 	});
+	$( "button.newsletter_undo" ).button({
+		icons: {
+			primary: "ui-icon-arrowreturnthick-1-w"
+		},
+		text: false
+	});
+	$( "button.newsletter_redo" ).button({
+		icons: {
+			primary: "ui-icon-arrowreturnthick-1-e"
+		},
+		text: false
+	});
 	$( "#privacy_radioset" ).buttonset();
 	
 	// put a show toggle button on password fields that want one
@@ -743,7 +774,7 @@ $(document).ready(function() {
 	    else return false;  
 	}); 
 	
-	// get existing conent from db
+	// get existing content from db
 	jQuery.post('db_interface_newsletters.php', {task: "restore"}, function(data) {
 		if (data.indexOf('Fail') >= 0) {alert (data);}
 		else if (data === '') {
@@ -755,6 +786,12 @@ $(document).ready(function() {
 			restore(data);
 		}
 	});
+	
+	// if there's no newsletter undo cookies set the 0 cookie to be the current state
+	if (jQuery.cookies.get('current_newsletter_do') == null)
+	{
+		jQuery.cookies.set('newsletter_do_0', collectNewsletterData());
+	}
 	
 	try {
 		var sendData = jQuery.cookies.get('send');
@@ -769,6 +806,10 @@ $(document).ready(function() {
 	// bind changes to the newsletter to get saved
 	$('.input-issue.save').change(setNewsletterCookie);
 	$('.input-send.save').change(setSendCookie);
+	
+	// bind undo and redo buttons
+	$('.newsletter_undo').click(newsletterUndo);
+	$('.newsletter_redo').click(newsletterRedo);
 	
 	// bind the new article buttons
 	$('.addArticle').click(function() {

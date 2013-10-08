@@ -42,7 +42,6 @@ if (isset($uid)) {
 <script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
 <script src="js/jquery-ui-1.10.0.custom.js" type="text/javascript"></script>
 <script src="js/jquery.cookies.2.2.0.js" type="text/javascript"></script>
-<!--<script src="js/tiny_mce/jquery.tinymce.js" type="text/javascript"></script>-->
 <script src="js/newsletterComposer.js?<?php echo time(); ?>" type="text/javascript"></script>
 
 </head>
@@ -181,17 +180,20 @@ else { // the user is logged in or attempting to log in
   <div>
   <!--fieldset><legend>Newsletter</legend-->
   
+  <button class="clear">Clear</button>
   <button class="saveIssue">Save this revision</button>
   Last save: <span class="last_save_date"></span>
   <select class="load_revision">
 	  <option value="default" selected>Load previous revision</option>
   </select>
-  <button class="clear left">Clear</button>
   
   <label for="template">Template: </label>
   <select name="template" id="template" class="input-issue save">
     <option value="cool.php" selected="selected">Cool</option>
   </select>
+  
+  <button class="newsletter_undo" disabled="disabled">Undo</button>
+  <button class="newsletter_redo" disabled="disabled">Redo</button>
   
   <!-- This is tabs, one for the header of each format-->
   <div class="tabs" id="header">
