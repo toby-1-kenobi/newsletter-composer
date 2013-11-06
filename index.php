@@ -287,6 +287,9 @@ else { // the user is logged in or attempting to log in
   <div id="generateResults"></div>
 </div>
 
+<div class="section left">
+</div>
+
 </div>
 <h3>Send Newsletter</h3>
 <div>

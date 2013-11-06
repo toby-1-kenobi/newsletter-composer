@@ -23,12 +23,12 @@ if (login_ok() == 1) {
 	$q_clear_current_newsletter = $dbh->prepare("UPDATE Newsletters SET current_newsletter=0 WHERE user=:user");
 	$q_clear_current_newsletter->bindParam(':user', $db_uid);
 	
-	/*
+	
 	$q_clear_current_revison = $dbh->prepare("UPDATE Newsletters SET current_revision=0 WHERE user=:user AND name=':newsletter_name' AND issue=':issue'");
 	$q_clear_current_revison->bindParam(':user', $_SESSION['uid']);
 	$q_clear_current_revison->bindParam(':newsletter_name', $_POST['title']);
 	$q_clear_current_revison->bindParam(':issue', $_POST['issue']);
-	*/
+	
 	
 	// get the record of the current save for this newsletter
 	$q_get_current = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND name=:newsletter_name AND issue=:issue AND current_revision=1");
@@ -46,32 +46,17 @@ if (login_ok() == 1) {
 	
 	if (strcmp($_POST['task'], 'save') == 0)
 	{
+		// first clear the current newsletter and revision flags
+		$q_clear_current_newsletter->execute();
+		$q_clear_current_revision->execute();
 		
-		if (sizeof($current_revision) > 0)
-		{
-			//TODO: don't allow old data to overwrite more recent data
-			
-			// first clear the current newsletter flag for this user
-			$q_clear_current_newsletter->execute();
-			
-			// we want to overwrite the exising current revison making it also the current newsletter
-			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters SET content=:content, current_newsletter=1 WHERE id=:id");
-			$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
-			$q_save_newsletter->bindParam(':id', $current_revision[0]['id']);
-		}
-		
-		else
-		{
-			// there is no current revision so this must be the first save for this newsletter
-			// first clear the current newsletter flag
-			// so create a new entry
-			$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,current_revision,current_newsletter,user) VALUES (:newsletter_name,:issue,:content,1,1,:user)");
-			$q_save_newsletter->bindParam(':newsletter_name', $_POST['title']);
-			$q_save_newsletter->bindParam(':issue', $_POST['issue']);
-			$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
-			$q_save_newsletter->bindParam(':user', $db_uid);
-		}
-		
+		// now create a new entry
+		$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,current_revision,current_newsletter,user, previous) VALUES (:newsletter_name,:issue,:content,1,1,:user, :previous)");
+		$q_save_newsletter->bindParam(':newsletter_name', $_POST['title']);
+		$q_save_newsletter->bindParam(':issue', $_POST['issue']);
+		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
+		$q_save_newsletter->bindParam(':user', $db_uid);
+		$q_save_newsletter->bindParam(':previous', $current_revision[0]['id'])	;
 		//$q_save_newsletter->debugDumpParams();
 		$q_save_newsletter->execute();
 		$save_affected = $q_save_newsletter->rowCount();
@@ -84,13 +69,18 @@ if (login_ok() == 1) {
 		{
 			echo "Save Failed: $save_affected records made/modified (expecting 1)";
 		}
+		
+		// also set the next field of the previously current record to refer to the currently current record
+		$q_set_next = $dbh->prepare("UPDATE Newsletters SET next=(SELECT id FROM Newsletters WHERE current_revision=1 AND current_newsletter=1) WHERE id=:x_current_id");
+		$q_set_next->bindParam(':x_current_id', $current_revision[0]['id']);
+		$q_set_next->execute();
 	}
 	
 	else if (strcmp($_POST['task'], 'save_instance') == 0)
 	{
 		// this will save a copy of the newsletter that is not current. It will insert a new record into the database that will not be overwritten
 		// an instance can be restored later by the user
-		$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,current_revision,current_newsletter,user) VALUES (:newsletter_name,:issue,:content,0,0,:user)");
+		$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,permanent,current_revision,current_newsletter,user) VALUES (:newsletter_name,:issue,:content,1,0,0,:user)");
 		$q_save_newsletter->bindParam(':newsletter_name', $_POST['title']);
 		$q_save_newsletter->bindParam(':issue', $_POST['issue']);
 		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
@@ -112,7 +102,7 @@ if (login_ok() == 1) {
 	else if (strcmp($_POST['task'], 'get_all_instances') == 0)
 	{
 		// this will get a list of ids and dates for all saved instances for a given newsletter issue exluding the current one
-		$q_get_revisions = $dbh->prepare("SELECT id,timestamp FROM Newsletters WHERE user=:user AND name=:newsletter_name AND issue=:issue AND current_revision=0 ORDER BY timestamp DESC");
+		$q_get_revisions = $dbh->prepare("SELECT id,timestamp FROM Newsletters WHERE user=:user AND name=:newsletter_name AND issue=:issue AND current_revision=0 AND permanent=1 ORDER BY timestamp DESC");
 		$q_get_revisions->bindParam(':user', $db_uid);
 		$q_get_revisions->bindParam(':newsletter_name', $_POST['title']);
 		$q_get_revisions->bindParam(':issue', $_POST['issue']);
@@ -164,6 +154,62 @@ if (login_ok() == 1) {
 			// do nothing if there is no data to load from db
 			// The js that calls this file will get back an empty string
 		}
+	}
+	
+	else if (strcmp($_POST['task'], 'previous') == 0)
+	{
+		if ($current_revision[0]['previous'] != Null)
+		{
+			// return the previous to current instance
+			$q_previous = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND id=:prev_id");
+			$q_previous->bindParam(':user', $db_uid);
+			$q_previous->bindParam(':prev_id', $current_revision[0]['previous']);
+			$q_previous->execute();
+			$newsletter = $q_previous->fetchAll(PDO::FETCH_ASSOC);
+			if (sizeof($newsletter) > 0)
+			{		
+				echo $newsletter[0]['content'];
+			}
+			else
+			{
+				// do nothing if there is no data to load from db
+				// The js that calls this file will get back an empty string
+			}
+		}
+	}
+	
+	else if (strcmp($_POST['task'], 'next') == 0)
+	{
+		if ($current_revision[0]['next'] != Null)
+		{
+			// return the next to current instance
+			$q_next = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND id=:next_id");
+			$q_next->bindParam(':user', $db_uid);
+			$q_next->bindParam(':next_id', $current_revision[0]['next']);
+			$q_next->execute();
+			$newsletter = $q_next->fetchAll(PDO::FETCH_ASSOC);
+			if (sizeof($newsletter) > 0)
+			{		
+				echo $newsletter[0]['content'];
+			}
+			else
+			{
+				// do nothing if there is no data to load from db
+				// The js that calls this file will get back an empty string
+			}
+		}
+	}
+	
+	
+	else if (strcmp($_POST['task'], 'clear_old') == 0)
+	{
+		// delete instances that are not permanent or current that are older than one day
+		// it's okay to be deleting the data of all users here:
+		// any non-permanent newsletter instance that has expired is due to go.
+		$q_clear_old = $dbh->prepare("DELETE FROM Newsletters WHERE permanent=0 AND current_revision=0 AND timestamp<:expire");
+		$yesterday = strtotime('-1 day');
+		$q_clear_old->bindParam(':expire', $yesterday);
+		$q_clear_old->execute();
 	}
 	
 	else

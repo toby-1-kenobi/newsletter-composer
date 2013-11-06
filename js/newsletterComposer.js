@@ -368,7 +368,7 @@ var setNewsletterCookie = function() {
 		var currentNewsletterDo = 0;
 	}
 	++currentNewsletterDo;
-	jQuery.cookies.set('newsletter_do_' + currentNewsletterDo, saveData);
+	jQuery.cookies.set('newsletterDo' + currentNewsletterDo, saveData);
 	jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
 	jQuery.cookies.set('newsletter_available_redo', 0);
 	$('.newsletter_redo').button('disable');
@@ -392,6 +392,7 @@ var newsletterUndo = function()
 		restore(data, false);
 		jQuery.cookies.set('current_newsletter_do', currentNewsletterDo);
 		var availableRedo = parseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
+		if (isNaN(availableRedo)) availableRedo = 0;
 		jQuery.cookies.set('newsletter_available_redo', ++availableRedo);
 		$('.newsletter_redo').button('enable');
 		if (currentNewsletterDo == 0)
@@ -409,6 +410,7 @@ var newsletterRedo = function()
 {
 	try {
 		var availableRedo = parseInt(jQuery.cookies.get('newsletter_available_redo'), 10);
+		if (isNaN(availableRedo)) availableRedo = 0;
 		if (availableRedo > 0) {
 			var currentNewsletterDo = parseInt(jQuery.cookies.get('current_newsletter_do'), 10);
 			++currentNewsletterDo;
