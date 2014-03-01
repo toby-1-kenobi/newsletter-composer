@@ -7,9 +7,8 @@ require_once 'db.php';
 <html>
 <head>
 
-<title>Newsletter Composer</title>
+<title>Newsletter Orangutan</title>
 
-<meta name="generator" content="Bluefish 2.2.2" />
 <meta name="author" content="Toby Anderson" />
 <meta name="description" content="Generate and Send a newsletter"/>
 <meta name="ROBOTS" content="NOINDEX, NOFOLLOW"/>
@@ -49,7 +48,7 @@ if (isset($uid)) {
 
 <body>
 
-<h1>Newsletter Composer</h1>
+<h1>Newsletter Orangutan</h1>
 
 <p><a href="instructions.html" >Instructions</a> <a href="https://docs.google.com/forms/d/1cQoTwTyWFGSvBKeUTcjtb49GQYtXFtv7WyYdrovoFHE/viewform">Feedback</a></p>
 
