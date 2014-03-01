@@ -49,17 +49,24 @@ function pad(number, length)
  */
 function encodeHTML(str)
 {
-	var encoded = "";
-	for (var i = 0; i < str.length; i++)
+	if (typeof str == 'string' || str instanceof String)
 	{
-		var c = str.charAt(i);
-		if (c < ' ' || c > '~' || c == '"')
+		var encoded = "";
+		for (var i = 0; i < str.length; i++)
 		{
-			c = "&#" + c.charCodeAt() + ";";
+			var c = str.charAt(i);
+			if (c < ' ' || c > '~' || c == '"')
+			{
+				c = "&#" + c.charCodeAt() + ";";
+			}
+			encoded += c;
 		}
-		encoded += c;
+		return encoded;
 	}
-	return encoded;
+	else
+	{ // if the input is not valid still return a valid output (empty string)
+		return "";
+	}
 
 }
 
@@ -358,6 +365,7 @@ var setNewsletterCookie = function() {
 			$('.last_save_date').text(lastSaveDate.toLocaleString());
 		}
 	});
+	/*
 	// save it also in a cookie for use of undo and redo
 	try {
 		//debugger;
@@ -373,6 +381,7 @@ var setNewsletterCookie = function() {
 	jQuery.cookies.set('newsletter_available_redo', 0);
 	$('.newsletter_redo').button('disable');
 	$('.newsletter_undo').button('enable');
+	*/
 };
 
 var setSendCookie = function() {
