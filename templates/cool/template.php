@@ -450,9 +450,10 @@ $template['web']['whole']['secondary']['para'] = $template['web']['whole']['main
 
 $template['web']['whole']['secondary']['list'] = $template['web']['whole']['main']['list'];
 
-$template['web']['whole']['secondary']['image'] = '<!--image--><a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="204" /></a><!--/image-->';
+$template['web']['whole']['secondary']['image'] = '<!--image--><a href="<!--IMAGE PATH--><!--CONTENT-->"><img style="-moz-box-shadow: 2px 2px 4px #000; -webkit-box-shadow: 2px 2px 4px #000; box-shadow: 2px 2px 4px #000; margin: 0; padding: 0; display: block;" src="<!--IMAGE PATH--><!--CONTENT-->" width="150" /></a><!--/image-->';
 
-$template['web']['between']['secondary']['items'] = "\n";
+//$template['web']['between']['secondary']['items'] = "\n";
+$template['web']['between']['secondary']['items'] = $break;
 
 $template['web']['whole']['secondary']['link'] = $template['web']['whole']['header']['link'];
 
@@ -475,11 +476,15 @@ $template['email']['begin']['secondary']['articleNoTitle'] = str_replace('<!--TE
 
 $template['email']['whole']['main']['list'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['whole']['main']['list']);
 
-$template['email']['whole']['secondary']['list'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['whole']['list']['list']);
+$template['email']['whole']['secondary']['list'] = str_replace('<!--TEMPLATE IMAGE PATH-->', '<!--FULL TEMPLATE IMAGE PATH-->', $template['web']['whole']['main']['list']);
 
 $template['email']['whole']['main']['image'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['whole']['main']['image']);
 
 $template['email']['whole']['secondary']['image'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['whole']['secondary']['image']);
+
+$template['email']['between']['main']['article-article'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['between']['main']['article-article']);
+
+$template['email']['between']['secondary']['article-article'] = str_replace('<!--IMAGE PATH-->', '<!--FULL IMAGE PATH-->', $template['web']['between']['secondary']['article-article']);
 
 
 $template['print']['begin']['header']['container'] = '';
