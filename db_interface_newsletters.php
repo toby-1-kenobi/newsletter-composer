@@ -39,7 +39,11 @@ if (login_ok() == 1) {
 	$current_revision = $q_get_current->fetchAll(PDO::FETCH_ASSOC);
 	
 	$current_newsletter_id  = null;
-	if (isset($_POST['nid'])) $current_newsletter_id = $_POST['nid'];
+	if (isset($_POST['newsletter_id']))
+	{
+		$current_newsletter_id = $_POST['newsletter_id'];
+		//TODO: check this newsletter belongs to this user
+	}
 	
 	function getCurrentNewsletterID()
 	{
@@ -89,6 +93,9 @@ if (login_ok() == 1) {
 			//echo 'Newsletter saved';
 			// return the datetime of the successful save in UTC
 			echo gmdate('Y-m-d H:i:s'), ' UTC';
+			
+			// Finally empty the future table because we can't redo from here
+			$dbh->query("DELETE FROM NewsletterFuture");
 		}
 		else
 		{
@@ -111,32 +118,12 @@ if (login_ok() == 1) {
 		echo json_encode($revisions);
 	}
 	
+	
 	else if (strcmp($_POST['task'], 'restore') == 0)
 	{
 		// get the saved record of the current newsletter
-		$q_get_current_newsletter = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND current_newsletter=1");
-		$q_get_current_newsletter->bindParam(':user', $db_uid);
-		$q_get_current_newsletter->execute();
-		$current_newsletter = $q_get_current_newsletter->fetchAll(PDO::FETCH_ASSOC);
-		
-		if (sizeof($current_newsletter) > 0)
-		{
-			echo $current_newsletter[0]['content'];
-		}
-		else
-		{
-			// do nothing if there is no data to load from db
-			// The js that calls this file will get back an empty string
-		}
-	}
-	
-	else if (strcmp($_POST['task'], 'restore_from_id') == 0)
-	{
-		// get the saved record of the identified newsletter
-		// also match the user id in the query to make certain one user can't restore another user's newsletter
-		$q_get_newsletter = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND id=:id");
-		$q_get_newsletter->bindParam(':user', $db_uid);
-		$q_get_newsletter->bindParam(':id', $_POST['newsletter_id']);
+		$q_get_newsletter = $dbh->prepare("SELECT * FROM Newsletters1 WHERE id=:id");
+		$q_get_newsletter->bindParam(':id', getCurrentNewsletterID());
 		$q_get_newsletter->execute();
 		$newsletter = $q_get_newsletter->fetchAll(PDO::FETCH_ASSOC);
 		
