@@ -38,25 +38,27 @@ if (login_ok() == 1) {
 	$q_get_current->execute();
 	$current_revision = $q_get_current->fetchAll(PDO::FETCH_ASSOC);
 	
-	if (sizeof($current_revision) > 1)
+	$current_newsletter_id  = null;
+	if (isset($_POST['nid'])) $current_newsletter_id = $_POST['nid'];
+	
+	function getCurrentNewsletterID()
 	{
-		// if there's more than on current revision of this newsletter something went seriously wrong
-		//TODO: make the one with the most recent timestamp the current
+		// if we don't know which is the current newsletter assume it's the most recent
+		if ($current_newsletter_id == null)
+		{
+			$recent_newsletter_id = $dbh->query("SELECT id FROM Newsletters1 Where user={$db_uid} HAVING MAX(`timestamp`)");
+			$current_newsletter_id = $recent_newsletter_id[0]['id'];
+			$recent_newsletter_id->closeCursor();
+		}
+		return $current_newsletter_id;
 	}
 	
 	if (strcmp($_POST['task'], 'save') == 0)
-	{
-		// first clear the current newsletter and revision flags
-		$q_clear_current_newsletter->execute();
-		$q_clear_current_revision->execute();
-		
-		// now create a new entry
-		$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,current_revision,current_newsletter,user, previous) VALUES (:newsletter_name,:issue,:content,1,1,:user, :previous)");
-		$q_save_newsletter->bindParam(':newsletter_name', $_POST['title']);
-		$q_save_newsletter->bindParam(':issue', $_POST['issue']);
+	{		
+		// create a new entry in the NewsletterSaves table
+		$q_save_newsletter = $dbh->prepare("INSERT INTO NewsletterSaves (newsletter, content) VALUES (:newsletter_id,:content)");
+		$q_save_newsletter->bindParam(':newsletter_id', getCurrentNewsletterID());
 		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
-		$q_save_newsletter->bindParam(':user', $db_uid);
-		$q_save_newsletter->bindParam(':previous', $current_revision[0]['id'])	;
 		//$q_save_newsletter->debugDumpParams();
 		$q_save_newsletter->execute();
 		$save_affected = $q_save_newsletter->rowCount();
@@ -69,14 +71,9 @@ if (login_ok() == 1) {
 		{
 			echo "Save Failed: $save_affected records made/modified (expecting 1)";
 		}
-		
-		// also set the next field of the previously current record to refer to the currently current record
-		$q_set_next = $dbh->prepare("UPDATE Newsletters SET next=(SELECT id FROM Newsletters WHERE current_revision=1 AND current_newsletter=1) WHERE id=:x_current_id");
-		$q_set_next->bindParam(':x_current_id', $current_revision[0]['id']);
-		$q_set_next->execute();
 	}
 	
-	else if (strcmp($_POST['task'], 'save_instance') == 0)
+	else if (strcmp($_POST['task'], 'autosave') == 0)
 	{
 		// this will save a copy of the newsletter that is not current. It will insert a new record into the database that will not be overwritten
 		// an instance can be restored later by the user
