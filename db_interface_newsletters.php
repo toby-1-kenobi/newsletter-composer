@@ -96,13 +96,11 @@ if (login_ok() == 1) {
 		}
 	}
 	
-	else if (strcmp($_POST['task'], 'get_all_instances') == 0)
+	else if (strcmp($_POST['task'], 'get_all_saves') == 0)
 	{
-		// this will get a list of ids and dates for all saved instances for a given newsletter issue exluding the current one
-		$q_get_revisions = $dbh->prepare("SELECT id,timestamp FROM Newsletters WHERE user=:user AND name=:newsletter_name AND issue=:issue AND current_revision=0 AND permanent=1 ORDER BY timestamp DESC");
-		$q_get_revisions->bindParam(':user', $db_uid);
-		$q_get_revisions->bindParam(':newsletter_name', $_POST['title']);
-		$q_get_revisions->bindParam(':issue', $_POST['issue']);
+		// this will get a list of ids and dates for all saved instances of a given newsletter issue
+		$q_get_revisions = $dbh->prepare("SELECT id,timestamp FROM NewsletterSaves WHERE newsletter=:newsletter_id ORDER BY timestamp DESC");
+		$q_get_revisions->bindParam(':newsletter_id', getCurrentNewsletterID);
 		$q_get_revisions->execute();
 		$revisions = $q_get_revisions->fetchAll(PDO::FETCH_ASSOC);
 		// convert all the dates to UTC
