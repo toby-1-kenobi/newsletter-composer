@@ -75,13 +75,13 @@ if (login_ok() == 1) {
 	
 	else if (strcmp($_POST['task'], 'autosave') == 0)
 	{
-		// this will save a copy of the newsletter that is not current. It will insert a new record into the database that will not be overwritten
-		// an instance can be restored later by the user
-		$q_save_newsletter = $dbh->prepare("INSERT INTO Newsletters (name,issue,content,permanent,current_revision,current_newsletter,user) VALUES (:newsletter_name,:issue,:content,1,0,0,:user)");
-		$q_save_newsletter->bindParam(':newsletter_name', $_POST['title']);
-		$q_save_newsletter->bindParam(':issue', $_POST['issue']);
+		// this is to happen after every change of the newsletter to keep the history table up to date
+		// first copy the current content into the history table
+		$dbh->query("INSERT INTO NewsletterHistory (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID());
+		// now update the content in the current newsletter
+		$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
 		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
-		$q_save_newsletter->bindParam(':user', $db_uid);
+		$q_save_newsletter->bindParam(':id', getCurrentNewsletterID());
 		$q_save_newsletter->execute();
 		$save_affected = $q_save_newsletter->rowCount();
 		if ($save_affected == 1)
