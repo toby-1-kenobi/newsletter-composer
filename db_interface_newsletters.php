@@ -41,8 +41,15 @@ if (login_ok() == 1) {
 	$current_newsletter_id  = null;
 	if (isset($_POST['newsletter_id']))
 	{
-		$current_newsletter_id = $_POST['newsletter_id'];
-		//TODO: check this newsletter belongs to this user
+		// if a newsletter id is fed in we have to check it exists and belongs to the current user
+		$q_check_id = $dbh->prepare("SELECT * FROM Newsletters1 WHERE id = :id and user = :user");
+		$q_check_id->bindParam(':id', $_POST['newsletter_id']);
+		$q_check_id->bindParam(':user', $db_uid);
+		$q_check_id->execute();
+		if ($q_check_id->rowCount() > 0)
+		{
+			$current_newsletter_id = $_POST['newsletter_id'];
+		}
 	}
 	
 	function getCurrentNewsletterID()
@@ -56,6 +63,11 @@ if (login_ok() == 1) {
 			$recent_newsletter_id->closeCursor();
 		}
 		return $current_newsletter_id;
+	}
+	
+	if (strcmp($_POST['task', 'get_newsletter_id') == 0)
+	{
+		echo getCurrentNewsletterID();
 	}
 	
 	if (strcmp($_POST['task'], 'save') == 0)
