@@ -229,6 +229,8 @@ else { // the user is logged in or attempting to log in
   <input class="input-issue save" type="text" name="issuenum" size="4" maxlength="3" id="issuenum" />
   <label for="issuedate">Issue date: </label>
   <input class="input-issue save" type="text" name="issuedate" size="12" id="issuedate" /></div>
+  
+  <input type="hidden" id="nesletterID" />
 
 <div id="newslettercontent">
 
