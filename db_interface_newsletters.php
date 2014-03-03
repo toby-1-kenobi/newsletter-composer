@@ -50,7 +50,8 @@ if (login_ok() == 1) {
 		// if we don't know which is the current newsletter assume it's the most recent
 		if ($current_newsletter_id == null)
 		{
-			$recent_newsletter_id = $dbh->query("SELECT id FROM Newsletters1 Where user={$db_uid} HAVING MAX(`timestamp`)");
+			$q_recent_newsletter_id = $dbh->query("SELECT id FROM Newsletters1 Where user={$db_uid} HAVING MAX(`timestamp`)");
+			$recent_newsletter_id = $q_recent_newsletter_id->fetchAll(PDO:FETCH_ASSOC);
 			$current_newsletter_id = $recent_newsletter_id[0]['id'];
 			$recent_newsletter_id->closeCursor();
 		}
@@ -94,8 +95,8 @@ if (login_ok() == 1) {
 			// return the datetime of the successful save in UTC
 			echo gmdate('Y-m-d H:i:s'), ' UTC';
 			
-			// Finally empty the future table because we can't redo from here
-			$dbh->query("DELETE FROM NewsletterFuture");
+			// Finally empty the future table for this user because we can't redo from here
+			$dbh->query("DELETE FROM NewsletterFuture WHERE newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID() . ')');
 		}
 		else
 		{
@@ -138,47 +139,51 @@ if (login_ok() == 1) {
 		}
 	}
 	
-	else if (strcmp($_POST['task'], 'previous') == 0)
+	else if (strcmp($_POST['task'], 'undo') == 0)
 	{
-		if ($current_revision[0]['previous'] != Null)
+		// get the latest entry for the current newsletter from the history table
+		$q_latest_history = $dbh->query("SELECT * FROM NewsletterHistory WHERE newsletter = " . getCurrentNewsletterID() . " HAVING MAX(`timestamp`)");
+		if ($q_latest_history->rowCount() == 1)
 		{
-			// return the previous to current instance
-			$q_previous = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND id=:prev_id");
-			$q_previous->bindParam(':user', $db_uid);
-			$q_previous->bindParam(':prev_id', $current_revision[0]['previous']);
-			$q_previous->execute();
-			$newsletter = $q_previous->fetchAll(PDO::FETCH_ASSOC);
-			if (sizeof($newsletter) > 0)
-			{		
-				echo $newsletter[0]['content'];
-			}
-			else
-			{
-				// do nothing if there is no data to load from db
-				// The js that calls this file will get back an empty string
-			}
+			// store the current content into the future table
+			$dbh->query("INSERT INTO NewsletterFuture (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID());
+			// update the newsletter table with the data from history
+			$latest_history = $q_latest_history->fetchAll(PDO::FETCH_ASSOC);
+			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
+			$q_save_newsletter->bindParam(':content', $latest_history[0]['content']);
+			$q_save_newsletter->bindParam(':id', getCurrentNewsletterID());
+			$q_save_newsletter->execute();
+			// delete the record we used from the history table
+			$dbh->query("DELETE FROM NewslettersHistory WHERE id = " . $latest_history[0]['id']);
+		}
+		else
+		{
+			// do nothing if there is no data to load from db
+			// The js that calls this file will get back an empty string
 		}
 	}
 	
-	else if (strcmp($_POST['task'], 'next') == 0)
+	else if (strcmp($_POST['task'], 'redo') == 0)
 	{
-		if ($current_revision[0]['next'] != Null)
+		// get the latest entry for the current newsletter from the future table
+		$q_latest_future = $dbh->query("SELECT * FROM NewsletterFuture WHERE newsletter = " . getCurrentNewsletterID() . " HAVING MAX(`timestamp`)");
+		if ($q_latest_future->rowCount() == 1)
 		{
-			// return the next to current instance
-			$q_next = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND id=:next_id");
-			$q_next->bindParam(':user', $db_uid);
-			$q_next->bindParam(':next_id', $current_revision[0]['next']);
-			$q_next->execute();
-			$newsletter = $q_next->fetchAll(PDO::FETCH_ASSOC);
-			if (sizeof($newsletter) > 0)
-			{		
-				echo $newsletter[0]['content'];
-			}
-			else
-			{
-				// do nothing if there is no data to load from db
-				// The js that calls this file will get back an empty string
-			}
+			// store the current content into the history table
+			$dbh->query("INSERT INTO NewsletterHistory (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID());
+			// update the newsletter table with the data from future
+			$latest_future = $q_latest_future->fetchAll(PDO::FETCH_ASSOC);
+			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
+			$q_save_newsletter->bindParam(':content', $latest_future[0]['content']);
+			$q_save_newsletter->bindParam(':id', getCurrentNewsletterID());
+			$q_save_newsletter->execute();
+			// delete the record we used from the future table
+			$dbh->query("DELETE FROM NewslettersFuture WHERE id = " . $latest_future[0]['id']);
+		}
+		else
+		{
+			// do nothing if there is no data to load from db
+			// The js that calls this file will get back an empty string
 		}
 	}
 	
