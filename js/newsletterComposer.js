@@ -798,6 +798,11 @@ $(document).ready(function() {
 		}
 	});
 	
+	// get the newsletter id
+	jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
+		$('#newsletterID').val(data);
+	}
+	
 	// if there's no newsletter undo cookies set the 0 cookie to be the current state
 	if (jQuery.cookies.get('current_newsletter_do') == null)
 	{
@@ -833,7 +838,7 @@ $(document).ready(function() {
 	// bind the "save issue" buttons to allow the user to save this revision for later retrieval
 	$('.saveIssue').click(function() {
 		var saveData = collectNewsletterData();
-		jQuery.post('db_interface_newsletters.php', {task: "save_instance", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
+		jQuery.post('db_interface_newsletters.php', {task: "save", newsletter_id: $('#newsletterID').val(), content: saveData}, function(data) {
 			if (data.indexOf('Fail') >= 0) {
 				alert (data);
 			}
@@ -852,14 +857,16 @@ $(document).ready(function() {
 	
 	$('select.load_revision').change( function() {
 		// before loading a new revision we should save this one
-		jQuery.post('db_interface_newsletters.php', {task: "save_instance", title: $('#newsletterTitle').val(), issue: $('#issuenum').val(), content: saveData}, function(data) {
+		var saveData = collectNewsletterData();
+		jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(data) {
 			if (data.indexOf('Fail') >= 0) {
 				// if the save fails then just alert the error and keep going
 				alert (data);
 			}
 		});
 		// now load the selected revision
-		jQuery.post('db_interface_newsletters.php', {task: "restore_from_id", newsletter_id: $(this).val()}, function(data) {
+		$('#newsletterID').val($(this).val())
+		jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $(this).val()}, function(data) {
 			if (data.indexOf('Fail') >= 0) {alert (data);}
 			else if (data === '') {
 				// do nothing if there's no data to get
