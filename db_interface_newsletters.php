@@ -188,15 +188,16 @@ if (login_ok() == 1) {
 	}
 	
 	
-	else if (strcmp($_POST['task'], 'clear_old') == 0)
+	else if (strcmp($_POST['task'], 'clear_old_history') == 0)
 	{
-		// delete instances that are not permanent or current that are older than one day
-		// it's okay to be deleting the data of all users here:
-		// any non-permanent newsletter instance that has expired is due to go.
-		$q_clear_old = $dbh->prepare("DELETE FROM Newsletters WHERE permanent=0 AND current_revision=0 AND timestamp<:expire");
+		// clear both the redo and undo history of entries older than a day
 		$yesterday = strtotime('-1 day');
-		$q_clear_old->bindParam(':expire', $yesterday);
-		$q_clear_old->execute();
+		$q_clear_history = $dbh->prepare("DELETE FROM NewsletterHistory WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID() . ')');
+		$q_clear_history->bindParam(':expire', $yesterday);
+		$q_clear_history->execute();
+		$q_clear_future = $dbh->prepare("DELETE FROM NewsletterFuture WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID() . ')');
+		$q_clear_future->bindParam(':expire', $yesterday);
+		$q_clear_future->execute();
 	}
 	
 	else
