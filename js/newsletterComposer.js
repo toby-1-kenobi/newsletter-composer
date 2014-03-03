@@ -540,7 +540,7 @@ var addRecipientHandler = function(){
 
 // restore form content from JSON 
 function restore(jsonData, isString) {
-	//debugger;
+	debugger;
 	if(typeof(isString)==='undefined') isString = true;
 	if (isString)
 	{
@@ -801,13 +801,8 @@ $(document).ready(function() {
 	// get the newsletter id
 	jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
 		$('#newsletterID').val(data);
-	}
+	});
 	
-	// if there's no newsletter undo cookies set the 0 cookie to be the current state
-	if (jQuery.cookies.get('current_newsletter_do') == null)
-	{
-		jQuery.cookies.set('newsletter_do_0', collectNewsletterData());
-	}
 	
 	try {
 		var sendData = jQuery.cookies.get('send');
