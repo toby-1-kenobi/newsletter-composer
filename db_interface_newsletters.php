@@ -18,25 +18,6 @@ if (login_ok() == 1) {
 	$db_uid_row = $q_get_uid->fetch();
 	$db_uid = $db_uid_row['id'];
 	
-	// set up some statements for clearing the current_newsletter and current_revision flags for this user
-	$q_clear_current_newsletter = $dbh->prepare("UPDATE Newsletters SET current_newsletter=0 WHERE user=:user");
-	$q_clear_current_newsletter->bindParam(':user', $db_uid);
-	
-	
-	$q_clear_current_revison = $dbh->prepare("UPDATE Newsletters SET current_revision=0 WHERE user=:user AND name=':newsletter_name' AND issue=':issue'");
-	$q_clear_current_revison->bindParam(':user', $_SESSION['uid']);
-	$q_clear_current_revison->bindParam(':newsletter_name', $_POST['title']);
-	$q_clear_current_revison->bindParam(':issue', $_POST['issue']);
-	
-	
-	// get the record of the current save for this newsletter
-	$q_get_current = $dbh->prepare("SELECT * FROM Newsletters WHERE user=:user AND name=:newsletter_name AND issue=:issue AND current_revision=1");
-	$q_get_current->bindParam(':user', $db_uid);
-	$q_get_current->bindParam(':newsletter_name', $_POST['title']);
-	$q_get_current->bindParam(':issue', $_POST['issue']);
-	$q_get_current->execute();
-	$current_revision = $q_get_current->fetchAll(PDO::FETCH_ASSOC);
-	
 	$current_newsletter_id  = null;
 	if (isset($_POST['newsletter_id']))
 	{
@@ -202,12 +183,13 @@ if (login_ok() == 1) {
 	{
 		// clear both the redo and undo history of entries older than a day
 		$yesterday = strtotime('-1 day');
-		$q_clear_history = $dbh->prepare("DELETE FROM NewsletterHistory WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
-		$q_clear_history->bindParam(':expire', $yesterday);
-		$q_clear_history->execute();
-		$q_clear_future = $dbh->prepare("DELETE FROM NewsletterFuture WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
-		$q_clear_future->bindParam(':expire', $yesterday);
-		$q_clear_future->execute();
+		$table = 'NewsletterHistory';
+		$q_clear_table = $dbh->prepare("DELETE FROM :table WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
+		$q_clear_table->bindParam(':expire', $yesterday);
+		$q_clear_table->bindParam(':table', $table);
+		$q_clear_table->execute();
+		$table = 'NewsletterFuture';
+		$q_clear_table->execute();
 	}
 	
 	else
