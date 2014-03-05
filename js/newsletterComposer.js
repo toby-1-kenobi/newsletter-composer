@@ -402,6 +402,10 @@ var newsletterRedo = function()
 	});
 }
 
+var changeNewsletter = function()
+{
+}
+
 // when content is added dynamically we have to remember to also bind event handlers, etc
 function bindArticleButtons(article) {
 	article.find('.addPara').click(function(){
@@ -769,6 +773,9 @@ $(document).ready(function() {
 	
 	// in case user has just imported recipients from a file
 	setSendCookie();
+	
+	// bind changes to newsletter key fields to change the newsletter
+	$('.input-issue.key').change(changeNewsletter);
 	
 	// bind changes to the newsletter to get saved
 	$('.input-issue.save').change(setNewsletterCookie);

@@ -223,10 +223,10 @@ else { // the user is logged in or attempting to log in
   </div>
   
   <div><label for="newsletterTitle">Newsletter title: </label>
-  <input class="input-issue save" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
+  <input class="input-issue save key" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
   
   <div><label for="issuednum">Issue number: </label>
-  <input class="input-issue save" type="text" name="issuenum" size="4" maxlength="3" id="issuenum" />
+  <input class="input-issue save key" type="text" name="issuenum" size="4" maxlength="3" id="issuenum" />
   <label for="issuedate">Issue date: </label>
   <input class="input-issue save" type="text" name="issuedate" size="12" id="issuedate" /></div>
   
