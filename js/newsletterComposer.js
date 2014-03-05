@@ -385,6 +385,7 @@ var newsletterUndo = function()
 		{
 			$('.newsletter_redo').button('enable');
 		}
+	});
 }
 
 var newsletterRedo = function()
@@ -398,6 +399,7 @@ var newsletterRedo = function()
 		{
 			$('.newsletter_undo').button('enable');
 		}
+	});
 }
 
 // when content is added dynamically we have to remember to also bind event handlers, etc
@@ -457,7 +459,7 @@ function buildArticles(array, followingElement) {
 
 function populateLoadRevisions()
 {
-	jQuery.post('db_interface_newsletters.php', {task: "get_all_instances", title: $('#newsletterTitle').val(), issue: $('#issuenum').val()}, function(data) {
+	jQuery.post('db_interface_newsletters.php', {task: "get_all_saves", newsletter_id: $('#newsletterID').val()}, function(data) {
 		
 		//alert (data);
 		// first empty the select box
@@ -494,7 +496,7 @@ var addRecipientHandler = function(){
 
 // restore form content from JSON 
 function restore(jsonData, isString) {
-	debugger;
+	//debugger;
 	if(typeof(isString)==='undefined') isString = true;
 	if (isString)
 	{
