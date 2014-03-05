@@ -230,7 +230,7 @@ else { // the user is logged in or attempting to log in
   <label for="issuedate">Issue date: </label>
   <input class="input-issue save" type="text" name="issuedate" size="12" id="issuedate" /></div>
   
-  <input type="hidden" id="nesletterID" />
+  <input type="hidden" id="newsletterID" />
 
 <div id="newslettercontent">
 
