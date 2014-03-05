@@ -149,8 +149,7 @@ if (login_ok() == 1) {
 		}
 		else
 		{
-			// do nothing if there is no data to load from db
-			// The js that calls this file will get back an empty string
+			echo 'no data';
 		}
 	}
 	
@@ -173,8 +172,7 @@ if (login_ok() == 1) {
 		}
 		else
 		{
-			// do nothing if there is no data to load from db
-			// The js that calls this file will get back an empty string
+			echo 'no data';
 		}
 	}
 	
