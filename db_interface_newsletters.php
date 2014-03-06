@@ -176,6 +176,32 @@ if (login_ok() == 1) {
 		}
 	}
 	
+	else if (strcmp($_POST['task'], 'change_newsletter') == 0)
+	{
+		$q_find_newsletter = $dbh->query("SELECT id FROM Newsletters1 WHERE user=:user AND name=:title AND issue=:issue");
+		$q_find_newsletter->bindParam(':user', $db_uid);
+		$q_find_newsletter->bindParam(':title', $_POST['newsletter_title']);
+		$q_find_newsletter->bindParam(':issue', $_POST['newsletter_issue']);
+		$find_newsletter = $q_find_newsletter->execute();
+		// if the newsletter doesn't exist add it
+		if ($find_newsletter->rowCount() == 0)
+		{
+			$q_new_newsletter = $dbh->prepare("INSERT INTO Newsletters1 (user, name, issue) VALUES (:user, :title, :issue)");
+			$q_new_newsletter->bindParam(':user', $db_uid);
+			$q_new_newsletter->bindParam(':title', $_POST['newsletter_title']);
+			$q_new_newsletter->bindParam(':issue', $_POST['newsletter_issue']);
+			$q_new_newsletter->execute();
+			// output the newsletter id which can be used to perform a restore
+			echo $q_new_newsletter->lastInsertId();
+		}
+		else
+		{
+			$found_newsletter = $q_find_newsletter->fetchAll(PDO::FETCH_ASSOC);
+			echo $found_newsletter[0]['id'];
+		}
+		
+	}
+	
 	
 	else if (strcmp($_POST['task'], 'clear_old_history') == 0)
 	{
