@@ -404,6 +404,8 @@ var newsletterRedo = function()
 
 var changeNewsletter = function()
 {
+	var content = collectNewsletterData();
+	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#newsletterIssue').val(), content: content}, restoreById(data));
 }
 
 // when content is added dynamically we have to remember to also bind event handlers, etc
@@ -478,6 +480,32 @@ function populateLoadRevisions()
 			$('.load_revision').append("<option class=\"revision\" value=\"" + instances[i]['id'] + "\">" + datetime.toLocaleString() + "</option>");
 		}
 		
+	});
+}
+
+function restoreById(newsletter_id) {
+	// load the selected revision
+	$('#newsletterID').val($newsletter_id)
+	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $newsletter_id}, function(data) {
+			if (data.indexOf('Fail') >= 0) {alert (data);}
+			else if (data === '') {
+				// do nothing if there's no data to get
+			}
+			else
+			{
+				//alert (data);
+				// before loading a new revision we should save this one
+				var saveData = collectNewsletterData();
+				jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
+					if (response.indexOf('Fail') >= 0) {
+						// if the save fails then just alert the error and keep going
+						alert (response);
+					}
+				});
+				$('.input-issue').clearForm();
+				$('.article').remove();
+				restore(data);
+			}
 	});
 }
 
@@ -813,30 +841,8 @@ $(document).ready(function() {
 		});
 	});
 	
-	$('select.load_revision').change( function() {
-		// load the selected revision
-		$('#newsletterID').val($(this).val())
-		jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $(this).val()}, function(data) {
-			if (data.indexOf('Fail') >= 0) {alert (data);}
-			else if (data === '') {
-				// do nothing if there's no data to get
-			}
-			else
-			{
-				//alert (data);
-				// before loading a new revision we should save this one
-				var saveData = collectNewsletterData();
-				jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
-					if (response.indexOf('Fail') >= 0) {
-						// if the save fails then just alert the error and keep going
-						alert (response);
-					}
-				});
-				$('.input-issue').clearForm();
-				$('.article').remove();
-				restore(data);
-			}
-		});
+	$('select.load_revision').change(function(){
+		restoreById($(this).val());
 	});
 	
 	// bind the clear form buttons

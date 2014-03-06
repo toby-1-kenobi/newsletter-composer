@@ -100,15 +100,23 @@ if (login_ok() == 1) {
 	{
 		// this will get a list of ids and dates for all saved instances of a given newsletter issue
 		$q_get_revisions = $dbh->prepare("SELECT id,timestamp FROM NewsletterSaves WHERE newsletter=:newsletter_id ORDER BY timestamp DESC");
-		$q_get_revisions->bindParam(':newsletter_id', getCurrentNewsletterID);
+		$q_get_revisions->bindParam(':newsletter_id', getCurrentNewsletterID($dbh, $db_uid));
 		$q_get_revisions->execute();
-		$revisions = $q_get_revisions->fetchAll(PDO::FETCH_ASSOC);
-		// convert all the dates to UTC
-		foreach ($revisions as $rev_i => $revision)
+		if ($q_get_revisions->rowCount() > 0)
 		{
-			$revisions[$rev_i]['timestamp'] = gmdate('Y-m-d H:i:s', date_timestamp_get(date_create($revisions[$rev_i]['timestamp']))) . ' UTC';
+			$revisions = $q_get_revisions->fetchAll(PDO::FETCH_ASSOC);
+			// convert all the dates to UTC
+			foreach ($revisions as $rev_i => $revision)
+			{
+				$revisions[$rev_i]['timestamp'] = gmdate('Y-m-d H:i:s', date_timestamp_get(date_create($revisions[$rev_i]['timestamp']))) . ' UTC';
+			}
+			echo json_encode($revisions);
 		}
-		echo json_encode($revisions);
+		else
+		{
+			// do nothing if there is no data to load from db
+			// The js that calls this file will get back an empty string
+		}
 	}
 	
 	else if (strcmp($_POST['task'], 'restore') == 0)
@@ -186,10 +194,11 @@ if (login_ok() == 1) {
 		// if the newsletter doesn't exist add it
 		if ($find_newsletter->rowCount() == 0)
 		{
-			$q_new_newsletter = $dbh->prepare("INSERT INTO Newsletters1 (user, name, issue) VALUES (:user, :title, :issue)");
+			$q_new_newsletter = $dbh->prepare("INSERT INTO Newsletters1 (user, name, issue, content) VALUES (:user, :title, :issue, :content)");
 			$q_new_newsletter->bindParam(':user', $db_uid);
 			$q_new_newsletter->bindParam(':title', $_POST['newsletter_title']);
 			$q_new_newsletter->bindParam(':issue', $_POST['newsletter_issue']);
+			$q_new_newsletter->bindParam(':content', $_POST['content']);
 			$q_new_newsletter->execute();
 			// output the newsletter id which can be used to perform a restore
 			echo $q_new_newsletter->lastInsertId();
