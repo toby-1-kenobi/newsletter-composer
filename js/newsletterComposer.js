@@ -239,7 +239,8 @@ function bindControls(elements) {
 	elements.find('button.delete').button({icons:{primary: "ui-icon-trash"},text:false}).click(deleteElement);
 }
 
-function logoMugshotHandler(container) {
+function logoMugshotHandler(container)
+{
 		//var parent = $(this).parent();
 		var uploadControl = "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
 		uploadControl += '<button class="removeImage">Remove</button>';
@@ -248,17 +249,21 @@ function logoMugshotHandler(container) {
 		container.find('.imageUpload').bind('change', imageUploadHandler);
 		container.find('.input-issue.save').change(setNewsletterCookie);
 		container.find('button.removeImage').button({icons:{primary: "ui-icon-trash"},text:false}).click(function(){
-			var parent = $(this).parent()
-			parent.find('input.imageUpload').remove();
-			parent.find('input.imageLoaded').parent().remove();
-			var freshButton = '<button>Upload</button>';
-			$(this).replaceWith(freshButton);
-			parent.find('button').button({icons:{primary: "ui-icon-image"},text:false}).click(function(){
-				logoMugshotHandler($(this).parent());
-			});
-			setNewsletterCookie();
+			logoMugshotReset($(this).parent());
 		});
-};
+}
+
+function logoMugshotReset(container)
+{
+	container.find('input.imageUpload').remove();
+	container.find('input.imageLoaded').parent().remove();
+	var freshButton = '<button>Upload</button>';
+	$(this).replaceWith(freshButton);
+	container.find('button').button({icons:{primary: "ui-icon-image"},text:false}).click(function(){
+		logoMugshotHandler($(this).parent());
+	});
+	setNewsletterCookie();
+}
 	
 // harvest the data entered for the newsletter
 function collectNewsletterData() {
@@ -383,6 +388,7 @@ var newsletterUndo = function()
 		}
 		else
 		{
+			restoreById($('#newsletterID').val());
 			$('.newsletter_redo').button('enable');
 		}
 	});
@@ -397,6 +403,7 @@ var newsletterRedo = function()
 		}
 		else
 		{
+			restoreById($('#newsletterID').val());
 			$('.newsletter_undo').button('enable');
 		}
 	});
@@ -405,7 +412,10 @@ var newsletterRedo = function()
 var changeNewsletter = function()
 {
 	var content = collectNewsletterData();
-	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#newsletterIssue').val(), content: content}, restoreById(data));
+	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#issuenum').val(), content: content}, function(data){
+		//alert(data);
+		restoreById(data);
+	});
 }
 
 // when content is added dynamically we have to remember to also bind event handlers, etc
@@ -472,12 +482,15 @@ function populateLoadRevisions()
 		$('option.revision').remove();
 		
 		// then fill it with the revisions
-		var instances = jQuery.parseJSON(data);
-		for (var i = 0; i < instances.length; ++i)
+		if (data != '')
 		{
-			// timestamp comes through as a UTC datetime so convert it to local time by making a date object
-			var datetime = new Date(instances[i]['timestamp']);
-			$('.load_revision').append("<option class=\"revision\" value=\"" + instances[i]['id'] + "\">" + datetime.toLocaleString() + "</option>");
+			var instances = jQuery.parseJSON(data);
+			for (var i = 0; i < instances.length; ++i)
+			{
+				// timestamp comes through as a UTC datetime so convert it to local time by making a date object
+				var datetime = new Date(instances[i]['timestamp']);
+				$('.load_revision').append("<option class=\"revision\" value=\"" + instances[i]['id'] + "\">" + datetime.toLocaleString() + "</option>");
+			}
 		}
 		
 	});
@@ -485,8 +498,7 @@ function populateLoadRevisions()
 
 function restoreById(newsletter_id) {
 	// load the selected revision
-	$('#newsletterID').val($newsletter_id)
-	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $newsletter_id}, function(data) {
+	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: newsletter_id}, function(data) {
 			if (data.indexOf('Fail') >= 0) {alert (data);}
 			else if (data === '') {
 				// do nothing if there's no data to get
@@ -502,8 +514,11 @@ function restoreById(newsletter_id) {
 						alert (response);
 					}
 				});
+				$('#newsletterID').val(newsletter_id);
 				$('.input-issue').clearForm();
 				$('.article').remove();
+				logoMugshotReset($('#logo'));
+				logoMugshotReset($('#mugshot'));
 				restore(data);
 			}
 	});

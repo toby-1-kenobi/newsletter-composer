@@ -50,7 +50,7 @@ if (login_ok() == 1) {
 		echo getCurrentNewsletterID($dbh, $db_uid);
 	}
 	
-	if (strcmp($_POST['task'], 'save') == 0)
+	else if (strcmp($_POST['task'], 'save') == 0)
 	{		
 		// create a new entry in the NewsletterSaves table
 		$q_save_newsletter = $dbh->prepare("INSERT INTO NewsletterSaves (newsletter, content) VALUES (:newsletter_id,:content)");
@@ -87,8 +87,8 @@ if (login_ok() == 1) {
 			// return the datetime of the successful save in UTC
 			echo gmdate('Y-m-d H:i:s'), ' UTC';
 			
-			// Finally empty the future table for this user because we can't redo from here
-			$dbh->query("DELETE FROM NewsletterFuture WHERE newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
+			// Finally delete entries for this newsletter from the future table for this user because we can't redo from here
+			$dbh->query("DELETE FROM NewsletterFuture WHERE newsletter = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
 		}
 		else
 		{
@@ -186,28 +186,26 @@ if (login_ok() == 1) {
 	
 	else if (strcmp($_POST['task'], 'change_newsletter') == 0)
 	{
-		$q_find_newsletter = $dbh->query("SELECT id FROM Newsletters1 WHERE user=:user AND name=:title AND issue=:issue");
+		$q_find_newsletter = $dbh->prepare("SELECT id FROM Newsletters1 WHERE user=:user AND name=:title AND issue=:issue");
 		$q_find_newsletter->bindParam(':user', $db_uid);
 		$q_find_newsletter->bindParam(':title', $_POST['newsletter_title']);
 		$q_find_newsletter->bindParam(':issue', $_POST['newsletter_issue']);
-		$find_newsletter = $q_find_newsletter->execute();
+		$q_find_newsletter->execute();
 		// if the newsletter doesn't exist add it
-		if ($find_newsletter->rowCount() == 0)
+		if ($q_find_newsletter->rowCount() == 0)
 		{
 			$q_new_newsletter = $dbh->prepare("INSERT INTO Newsletters1 (user, name, issue, content) VALUES (:user, :title, :issue, :content)");
 			$q_new_newsletter->bindParam(':user', $db_uid);
 			$q_new_newsletter->bindParam(':title', $_POST['newsletter_title']);
 			$q_new_newsletter->bindParam(':issue', $_POST['newsletter_issue']);
-			$q_new_newsletter->bindParam(':content', $_POST['content']);
+			$q_new_newsletter->bindParam(':content', json_encode($_POST['content']));
 			$q_new_newsletter->execute();
-			// output the newsletter id which can be used to perform a restore
-			echo $q_new_newsletter->lastInsertId();
+			// now we can try that original query again.
+			$q_find_newsletter->execute();
 		}
-		else
-		{
-			$found_newsletter = $q_find_newsletter->fetchAll(PDO::FETCH_ASSOC);
-			echo $found_newsletter[0]['id'];
-		}
+		
+		$found_newsletter = $q_find_newsletter->fetchAll(PDO::FETCH_ASSOC);
+		echo $found_newsletter[0]['id'];
 		
 	}
 	
