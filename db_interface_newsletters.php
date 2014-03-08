@@ -18,9 +18,13 @@ if (login_ok() == 1) {
 	$db_uid_row = $q_get_uid->fetch();
 	$db_uid = $db_uid_row['id'];
 	
+	//echo "<p>db uid: {$db_uid}</p>";
+	//echo "<p>posting nl id: {$_POST['newsletter_id']}</p>";
+	
 	$current_newsletter_id  = null;
 	if (isset($_POST['newsletter_id']))
 	{
+		//echo "<p>checking valid nl id: {$_POST['newsletter_id']}</p>";
 		// if a newsletter id is fed in we have to check it exists and belongs to the current user
 		$q_check_id = $dbh->prepare("SELECT * FROM Newsletters1 WHERE id = :id and user = :user");
 		$q_check_id->bindParam(':id', $_POST['newsletter_id']);
@@ -29,15 +33,16 @@ if (login_ok() == 1) {
 		if ($q_check_id->rowCount() > 0)
 		{
 			$current_newsletter_id = $_POST['newsletter_id'];
+			//echo "<p>setting nl id: {$current_newsletter_id}</p>";
 		}
 	}
 	
-	function getCurrentNewsletterID($dbh, $db_uid)
+	function getCurrentNewsletterID($dbh, $db_uid, &$current_newsletter_id)
 	{
 		// if we don't know which is the current newsletter assume it's the most recent
 		if ($current_newsletter_id == null)
 		{
-			$q_recent_newsletter_id = $dbh->query("SELECT id FROM Newsletters1 WHERE user = " . $db_uid . " HAVING MAX(`timestamp`)");
+			$q_recent_newsletter_id = $dbh->query("SELECT id FROM Newsletters1 WHERE user = " . $db_uid . " AND `timestamp` = (SELECT MAX(`timestamp`) FROM Newsletters1 WHERE user = " . $db_uid . ")");
 			$recent_newsletter_id = $q_recent_newsletter_id->fetchAll(PDO::FETCH_ASSOC);
 			$current_newsletter_id = $recent_newsletter_id[0]['id'];
 			$q_recent_newsletter_id->closeCursor();
@@ -45,16 +50,30 @@ if (login_ok() == 1) {
 		return $current_newsletter_id;
 	}
 	
+	//$tmp_id = getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id);
+	//echo "<p>getting current nl id: {$tmp_id}</p>";
+	
+	// the content of a newsletter needs to have a title and issue added
+	// if these are already there they could be erroneous and the values
+	// passed to this function should be used instead
+	function fixContent($json_content, $title, $issue)
+	{
+		$content = json_decode($json_content, true);
+		$content['title'] = $title;
+		$content['number'] = $issue;
+		return json_encode($content);
+	}
+	
 	if (strcmp($_POST['task'], 'get_newsletter_id') == 0)
 	{
-		echo getCurrentNewsletterID($dbh, $db_uid);
+		echo getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id);
 	}
 	
 	else if (strcmp($_POST['task'], 'save') == 0)
 	{		
 		// create a new entry in the NewsletterSaves table
 		$q_save_newsletter = $dbh->prepare("INSERT INTO NewsletterSaves (newsletter, content) VALUES (:newsletter_id,:content)");
-		$q_save_newsletter->bindParam(':newsletter_id', getCurrentNewsletterID($dbh, $db_uid));
+		$q_save_newsletter->bindParam(':newsletter_id', getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id));
 		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
 		//$q_save_newsletter->debugDumpParams();
 		$q_save_newsletter->execute();
@@ -74,11 +93,11 @@ if (login_ok() == 1) {
 	{
 		// this is to happen after every change of the newsletter to keep the history table up to date
 		// first copy the current content into the history table
-		$dbh->query("INSERT INTO NewsletterHistory (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID($dbh, $db_uid));
+		$dbh->query("INSERT INTO NewsletterHistory (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id));
 		// now update the content in the current newsletter
 		$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
 		$q_save_newsletter->bindParam(':content', json_encode($_POST['content']));
-		$q_save_newsletter->bindParam(':id', getCurrentNewsletterID($dbh, $db_uid));
+		$q_save_newsletter->bindParam(':id', getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id));
 		$q_save_newsletter->execute();
 		$save_affected = $q_save_newsletter->rowCount();
 		if ($save_affected == 1)
@@ -88,11 +107,11 @@ if (login_ok() == 1) {
 			echo gmdate('Y-m-d H:i:s'), ' UTC';
 			
 			// Finally delete entries for this newsletter from the future table for this user because we can't redo from here
-			$dbh->query("DELETE FROM NewsletterFuture WHERE newsletter = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
+			$dbh->query("DELETE FROM NewsletterFuture WHERE newsletter = " . getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id) . ')');
 		}
 		else
 		{
-			echo "Save Failed: $save_affected records made/modified (expecting 1)";
+			echo "Autosave Failed: $save_affected records made/modified (expecting 1)";
 		}
 	}
 	
@@ -100,7 +119,7 @@ if (login_ok() == 1) {
 	{
 		// this will get a list of ids and dates for all saved instances of a given newsletter issue
 		$q_get_revisions = $dbh->prepare("SELECT id,timestamp FROM NewsletterSaves WHERE newsletter=:newsletter_id ORDER BY timestamp DESC");
-		$q_get_revisions->bindParam(':newsletter_id', getCurrentNewsletterID($dbh, $db_uid));
+		$q_get_revisions->bindParam(':newsletter_id', getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id));
 		$q_get_revisions->execute();
 		if ($q_get_revisions->rowCount() > 0)
 		{
@@ -123,13 +142,13 @@ if (login_ok() == 1) {
 	{
 		// get the saved record of the current newsletter
 		$q_get_newsletter = $dbh->prepare("SELECT * FROM Newsletters1 WHERE id=:id");
-		$q_get_newsletter->bindParam(':id', getCurrentNewsletterID($dbh, $db_uid));
+		$q_get_newsletter->bindParam(':id', getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id));
 		$q_get_newsletter->execute();
 		$newsletter = $q_get_newsletter->fetchAll(PDO::FETCH_ASSOC);
 		
 		if (sizeof($newsletter) > 0)
 		{		
-			echo $newsletter[0]['content'];
+			echo fixContent($newsletter[0]['content'], $newsletter[0]['name'], $newsletter[0]['issue']);
 		}
 		else
 		{
@@ -141,16 +160,17 @@ if (login_ok() == 1) {
 	else if (strcmp($_POST['task'], 'undo') == 0)
 	{
 		// get the latest entry for the current newsletter from the history table
-		$q_latest_history = $dbh->query("SELECT * FROM NewsletterHistory WHERE newsletter = " . getCurrentNewsletterID($dbh, $db_uid) . " HAVING MAX(`timestamp`)");
+		getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id);
+		$q_latest_history = $dbh->query("SELECT * FROM NewsletterHistory WHERE newsletter = " . $current_newsletter_id . " AND `timestamp` = (SELECT MAX(`timestamp`) FROM NewsletterHistory WHERE newsletter = " . $current_newsletter_id .")");
 		if ($q_latest_history->rowCount() == 1)
 		{
 			// store the current content into the future table
-			$dbh->query("INSERT INTO NewsletterFuture (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID($dbh, $db_uid));
+			$dbh->query("INSERT INTO NewsletterFuture (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . $current_newsletter_id);
 			// update the newsletter table with the data from history
 			$latest_history = $q_latest_history->fetchAll(PDO::FETCH_ASSOC);
 			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
 			$q_save_newsletter->bindParam(':content', $latest_history[0]['content']);
-			$q_save_newsletter->bindParam(':id', getCurrentNewsletterID($dbh, $db_uid));
+			$q_save_newsletter->bindParam(':id', $current_newsletter_id);
 			$q_save_newsletter->execute();
 			// delete the record we used from the history table
 			$dbh->query("DELETE FROM NewslettersHistory WHERE id = " . $latest_history[0]['id']);
@@ -164,16 +184,17 @@ if (login_ok() == 1) {
 	else if (strcmp($_POST['task'], 'redo') == 0)
 	{
 		// get the latest entry for the current newsletter from the future table
-		$q_latest_future = $dbh->query("SELECT * FROM NewsletterFuture WHERE newsletter = " . getCurrentNewsletterID($dbh, $db_uid) . " HAVING MAX(`timestamp`)");
+		getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id);
+		$q_latest_future = $dbh->query("SELECT * FROM NewsletterFuture WHERE newsletter = " . $current_newsletter_id . " AND `timestamp` = (SELECT MAX(`timestamp`) FROM NewsletterFuture WHERE newsletter = " . $current_newsletter_id .")");
 		if ($q_latest_future->rowCount() == 1)
 		{
 			// store the current content into the history table
-			$dbh->query("INSERT INTO NewsletterHistory (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . getCurrentNewsletterID($dbh, $db_uid));
+			$dbh->query("INSERT INTO NewsletterHistory (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . $current_newsletter_id);
 			// update the newsletter table with the data from future
 			$latest_future = $q_latest_future->fetchAll(PDO::FETCH_ASSOC);
 			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
 			$q_save_newsletter->bindParam(':content', $latest_future[0]['content']);
-			$q_save_newsletter->bindParam(':id', getCurrentNewsletterID($dbh, $db_uid));
+			$q_save_newsletter->bindParam(':id', $current_newsletter_id);
 			$q_save_newsletter->execute();
 			// delete the record we used from the future table
 			$dbh->query("DELETE FROM NewslettersFuture WHERE id = " . $latest_future[0]['id']);
@@ -215,7 +236,7 @@ if (login_ok() == 1) {
 		// clear both the redo and undo history of entries older than a day
 		$yesterday = strtotime('-1 day');
 		$table = 'NewsletterHistory';
-		$q_clear_table = $dbh->prepare("DELETE FROM :table WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID($dbh, $db_uid) . ')');
+		$q_clear_table = $dbh->prepare("DELETE FROM :table WHERE timestamp<:expire AND newsletter IN (SELECT id FROM Newsletters1 WHERE user = " . getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id) . ')');
 		$q_clear_table->bindParam(':expire', $yesterday);
 		$q_clear_table->bindParam(':table', $table);
 		$q_clear_table->execute();

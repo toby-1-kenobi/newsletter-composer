@@ -275,8 +275,8 @@ function collectNewsletterData() {
 	if ($('#mugshot .imageLoaded').length > 0) mugshot = $('#mugshot .imageLoaded').val();
 	var saveData = {
 		"template": $('#template').val(),
-		"title": encodeHTML($('#newsletterTitle').val()),
-		"number": encodeHTML($('#issuenum').val()),
+		//"title": encodeHTML($('#newsletterTitle').val()),
+		//"number": encodeHTML($('#issuenum').val()),
 		"date": encodeHTML($('#issuedate').val()),
 		"logo": logo,
 		"mugshot": mugshot,
@@ -355,23 +355,28 @@ function collectSendData() {
 	return data;
 }
 
+var newsletterAutoSaveEnabled = true;
+
 // these functions save the form data so the user can come back to it
 var setNewsletterCookie = function() {
 	//alert ('save newsletter');
-	var saveData = collectNewsletterData();
-	// save it in the database using the php code that acts as a db interface
-	jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(data) {
-		if (data.indexOf('Fail') >= 0) {alert (data);}
-		else {
-			//alert (data);
-			// data should be a date string in UTC
-			// convert it to local time and display
-			var lastSaveDate = new Date(data);
-			$('.last_save_date').text(lastSaveDate.toLocaleString());
-			$('.newsletter_redo').button('disable');
-			$('.newsletter_undo').button('enable');
-		}
-	});
+	if (newsletterAutoSaveEnabled)
+	{
+		var saveData = collectNewsletterData();
+		// save it in the database using the php code that acts as a db interface
+		jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(data) {
+			if (data.indexOf('Fail') >= 0) {alert (data);}
+			else {
+				//alert (data);
+				// data should be a date string in UTC
+				// convert it to local time and display
+				var lastSaveDate = new Date(data);
+				$('.last_save_date').text(lastSaveDate.toLocaleString());
+				$('.newsletter_redo').button('disable');
+				$('.newsletter_undo').button('enable');
+			}
+		});
+	}
 };
 
 var setSendCookie = function() {
@@ -412,8 +417,9 @@ var newsletterRedo = function()
 var changeNewsletter = function()
 {
 	var content = collectNewsletterData();
+	//alert ('current content ' + JSON.stringify(content));
 	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#issuenum').val(), content: content}, function(data){
-		//alert(data);
+		//alert('next id ' + data);
 		restoreById(data);
 	});
 }
@@ -496,30 +502,33 @@ function populateLoadRevisions()
 	});
 }
 
-function restoreById(newsletter_id) {
+function restoreById(nl_id) {
 	// load the selected revision
-	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: newsletter_id}, function(data) {
+	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: nl_id}, function(data) {
 			if (data.indexOf('Fail') >= 0) {alert (data);}
 			else if (data === '') {
 				// do nothing if there's no data to get
 			}
 			else
 			{
-				//alert (data);
+				//alert ('next content ' + data);
 				// before loading a new revision we should save this one
 				var saveData = collectNewsletterData();
+				//alert ('current content ' + JSON.stringify(saveData));
 				jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
 					if (response.indexOf('Fail') >= 0) {
 						// if the save fails then just alert the error and keep going
 						alert (response);
 					}
 				});
-				$('#newsletterID').val(newsletter_id);
+				newsletterAutoSaveEnabled = false;
+				$('#newsletterID').val(nl_id);
 				$('.input-issue').clearForm();
 				$('.article').remove();
 				logoMugshotReset($('#logo'));
 				logoMugshotReset($('#mugshot'));
 				restore(data);
+				newsletterAutoSaveEnabled = true;
 			}
 	});
 }
@@ -547,6 +556,7 @@ function restore(jsonData, isString) {
 	if(typeof(isString)==='undefined') isString = true;
 	if (isString)
 	{
+		//alert ("restoring: " + jsonData);
 		jsonData = jQuery.parseJSON(jsonData);
 	}
 	$('#newsletterTitle').val(decodeHTML(jsonData.title));
@@ -574,12 +584,13 @@ function restore(jsonData, isString) {
 	$('#privacy_username').val(decodeHTML(jsonData.privacy_user));
 	$('#privacy_password').val(decodeHTML(jsonData.privacy_pass));
 	if (jsonData.privacy === 'privacy_protected') $('#privacy_credentials').show();
-	buildArticles(jsonData.mainArticles, $('#leftPanel .addArticle'));
-	buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
+	if (typeof jsonData.mainArticles !== 'undefined') buildArticles(jsonData.mainArticles, $('#leftPanel .addArticle'));
+	if (typeof jsonData.sideArticles !== 'undefined') buildArticles(jsonData.sideArticles, $('#rightPanel .addArticle'));
 	
 	// populate the load revision select box with previously saved newsletters
 	populateLoadRevisions();
 }
+
 function restoreSend(jsonData) {
 	
 	$('#from').val(jsonData.from);
@@ -788,10 +799,17 @@ $(document).ready(function() {
 	    else return false;  
 	}); 
 	
+	// get the newsletter id
+	jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
+		//alert ("first newsletter id: " + data);
+		$('#newsletterID').val(data);
+	});
+	
 	// get existing content from db
-	jQuery.post('db_interface_newsletters.php', {task: "restore"}, function(data) {
+	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $('#newsletterID').val()}, function(data) {
 		if (data.indexOf('Fail') >= 0) {alert (data);}
 		else if (data === '') {
+			alert ("no data to restore");
 			// do nothing if there's no data to get
 		}
 		else 
@@ -799,11 +817,6 @@ $(document).ready(function() {
 			//alert (data);
 			restore(data);
 		}
-	});
-	
-	// get the newsletter id
-	jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
-		$('#newsletterID').val(data);
 	});
 	
 	
@@ -821,7 +834,7 @@ $(document).ready(function() {
 	$('.input-issue.key').change(changeNewsletter);
 	
 	// bind changes to the newsletter to get saved
-	$('.input-issue.save').change(setNewsletterCookie);
+	$('.input-issue.save').not('.key').change(setNewsletterCookie);
 	$('.input-send.save').change(setSendCookie);
 	
 	// bind undo and redo buttons
