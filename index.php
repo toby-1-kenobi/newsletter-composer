@@ -284,8 +284,10 @@ else { // the user is logged in or attempting to log in
 	</div>
 	<div id="privacy_msg"></div>
 	</fieldset>
-  <button id="generate" name="generate">Generate Newsletter</button>
-  <div id="generateResults"></div>
+	<fieldset><legend>Generate</legend>
+	<button id="generate" name="generate">Generate Newsletter</button>
+	<div id="generateResults"></div>
+	</fieldset>
 </div>
 
 <div class="section left">
