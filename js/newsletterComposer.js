@@ -254,7 +254,20 @@ function logoMugshotReset(container)
 	});
 	saveNewsletter();
 }
-	
+
+function generatePreviousNewsletter(newsletter_data)
+{
+	var element = $('<div class="previous_newsletter section left"></div>');
+	element.append('<div class="prev_news_title">' + newsletter_data['name'] + ' ' + newsletter_data['issue'] + '</div>');
+	var files = $('<fieldset><legend>Files online</legend></fieldset>');
+	element.append(files);
+	var operations = $('<fieldset><legend>Actions</legend></fieldset>');
+	operations.append('<button>Load</button>');
+	operations.append('<button>Delete all</button>');
+	element.append(operations);
+	return element;
+}
+
 // harvest the data entered for the newsletter
 function collectNewsletterData() {
 	// make a JSON object for the form data
@@ -815,6 +828,23 @@ $(document).ready(function() {
 		}
 	});
 	
+	// populate previous newsletters
+	jQuery.post('db_interface_newsletters.php', {task: "get_all_newsletters"}, function(data) {
+		
+		// first remove any that might be there
+		$('dev.previous_newsletter').remove();
+		
+		// then fill it
+		if (data != '')
+		{
+			var prev_newsletters = jQuery.parseJSON(data);
+			for (var i = 0; i < prev_newsletters.length; ++i)
+			{
+				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i]));
+			}
+		}
+		
+	});
 	
 	try {
 		var sendData = jQuery.cookies.get('send');

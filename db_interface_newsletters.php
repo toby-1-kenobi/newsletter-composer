@@ -232,6 +232,24 @@ if (login_ok() == 1) {
 		
 	}
 	
+	else if (strcmp($_POST['task'], 'get_all_newsletters') == 0)
+	{
+		// this will get a list of ids and titles and issue numbers for all this user's newsletters
+		$q_get_newsletters = $dbh->prepare("SELECT id, name, issue FROM Newsletters WHERE user=:user_id ORDER BY timestamp ASC");
+		$q_get_newsletters->bindParam(':user_id', $db_uid);
+		$q_get_newsletters->execute();
+		if ($q_get_newsletters->rowCount() > 0)
+		{
+			$newsletters = $q_get_newsletters->fetchAll(PDO::FETCH_ASSOC);
+			echo json_encode($newsletters);
+		}
+		else
+		{
+			// do nothing if there is no data to load from db
+			// The js that calls this file will get back an empty string
+		}
+	}
+	
 	
 	else if (strcmp($_POST['task'], 'clear_old_history') == 0)
 	{
