@@ -175,6 +175,8 @@ else { // the user is logged in or attempting to log in
 </div>
 
 <div id="accordion">  
+  <h3>Previous Newsletters</h3>
+  <div></div>
   <h3>Compose Newsletter</h3>
   <div>
   <!--fieldset><legend>Newsletter</legend-->
