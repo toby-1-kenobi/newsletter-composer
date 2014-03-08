@@ -262,10 +262,33 @@ function generatePreviousNewsletter(newsletter_data)
 	var files = $('<fieldset><legend>Files online</legend></fieldset>');
 	element.append(files);
 	var operations = $('<fieldset><legend>Actions</legend></fieldset>');
-	operations.append('<button>Load</button>');
+	operations.append('<button class="load_newsletter">Load</button>');
 	operations.append('<button>Delete all</button>');
+	operations.find('.load_newsletter').click(function(){
+		restoreById(newsletter_data['id'], true);
+	});
 	element.append(operations);
 	return element;
+}
+
+function populatePreviousNewsletters()
+{
+	jQuery.post('db_interface_newsletters.php', {task: "get_all_newsletters"}, function(data) {
+		
+		// first remove any that might be there
+		$('dev.previous_newsletter').remove();
+		
+		// then fill it
+		if (data != '')
+		{
+			var prev_newsletters = jQuery.parseJSON(data);
+			for (var i = 0; i < prev_newsletters.length; ++i)
+			{
+				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i]));
+			}
+		}
+		
+	});
 }
 
 // harvest the data entered for the newsletter
@@ -828,23 +851,7 @@ $(document).ready(function() {
 		}
 	});
 	
-	// populate previous newsletters
-	jQuery.post('db_interface_newsletters.php', {task: "get_all_newsletters"}, function(data) {
-		
-		// first remove any that might be there
-		$('dev.previous_newsletter').remove();
-		
-		// then fill it
-		if (data != '')
-		{
-			var prev_newsletters = jQuery.parseJSON(data);
-			for (var i = 0; i < prev_newsletters.length; ++i)
-			{
-				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i]));
-			}
-		}
-		
-	});
+	populatePreviousNewsletters();
 	
 	try {
 		var sendData = jQuery.cookies.get('send');
