@@ -720,7 +720,7 @@ $(document).ready(function() {
 	
 	// apply jQueryUI elements
 	$( ".tabs" ).tabs();
-	$( "#accordion" ).accordion();
+	$( "#accordion" ).accordion({ active: 1, heightStyle: "content" });
 	$( "button" ).button();
 	$( ".button" ).button();
 	$( "#logo > button, #mugshot > button" ).button({
