@@ -168,12 +168,14 @@ if (login_ok() == 1) {
 			$dbh->query("INSERT INTO NewsletterFuture (newsletter, content) SELECT id, content FROM Newsletters1 WHERE Newsletters1.id = " . $current_newsletter_id);
 			// update the newsletter table with the data from history
 			$latest_history = $q_latest_history->fetchAll(PDO::FETCH_ASSOC);
+			echo "history id: " . $latest_history[0]['id'];
+			echo "\n\nhistory content: " . $latest_history[0]['content'];
 			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters1 SET content=:content WHERE id=:id");
 			$q_save_newsletter->bindParam(':content', $latest_history[0]['content']);
 			$q_save_newsletter->bindParam(':id', $current_newsletter_id);
 			$q_save_newsletter->execute();
 			// delete the record we used from the history table
-			$dbh->query("DELETE FROM NewslettersHistory WHERE id = " . $latest_history[0]['id']);
+			$dbh->query("DELETE FROM NewsletterHistory WHERE id = " . $latest_history[0]['id']);
 		}
 		else
 		{
@@ -197,7 +199,7 @@ if (login_ok() == 1) {
 			$q_save_newsletter->bindParam(':id', $current_newsletter_id);
 			$q_save_newsletter->execute();
 			// delete the record we used from the future table
-			$dbh->query("DELETE FROM NewslettersFuture WHERE id = " . $latest_future[0]['id']);
+			$dbh->query("DELETE FROM NewsletterFuture WHERE id = " . $latest_future[0]['id']);
 		}
 		else
 		{

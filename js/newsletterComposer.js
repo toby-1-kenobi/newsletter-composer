@@ -393,7 +393,8 @@ var newsletterUndo = function()
 		}
 		else
 		{
-			restoreById($('#newsletterID').val());
+			alert(data);
+			restoreById($('#newsletterID').val(), false);
 			$('.newsletter_redo').button('enable');
 		}
 	});
@@ -408,7 +409,7 @@ var newsletterRedo = function()
 		}
 		else
 		{
-			restoreById($('#newsletterID').val());
+			restoreById($('#newsletterID').val(), false);
 			$('.newsletter_undo').button('enable');
 		}
 	});
@@ -420,7 +421,7 @@ var changeNewsletter = function()
 	//alert ('current content ' + JSON.stringify(content));
 	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#issuenum').val(), content: content}, function(data){
 		//alert('next id ' + data);
-		restoreById(data);
+		restoreById(data, true);
 	});
 }
 
@@ -502,9 +503,10 @@ function populateLoadRevisions()
 	});
 }
 
-function restoreById(nl_id) {
+function restoreById(nl_id, saving_old) {
 	// load the selected revision
 	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: nl_id}, function(data) {
+			debugger;
 			if (data.indexOf('Fail') >= 0) {alert (data);}
 			else if (data === '') {
 				// do nothing if there's no data to get
@@ -512,15 +514,18 @@ function restoreById(nl_id) {
 			else
 			{
 				//alert ('next content ' + data);
-				// before loading a new revision we should save this one
-				var saveData = collectNewsletterData();
-				//alert ('current content ' + JSON.stringify(saveData));
-				jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
-					if (response.indexOf('Fail') >= 0) {
-						// if the save fails then just alert the error and keep going
-						alert (response);
-					}
-				});
+				if (saving_old)
+				{
+					// before loading a new revision save this one
+					var saveData = collectNewsletterData();
+					//alert ('current content ' + JSON.stringify(saveData));
+					jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
+						if (response.indexOf('Fail') >= 0) {
+							// if the save fails then just alert the error and keep going
+							alert (response);
+						}
+					});
+				}
 				newsletterAutoSaveEnabled = false;
 				$('#newsletterID').val(nl_id);
 				$('.input-issue').clearForm();
@@ -715,6 +720,7 @@ var sendEmail = function(recipient) {
 		  
 };
 
+
 $(document).ready(function() {
 
 	//debugger; 
@@ -870,7 +876,7 @@ $(document).ready(function() {
 	});
 	
 	$('select.load_revision').change(function(){
-		restoreById($(this).val());
+		restoreById($(this).val(), true);
 	});
 	
 	// bind the clear form buttons

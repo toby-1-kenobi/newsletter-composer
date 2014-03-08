@@ -191,8 +191,8 @@ else { // the user is logged in or attempting to log in
     <option value="cool.php" selected="selected">Cool</option>
   </select>
   
-  <button class="newsletter_undo" disabled="disabled">Undo</button>
-  <button class="newsletter_redo" disabled="disabled">Redo</button>
+  <button class="newsletter_undo">Undo</button>
+  <button class="newsletter_redo">Redo</button>
   
   <!-- This is tabs, one for the header of each format-->
   <div class="tabs" id="header">
