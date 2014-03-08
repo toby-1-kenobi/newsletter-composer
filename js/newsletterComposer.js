@@ -114,11 +114,6 @@ jQuery.fn.clearForm = function() {
   });
 };
 
-// cookies expire 1 day from now.
-var oneDay = new Date();
-oneDay.setDate(oneDay.getDate() + 1);
-jQuery.cookies.setOptions({expiresAt: oneDay});
-
 var MAX_WIDTH = 600; // for image uploaded to server
 var MAX_WIDTH_UI = 200; // for preview of image displayed in the user interface
 
@@ -167,7 +162,7 @@ var imageUploadHandler = function(event){
 				// when it's uploaded to the server and saved then set the image preview to source from there.
 				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved in the cookies
 				uploadedDiv.find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
-				setNewsletterCookie();
+				saveNewsletter();
 			});
 		}
 		reader.onload = function(e) {
@@ -186,18 +181,13 @@ controls += '<button class="down">Move it down</button>';
 controls += '<button class="delete">Remove this</button>';
 controls += '</div>';
 
-//var addTitleButton = '<button class="addTitle">Add title</button>';
 var addParaButton = '<button class="addPara" title="Add some text">Add text</button>';
-//var addListItemButton = '<button class="addLI">Add list item</button>';
 var addImageButton = '<button class="addImage" title="Add an image">Add image</button>';
 var articleField = "<fieldset class=\"article moveable ui-corner-all\"><legend>Article</legend>\n";
 articleField += '<div><label>Title</label> <input type="text" class="articleTitle input-issue save" /></div>';
 articleField += controls + "\n";
 articleField += "<div class=\"article_buttons\">\n";
-//articleField += addTitleButton + "\n";
 articleField += addParaButton + "\n";
-//articleField += '<br/>';
-//articleField += addListItemButton + "\n";
 articleField += addImageButton + "\n";
 articleField += "</div>\n</fieldset>\n";
 
@@ -222,16 +212,16 @@ recipientControl = "<td class=\"controls\"><button class=\"delete\">Remove recip
 // functions for controls
 var deleteElement = function() {
 	$(this).parent().parent().remove();
-	setNewsletterCookie();
+	saveNewsletter();
 	setSendCookie();
 };
 var moveUp = function() {
 	$(this).parent().parent().insertBefore($(this).parent().parent().prev());
-	setNewsletterCookie();
+	saveNewsletter();
 };
 var moveDown = function() {
 	$(this).parent().parent().insertAfter($(this).parent().parent().next());
-	setNewsletterCookie();
+	saveNewsletter();
 };
 function bindControls(elements) {
 	elements.find('button.up').button({icons:{primary: "ui-icon-arrowthick-1-n"},text:false}).click(moveUp);
@@ -247,7 +237,7 @@ function logoMugshotHandler(container)
 		uploadControl += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
 		container.find('button').replaceWith(uploadControl);
 		container.find('.imageUpload').bind('change', imageUploadHandler);
-		container.find('.input-issue.save').change(setNewsletterCookie);
+		container.find('.input-issue.save').change(saveNewsletter);
 		container.find('button.removeImage').button({icons:{primary: "ui-icon-trash"},text:false}).click(function(){
 			logoMugshotReset($(this).parent());
 		});
@@ -262,7 +252,7 @@ function logoMugshotReset(container)
 	container.find('button').button({icons:{primary: "ui-icon-image"},text:false}).click(function(){
 		logoMugshotHandler($(this).parent());
 	});
-	setNewsletterCookie();
+	saveNewsletter();
 }
 	
 // harvest the data entered for the newsletter
@@ -358,7 +348,7 @@ function collectSendData() {
 var newsletterAutoSaveEnabled = true;
 
 // these functions save the form data so the user can come back to it
-var setNewsletterCookie = function() {
+var saveNewsletter = function() {
 	//alert ('save newsletter');
 	if (newsletterAutoSaveEnabled)
 	{
@@ -430,14 +420,14 @@ function bindArticleButtons(article) {
 	article.find('.addPara').click(function(){
 		var field = $(paraField);
 		bindControls(field);
-		field.find('.input-issue.save').change(setNewsletterCookie);
+		field.find('.input-issue.save').change(saveNewsletter);
 		field.insertBefore($(this).parent());
 	});
 	article.find('.addImage').click(function(){
 		var field = $(imageField);
 		bindControls(field);
 		field.find('.imageUpload').bind('change', imageUploadHandler);
-		field.find('.input-issue.save').change(setNewsletterCookie);
+		field.find('.input-issue.save').change(saveNewsletter);
 		field.insertBefore($(this).parent());
 	});
 	article.find('button.addImage').button({icons:{primary: "ui-icon-image"},text:false});
@@ -474,7 +464,7 @@ function buildArticles(array, followingElement) {
 		}
 		bindControls(art);
 		bindArticleButtons(art);
-		art.find('.input-issue.save').change(setNewsletterCookie);
+		art.find('.input-issue.save').change(saveNewsletter);
 		followingElement.before(art);
 	}
 	
@@ -840,7 +830,7 @@ $(document).ready(function() {
 	$('.input-issue.key').change(changeNewsletter);
 	
 	// bind changes to the newsletter to get saved
-	$('.input-issue.save').not('.key').change(setNewsletterCookie);
+	$('.input-issue.save').not('.key').change(saveNewsletter);
 	$('.input-send.save').change(setSendCookie);
 	
 	// bind undo and redo buttons
@@ -904,7 +894,6 @@ $(document).ready(function() {
 	$('#generate').click(function(){
 		// send the content to the php code that generates the newsletter
 		var data = {
-			//personal: JSON.stringify(collectPersonalData()),
 			newsletter: JSON.stringify(collectNewsletterData())
 		};
 		// the generate_newsletter php returns some html links to the generated file that get loaded into our user interface
@@ -963,7 +952,7 @@ $(document).ready(function() {
 	});
 	
 	$(window).bind('beforeunload', function(){
-		setNewsletterCookie();
+		saveNewsletter();
 	});
 	
 /*	
