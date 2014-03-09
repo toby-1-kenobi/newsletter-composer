@@ -1,3 +1,10 @@
+// add a startsWith function to strings
+if (typeof String.prototype.startsWith != 'function') {
+  String.prototype.startsWith = function (str){
+    return this.slice(0, str.length) == str;
+  };
+}
+
 // user rego form validation
 function validatePassword()
 {
@@ -255,12 +262,35 @@ function logoMugshotReset(container)
 	saveNewsletter();
 }
 
-function generatePreviousNewsletter(newsletter_data)
-{
+function generatePreviousNewsletter(newsletter_data, files)
+{	
 	var element = $('<div class="previous_newsletter section left"></div>');
 	element.append('<div class="prev_news_title">' + newsletter_data['name'] + ' ' + newsletter_data['issue'] + '</div>');
-	var files = $('<fieldset><legend>Files online</legend></fieldset>');
-	element.append(files);
+	var files_fieldset = $('<fieldset><legend>Files online</legend></fieldset>');
+	var files_container = $('<div class="files_container"></div>');
+	if (files != null)
+	{
+		if (newsletter_data['issue'].length < 3)
+		{
+			newsletter_data['issue'] = ("000" + newsletter_data['issue']).slice(-3);
+		}
+		var filename_start = newsletter_data['name'] + '_' + newsletter_data['issue'];
+		alert (filename_start);
+		
+		for (var i = 0; i < files.length; ++i)
+		{
+			if (files[i].startsWith(filename_start))
+			{
+				files_container.append('<div><div>' + files[i] + '</div></div>');
+			}
+		}
+	}
+	if (files_container.children().length == 0)
+	{
+		files_container.append('<p>No files online</p>');
+	}
+	files_fieldset.append(files_container);
+	element.append(files_fieldset);
 	var operations = $('<fieldset><legend>Actions</legend></fieldset>');
 	operations.append('<button class="load_newsletter">Load</button>');
 	operations.append('<button>Delete all</button>');
@@ -273,9 +303,17 @@ function generatePreviousNewsletter(newsletter_data)
 
 function populatePreviousNewsletters()
 {
+	// get a list of files in the user's directory
+	var files = null;
+	jQuery.post('file_ops.php', {task: "list_files"}, function(file_data) {
+		if (file_data.indexOf('Fail') >= 0) {alert (file_data);}
+		else {files = jQuery.parseJSON(file_data);}
+	});
+	
 	jQuery.post('db_interface_newsletters.php', {task: "get_all_newsletters"}, function(data) {
 		
-		// first remove any that might be there
+		
+		// remove any that might be there
 		$('dev.previous_newsletter').remove();
 		
 		// then fill it
@@ -284,7 +322,7 @@ function populatePreviousNewsletters()
 			var prev_newsletters = jQuery.parseJSON(data);
 			for (var i = 0; i < prev_newsletters.length; ++i)
 			{
-				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i]));
+				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i], files));
 			}
 		}
 		
