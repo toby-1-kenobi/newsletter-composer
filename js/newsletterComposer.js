@@ -275,15 +275,21 @@ function generatePreviousNewsletter(newsletter_data, files)
 			newsletter_data['issue'] = ("000" + newsletter_data['issue']).slice(-3);
 		}
 		var filename_start = newsletter_data['name'] + '_' + newsletter_data['issue'];
-		alert (filename_start);
+		//alert (filename_start);
 		
 		for (var i = 0; i < files.length; ++i)
 		{
 			if (files[i].startsWith(filename_start))
 			{
-				files_container.append('<div><div>' + files[i] + '</div></div>');
+				files_container.append('<div><div>' + files[i] + '</div><div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div></div>');
 			}
 		}
+		$('.files_container div a').button({
+			icons: {
+				primary: "ui-icon-search"
+			},
+			text: true
+		});
 	}
 	if (files_container.children().length == 0)
 	{
@@ -457,7 +463,7 @@ var newsletterUndo = function()
 		}
 		else
 		{
-			alert(data);
+			//alert(data);
 			restoreById($('#newsletterID').val(), false);
 			$('.newsletter_redo').button('enable');
 		}

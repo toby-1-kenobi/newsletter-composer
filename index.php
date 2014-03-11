@@ -155,7 +155,7 @@ else { // the user is logged in or attempting to log in
 
 <div class="ui-widget"> <!-- logout or change password -->
 
-<div><?=$uid?></div>
+<div id="username"><?=$uid?></div>
 
 <div>
 <button class="reveal_trigger">Change Password</button>

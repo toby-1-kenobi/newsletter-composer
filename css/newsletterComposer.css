@@ -26,6 +26,18 @@ background-color: #47AFAF;
 	float: left;
 }
 
+div.files_container {
+	display: table;
+}
+
+div.files_container div {
+	display: table-row;
+}
+
+div.files_container div div {
+	display: table-cell;
+}
+
 #newslettercontent {
 	overflow: hidden;
 	clear: both;
