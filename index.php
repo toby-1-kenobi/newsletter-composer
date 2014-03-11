@@ -1,6 +1,7 @@
 <?php
 require_once 'Excel/reader.php';
 require_once 'db.php';
+require_once 'environment.php';
 
 ?>
 <!DOCTYPE html>
@@ -24,7 +25,6 @@ require_once 'db.php';
 
 <?php
 
-session_save_path('/home/users/web/b1356/ipg.newslettercomposerne/cgi-bin/tmp');
 session_start();
 
 // get the user credentials from either the existing session or the login post

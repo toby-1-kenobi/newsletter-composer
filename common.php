@@ -1,11 +1,11 @@
 <?php
 
 require_once 'db.php';
+require_once 'environment.php';
 
 // make sure the user is logged in
 function login_ok() {
 	
-	session_save_path('/home/users/web/b1356/ipg.newslettercomposerne/cgi-bin/tmp');
 	session_start();
 	
 	//echo "<p>debug login A {$_SESSION['uid']}</p>";
