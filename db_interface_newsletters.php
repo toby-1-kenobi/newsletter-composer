@@ -168,8 +168,8 @@ if (login_ok() == 1) {
 			$dbh->query("INSERT INTO NewsletterFuture (newsletter, content) SELECT id, content FROM Newsletters WHERE Newsletters.id = " . $current_newsletter_id);
 			// update the newsletter table with the data from history
 			$latest_history = $q_latest_history->fetchAll(PDO::FETCH_ASSOC);
-			echo "history id: " . $latest_history[0]['id'];
-			echo "\n\nhistory content: " . $latest_history[0]['content'];
+			//echo "history id: " . $latest_history[0]['id'];
+			//echo "\n\nhistory content: " . $latest_history[0]['content'];
 			$q_save_newsletter = $dbh->prepare("UPDATE Newsletters SET content=:content WHERE id=:id");
 			$q_save_newsletter->bindParam(':content', $latest_history[0]['content']);
 			$q_save_newsletter->bindParam(':id', $current_newsletter_id);
