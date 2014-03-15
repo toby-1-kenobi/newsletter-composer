@@ -36,6 +36,7 @@ div.files_container div {
 
 div.files_container div div {
 	display: table-cell;
+	padding: 0.5ex;
 }
 
 #newslettercontent {
