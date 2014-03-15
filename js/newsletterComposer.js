@@ -281,14 +281,24 @@ function generatePreviousNewsletter(newsletter_data, files)
 		{
 			if (files[i].startsWith(filename_start))
 			{
-				files_container.append('<div><div>' + files[i] + '</div><div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div></div>');
+				var fileRow = $('<div></div>');
+				fileRow.append('<div>' + files[i] + '</div>');
+				fileRow.append('<div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div>');
+				fileRow.append('<div><button class="delete_file">Delete</button></div>');
+				files_container.append(fileRow);
 			}
 		}
-		$('.files_container div a').button({
+		files_container.find('div a').button({
 			icons: {
 				primary: "ui-icon-search"
 			},
-			text: true
+			text: false
+		});
+		files_container.find('.delete_file').button({
+			icons: {
+				primary: "ui-icon-trash"
+			},
+			text: false
 		});
 	}
 	if (files_container.children().length == 0)
@@ -299,10 +309,11 @@ function generatePreviousNewsletter(newsletter_data, files)
 	element.append(files_fieldset);
 	var operations = $('<fieldset><legend>Actions</legend></fieldset>');
 	operations.append('<button class="load_newsletter">Load</button>');
-	operations.append('<button>Delete all</button>');
-	operations.find('.load_newsletter').click(function(){
+	operations.append('<button class="delete_newsletter">Delete all</button>');
+	operations.find('.load_newsletter').button().click(function(){
 		restoreById(newsletter_data['id'], true);
 	});
+	operations.find('.delete_newsletter').button();
 	element.append(operations);
 	return element;
 }
