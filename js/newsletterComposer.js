@@ -856,20 +856,6 @@ $(document).ready(function() {
 		$(this).parent().find('.hidden').show();
 	});
 	
-	$('#privacy_protected').click(function(){
-		$('#privacy_credentials').show();
-	});
-	
-	$('#privacy_public').click(function(){
-		$('#privacy_credentials').hide();
-		$('#privacy_msg').load('htaccess.php', {'action':'unset'});
-	});
-	
-	// bind button to bring up file upload controls for logo and mugshot
-	$('#logo > button, #mugshot > button').click(function(){
-		logoMugshotHandler($(this).parent());
-	});
-	
 	// bind rego form validation
 	$('#conf_pwd').blur(validatePassword);  
 	$('#conf_pwd').keyup(validatePassword); 
@@ -884,168 +870,188 @@ $(document).ready(function() {
 	$('#chpwd_form').submit(function(){  
 	    if(validateChangePassword()) return true;
 	    else return false;  
-	}); 
-	
-	// get the newsletter id
-	jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
-		//alert ("first newsletter id: " + data);
-		$('#newsletterID').val(data);
 	});
+
+	if ($('#username').length > 0)
+	{
+		// the following should only be done if the user is logged in and on the main page
+		
+		$('#privacy_protected').click(function(){
+			$('#privacy_credentials').show();
+		});
+		
+		$('#privacy_public').click(function(){
+			$('#privacy_credentials').hide();
+			$('#privacy_msg').load('htaccess.php', {'action':'unset'});
+		});
+		
+		// bind button to bring up file upload controls for logo and mugshot
+		$('#logo > button, #mugshot > button').click(function(){
+			logoMugshotHandler($(this).parent());
+		});
+		
+		// get the newsletter id
+		jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
+			//alert ("first newsletter id: " + data);
+			$('#newsletterID').val(data);
+		});
 	
-	// get existing content from db
-	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $('#newsletterID').val()}, function(data) {
-		if (data.indexOf('Fail') >= 0) {alert (data);}
-		else if (data === '') {
-			alert ("no data to restore");
-			// do nothing if there's no data to get
-		}
-		else 
-		{
-			//alert (data);
-			restore(data);
-		}
-	});
-	
-	populatePreviousNewsletters();
-	
-	try {
-		var sendData = jQuery.cookies.get('send');
-		if (sendData) restoreSend(sendData);
-	} catch(e) {
-		alert('Cannot restore send data. ' + e.message)
-	}
-	
-	// in case user has just imported recipients from a file
-	setSendCookie();
-	
-	// bind changes to newsletter key fields to change the newsletter
-	$('.input-issue.key').change(changeNewsletter);
-	
-	// bind changes to the newsletter to get saved
-	$('.input-issue.save').not('.key').change(saveNewsletter);
-	$('.input-send.save').change(setSendCookie);
-	
-	// bind undo and redo buttons
-	$('.newsletter_undo').click(newsletterUndo);
-	$('.newsletter_redo').click(newsletterRedo);
-	
-	// bind the new article buttons
-	$('.addArticle').click(function() {
-		var newArticle = $(articleField);
-		bindControls(newArticle);
-		bindArticleButtons(newArticle);
-		newArticle.insertBefore($(this));
-	});
-	
-	// bind the "save issue" buttons to allow the user to save this revision for later retrieval
-	$('.saveIssue').click(function() {
-		var saveData = collectNewsletterData();
-		jQuery.post('db_interface_newsletters.php', {task: "save", newsletter_id: $('#newsletterID').val(), content: saveData}, function(data) {
-			if (data.indexOf('Fail') >= 0) {
-				alert (data);
+		// get existing content from db
+		jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $('#newsletterID').val()}, function(data) {
+
+			if (data.indexOf('Fail') >= 0) {alert (data);}
+			else if (data === '') {
+				alert ("no data to restore");
+				// do nothing if there's no data to get
 			}
-			else
+			else 
 			{
-				// data should be a date string in UTC
-				// convert it to local time and display
-				var lastSaveDate = new Date(data);
-				$('.last_save_date').text(lastSaveDate.toLocaleString());
-				
+				//alert (data);
+				restore(data);
 			}
-			// populate the load revision select box so it includes the new save
-			populateLoadRevisions();
 		});
-	});
-	
-	$('select.load_revision').change(function(){
-		restoreById($(this).val(), true);
-	});
-	
-	// bind the clear form buttons
-	$('.clear').click(function() {
-		$('.input-issue').clearForm();
-		$('.article').remove();
-	});
-	
-	// bind the privacy fields to call the script that creates or deletes the .htaccess files
-	$('#privacy_radioset input').change(function(){
-		if($('#privacy_radioset input:checked')[0].id === 'privacy_public')
-		{
-			$('#privacy_msg').load('htaccess.php', {'action':'unset'}, function(){
-				$('#privacy_msg').show().fadeOut(3000);
+		
+		populatePreviousNewsletters();
+		
+		try {
+			var sendData = jQuery.cookies.get('send');
+			if (sendData) restoreSend(sendData);
+		} catch(e) {
+			alert('Cannot restore send data. ' + e.message)
+		}
+		
+		// in case user has just imported recipients from a file
+		setSendCookie();
+		
+		// bind changes to newsletter key fields to change the newsletter
+		$('.input-issue.key').change(changeNewsletter);
+		
+		// bind changes to the newsletter to get saved
+		$('.input-issue.save').not('.key').change(saveNewsletter);
+		$('.input-send.save').change(setSendCookie);
+		
+		// bind undo and redo buttons
+		$('.newsletter_undo').click(newsletterUndo);
+		$('.newsletter_redo').click(newsletterRedo);
+		
+		// bind the new article buttons
+		$('.addArticle').click(function() {
+			var newArticle = $(articleField);
+			bindControls(newArticle);
+			bindArticleButtons(newArticle);
+			newArticle.insertBefore($(this));
+		});
+		
+		// bind the "save issue" buttons to allow the user to save this revision for later retrieval
+		$('.saveIssue').click(function() {
+			var saveData = collectNewsletterData();
+			jQuery.post('db_interface_newsletters.php', {task: "save", newsletter_id: $('#newsletterID').val(), content: saveData}, function(data) {
+				if (data.indexOf('Fail') >= 0) {
+					alert (data);
+				}
+				else
+				{
+					// data should be a date string in UTC
+					// convert it to local time and display
+					var lastSaveDate = new Date(data);
+					$('.last_save_date').text(lastSaveDate.toLocaleString());
+					
+				}
+				// populate the load revision select box so it includes the new save
+				populateLoadRevisions();
 			});
-		}
-		if($('#privacy_radioset input:checked')[0].id === 'privacy_protected')
-		{
-			htaccessSetUnset();
-		}
-	});
-	$('#privacy_username, #privacy_password').change(htaccessSetUnset);
-	
-	// once the data is entered into the form the user can click to generate the html newsletter
-	$('#generate').click(function(){
-		// send the content to the php code that generates the newsletter
-		var data = {
-			newsletter: JSON.stringify(collectNewsletterData())
-		};
-		// the generate_newsletter php returns some html links to the generated file that get loaded into our user interface
-		$('#generateResults').html('Generating ...').load('generate_newsletter.php', data, function(response, status, xhr){
-			if (status == "error") {
-				$('#generateResults').html("Could not generate: " + xhr.status + " " + xhr.statusText);
-			} else {
-				// once it's done get ready to send the newsletter
-				$('#newsletter_file_name').val($('#email_file').attr('href'));
-				//$('#send').removeAttr('disabled');
-				//$('#send').removeAttr('aria-disabled');
-			}
 		});
 		
-	});
-	
-	// the empty row in the recipients table ".newRecipient" should trigger when changed a new empty row to appear
-	$("tr.newRecipient > td > input").bind('change.addRecipient', addRecipientHandler);
-	
-	// bind delete buttons for any recipients that came in via Excel import
-	bindControls($('#all_recipients'));
-	// hide all the empty personal greeting fields until the "add personal greeting" button is clicked for that recipient
-	$('input.greeting').each(function(){
-		if ($(this).val() == '') $(this).hide();
-	});
-	$('button.addGreeting').click(function(){
-			// hide the "add greeting" button once it is used
-			$(this).hide();
-			// show the personal greeting field.
-			$(this).parent().parent().find('textarea.greeting').show();
-	});
-	
-	$('#send').click(function(){
-		//TODO: add mode to check all is ready before sending
-		//$('#sendMessage').html('Sending...');
-		var recipients = $('.recipient');
-		// remove all send_fail and send_succeed classes that might be there from a previous send
-		recipients.removeClass('send_fail');
-		recipients.removeClass('send_succeed');
-		var index = 0;
-		// wait a second before sending each email out.
-		// I think it's only polite not to flood the mail server
-		var sendIntervalID = setInterval(function() {
-			if (index == recipients.length) clearInterval(sendIntervalID);
-			if (index > 0) recipients.eq(index - 1).removeClass('sending');
-			recipients.eq(index).addClass('sending');
-			sendEmail(recipients.eq(index));
-			++index;
-			if (index == recipients.length) {
-				clearInterval(sendIntervalID);
-				recipients.eq(index - 1).removeClass('sending');
-				//$('#sendMessage').html('Sent');
-			}
-		}, 1000);
+		$('select.load_revision').change(function(){
+			restoreById($(this).val(), true);
+		});
 		
-	});
-	
-	$(window).bind('beforeunload', function(){
-		saveNewsletter();
-	});
+		// bind the clear form buttons
+		$('.clear').click(function() {
+			$('.input-issue').clearForm();
+			$('.article').remove();
+		});
+		
+		// bind the privacy fields to call the script that creates or deletes the .htaccess files
+		$('#privacy_radioset input').change(function(){
+			if($('#privacy_radioset input:checked')[0].id === 'privacy_public')
+			{
+				$('#privacy_msg').load('htaccess.php', {'action':'unset'}, function(){
+					$('#privacy_msg').show().fadeOut(3000);
+				});
+			}
+			if($('#privacy_radioset input:checked')[0].id === 'privacy_protected')
+			{
+				htaccessSetUnset();
+			}
+		});
+		$('#privacy_username, #privacy_password').change(htaccessSetUnset);
+		
+		// once the data is entered into the form the user can click to generate the html newsletter
+		$('#generate').click(function(){
+			// send the content to the php code that generates the newsletter
+			var data = {
+				newsletter: JSON.stringify(collectNewsletterData())
+			};
+			// the generate_newsletter php returns some html links to the generated file that get loaded into our user interface
+			$('#generateResults').html('Generating ...').load('generate_newsletter.php', data, function(response, status, xhr){
+				if (status == "error") {
+					$('#generateResults').html("Could not generate: " + xhr.status + " " + xhr.statusText);
+				} else {
+					// once it's done get ready to send the newsletter
+					$('#newsletter_file_name').val($('#email_file').attr('href'));
+					//$('#send').removeAttr('disabled');
+					//$('#send').removeAttr('aria-disabled');
+				}
+			});
+			
+		});
+		
+		// the empty row in the recipients table ".newRecipient" should trigger when changed a new empty row to appear
+		$("tr.newRecipient > td > input").bind('change.addRecipient', addRecipientHandler);
+		
+		// bind delete buttons for any recipients that came in via Excel import
+		bindControls($('#all_recipients'));
+		// hide all the empty personal greeting fields until the "add personal greeting" button is clicked for that recipient
+		$('input.greeting').each(function(){
+			if ($(this).val() == '') $(this).hide();
+		});
+		$('button.addGreeting').click(function(){
+				// hide the "add greeting" button once it is used
+				$(this).hide();
+				// show the personal greeting field.
+				$(this).parent().parent().find('textarea.greeting').show();
+		});
+		
+		$('#send').click(function(){
+			//TODO: add mode to check all is ready before sending
+			//$('#sendMessage').html('Sending...');
+			var recipients = $('.recipient');
+			// remove all send_fail and send_succeed classes that might be there from a previous send
+			recipients.removeClass('send_fail');
+			recipients.removeClass('send_succeed');
+			var index = 0;
+			// wait a second before sending each email out.
+			// I think it's only polite not to flood the mail server
+			var sendIntervalID = setInterval(function() {
+				if (index == recipients.length) clearInterval(sendIntervalID);
+				if (index > 0) recipients.eq(index - 1).removeClass('sending');
+				recipients.eq(index).addClass('sending');
+				sendEmail(recipients.eq(index));
+				++index;
+				if (index == recipients.length) {
+					clearInterval(sendIntervalID);
+					recipients.eq(index - 1).removeClass('sending');
+					//$('#sendMessage').html('Sent');
+				}
+			}, 1000);
+			
+		});
+		
+		$(window).bind('beforeunload', function(){
+			saveNewsletter();
+		});
+	}
 	
 /*	
 	$('#loading_splash')
