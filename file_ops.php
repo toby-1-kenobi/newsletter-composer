@@ -21,6 +21,12 @@ if (login_ok() == 1) {
 		
 		echo json_encode($files);
 	}
+
+	else if (strcmp($_POST['task'], 'delete_file') == 0)
+	{
+		//delete the specified file
+		unlink($_POST['filename']);
+	}
 	
 	else
 	{
