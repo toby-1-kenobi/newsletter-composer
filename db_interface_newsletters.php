@@ -266,11 +266,11 @@ if (login_ok() == 1) {
 	
 	else
 	{
-		echo "<p>Fail. unrecognised task: {$_POST['task']}</p>";
+		echo "<p class=\"error error_02\">Fail. unrecognised task: {$_POST['task']}</p>";
 	}
 	
 	$dbh = null;
 	
 } else {
-	echo '<p>Fail. Could not verify user. Login again.</p>';
+	echo '<p class="error error_01">Fail. Could not verify user. Login again.</p>';
 }
