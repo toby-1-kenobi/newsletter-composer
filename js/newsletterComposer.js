@@ -285,6 +285,12 @@ function generatePreviousNewsletter(newsletter_data, files)
 				fileRow.append('<div>' + files[i] + '</div>');
 				fileRow.append('<div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div>');
 				fileRow.append('<div><button class="delete_file">Delete</button></div>');
+				fileRow.find('.delete_file').click(function(){
+					jQuery.post('file_ops.php', {task: "delete_file", filename: 'users/' + $('#username').text() + '/' + files[i]}, function(data) {
+						alert(data);
+						populatePreviousNewsletters();
+					});
+				});
 				files_container.append(fileRow);
 			}
 		}
@@ -331,7 +337,7 @@ function populatePreviousNewsletters()
 		
 		
 		// remove any that might be there
-		$('dev.previous_newsletter').remove();
+		$('div.previous_newsletter').remove();
 		
 		// then fill it
 		if (data != '')
@@ -884,7 +890,7 @@ $(document).ready(function() {
 			$('#privacy_credentials').hide();
 			$('#privacy_msg').load('htaccess.php', {'action':'unset'});
 		});
-		
+
 		// bind button to bring up file upload controls for logo and mugshot
 		$('#logo > button, #mugshot > button').click(function(){
 			logoMugshotHandler($(this).parent());

@@ -25,7 +25,13 @@ if (login_ok() == 1) {
 	else if (strcmp($_POST['task'], 'delete_file') == 0)
 	{
 		//delete the specified file
-		unlink($_POST['filename']);
+		if (unlink($_POST['filename']))
+		{
+			echo 'deleted ' + $_POST['filename'];
+		}
+		else {
+			echo 'Fail: could not delete ' + $_POST['filename'];
+		}
 	}
 	
 	else
