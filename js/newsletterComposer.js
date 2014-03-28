@@ -167,7 +167,7 @@ var imageUploadHandler = function(event){
 			//alert(file.name);
 			jQuery.post('save_image.php', { 'filename': file.name, 'ext': extension, 'data': canvas.toDataURL(uploadType) }, function(data_returned) {
 				// when it's uploaded to the server and saved then set the image preview to source from there.
-				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved in the cookies
+				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved
 				uploadedDiv.find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
 				saveNewsletter();
 			});
@@ -262,6 +262,14 @@ function logoMugshotReset(container)
 	saveNewsletter();
 }
 
+var deleteFile = function(filename)
+{
+	jQuery.post('file_ops.php', {task: "delete_file", 'filename': filename}, function(data) {
+		alert(data);
+		populatePreviousNewsletters();
+	});
+}
+
 function generatePreviousNewsletter(newsletter_data, files)
 {	
 	var element = $('<div class="previous_newsletter section left"></div>');
@@ -285,12 +293,7 @@ function generatePreviousNewsletter(newsletter_data, files)
 				fileRow.append('<div>' + files[i] + '</div>');
 				fileRow.append('<div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div>');
 				fileRow.append('<div><button class="delete_file">Delete</button></div>');
-				fileRow.find('.delete_file').click(function(){
-					jQuery.post('file_ops.php', {task: "delete_file", filename: 'users/' + $('#username').text() + '/' + files[i]}, function(data) {
-						alert(data);
-						populatePreviousNewsletters();
-					});
-				});
+				fileRow.find('.delete_file').click(deleteFile);
 				files_container.append(fileRow);
 			}
 		}
@@ -552,7 +555,15 @@ function buildArticles(array, followingElement) {
 				bindControls(image);
 				//image.find('input').val(array[a].article[i].value);
 				image.find('.imageLoaded').val(array[a].article[i].value);
-				image.find('img.preview').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
+				var preview = image.find('img.preview');
+				preview.attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
+				// resize the preview image
+				preview.load(function() {
+					if ($(this).width() > MAX_WIDTH_UI) {
+						$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
+						$(this).css('width', MAX_WIDTH_UI);
+					}
+				});
 				image.find('.imageUpload').bind('change', imageUploadHandler);
 				art.find('.article_buttons').before(image);
 			} else {
@@ -593,7 +604,7 @@ function populateLoadRevisions()
 function restoreById(nl_id, saving_old) {
 	// load the selected revision
 	jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: nl_id}, function(data) {
-			debugger;
+			//debugger;
 			if (data.indexOf('Fail') >= 0) {alert (data);}
 			else if (data === '') {
 				// do nothing if there's no data to get
@@ -645,6 +656,7 @@ var addRecipientHandler = function(){
 // restore form content from JSON 
 function restore(jsonData, isString) {
 	//debugger;
+	$( "#accordion" ).accordion( "option", "active", 1 );
 	if(typeof(isString)==='undefined') isString = true;
 	if (isString)
 	{
@@ -659,12 +671,25 @@ function restore(jsonData, isString) {
 		logoMugshotHandler($('#logo'));
 		$('#logo > .uploadedData').find('input').val(jsonData.logo);
 		$('#logo > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.logo));
+		$('#logo > .uploadedData').find('img').load(function() {
+			debugger;
+			if ($(this).width() > MAX_WIDTH_UI) {
+				$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
+				$(this).css('width', MAX_WIDTH_UI);
+			}
+		});
 	}
 	if (jsonData.mugshot.length > 0)
 	{
 		logoMugshotHandler($('#mugshot'));
 		$('#mugshot > .uploadedData').find('input').val(jsonData.mugshot);
 		$('#mugshot > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.mugshot));
+		$('#mugshot > .uploadedData').find('img').load(function() {
+			if ($(this).width() > MAX_WIDTH_UI) {
+				$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
+				$(this).css('width', MAX_WIDTH_UI);
+			}
+		});
 	}
 	$('#emailHeader > textarea').val(decodeHTML(jsonData.header.email));
 	$('#webHeader > textarea').val(decodeHTML(jsonData.header.web));
@@ -997,6 +1022,8 @@ $(document).ready(function() {
 		$('#generate').click(function(){
 			// send the content to the php code that generates the newsletter
 			var data = {
+				title: encodeHTML($('#newsletterTitle').val()),
+				number: encodeHTML($('#issuenum').val()),
 				newsletter: JSON.stringify(collectNewsletterData())
 			};
 			// the generate_newsletter php returns some html links to the generated file that get loaded into our user interface

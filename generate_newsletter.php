@@ -278,7 +278,8 @@ if (login_ok() == 1) {
 	// collect the JSON containing all the data entered into the form
 	//$personal_info = json_decode(stripslashes($_POST['personal']), true);
 	$newsletter_info = json_decode(stripslashes($_POST['newsletter']), true);
-
+	$newsletter_info['title'] = stripslashes($_POST['title']);
+	$newsletter_info['number'] = stripslashes($_POST['number']);
 	//echo "\n<br />newsletter_info:<br />";
 	//print_r($newsletter_info);
 	
