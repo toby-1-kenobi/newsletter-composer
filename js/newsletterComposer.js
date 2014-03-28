@@ -505,13 +505,48 @@ var newsletterRedo = function()
 	});
 }
 
+// change the newsletter, removing article data but keeping other data
+// such as header and footer
 var changeNewsletter = function()
 {
+	// first save the newsletter content
 	var content = collectNewsletterData();
+	jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
+		if (response.indexOf('Fail') >= 0) {
+			// if the save fails then just alert the error and keep going
+			alert (response);
+		}
+	});
+	// remove all articles
+	$('.article').remove();
 	//alert ('current content ' + JSON.stringify(content));
 	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#issuenum').val(), content: content}, function(data){
 		//alert('next id ' + data);
-		restoreById(data, true);
+		restoreById(data, false);
+	});
+}
+
+// change the newsletter removing all data inputted.
+var changeNewsletter_clearAll = function()
+{
+	// first save the newsletter content
+	var content = collectNewsletterData();
+	jQuery.post('db_interface_newsletters.php', {task: "autosave", newsletter_id: $('#newsletterID').val(), content: saveData}, function(response) {
+		if (response.indexOf('Fail') >= 0) {
+			// if the save fails then just alert the error and keep going
+			alert (response);
+		}
+	});
+	// remove all articles
+	$('.article').remove();
+	// clear other inputted data
+	$('.input-issue').clearForm();
+	logoMugshotReset($('#logo'));
+	logoMugshotReset($('#mugshot'));
+	//alert ('current content ' + JSON.stringify(content));
+	jQuery.post('db_interface_newsletters.php', {task: "change_newsletter", newsletter_title: $('#newsletterTitle').val(), newsletter_issue: $('#issuenum').val(), content: content}, function(data){
+		//alert('next id ' + data);
+		restoreById(data, false);
 	});
 }
 
@@ -955,7 +990,8 @@ $(document).ready(function() {
 		setSendCookie();
 		
 		// bind changes to newsletter key fields to change the newsletter
-		$('.input-issue.key').change(changeNewsletter);
+		$('#newsletterTitle').change(changeNewsletter_clearAll);
+		$('#issuenum').change(changeNewsletter);
 		
 		// bind changes to the newsletter to get saved
 		$('.input-issue.save').not('.key').change(saveNewsletter);
