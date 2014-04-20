@@ -133,6 +133,8 @@ var imageUploadHandler = function(event){
 	if (!file.type.match(/image.*/)) {
 		alert('that file is not an image.');
 	} else {
+		uploadedDiv.children('img.preview').hide();
+		uploadedDiv.children('img.preloader').show();
 		var img = document.createElement("img"); // need an img element to read file into
 		var reader = new FileReader(); // HTML 5 goodness
 		img.onload = function(e) { // when the file has finished being read into the img element
@@ -145,7 +147,7 @@ var imageUploadHandler = function(event){
 				canvas.width = img.width;
 			}
 			// while we're at it resize the preview image size
-			var preview = uploadedDiv.children('img');
+			var preview = uploadedDiv.children('img.preview');
 			if (img.width > MAX_WIDTH_UI) {
 				preview.css('height', img.height * MAX_WIDTH_UI / img.width); // keep aspect ratio of image
 				preview.css('width', MAX_WIDTH_UI);
@@ -168,7 +170,9 @@ var imageUploadHandler = function(event){
 			jQuery.post('save_image.php', { 'filename': file.name, 'ext': extension, 'data': canvas.toDataURL(uploadType) }, function(data_returned) {
 				// when it's uploaded to the server and saved then set the image preview to source from there.
 				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved
-				uploadedDiv.find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
+				uploadedDiv.find('img.preview').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
+				uploadedDiv.children('img.preview').show();
+				uploadedDiv.children('img.preloader').hide();
 				saveNewsletter();
 			});
 		}
@@ -202,7 +206,7 @@ var paraField = '<div class="moveable">' + controls + '<textarea class="articleP
 
 var imageField = '<div class="moveable">' + controls + "\n";
 imageField += "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
-imageField += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
+imageField += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /><img class="preloader hidden" src="images/image_preloader.gif" /></div>';
 imageField += "</div>\n";
 
 var recipientRow = "<tr class=\"newRecipient\">\n";
@@ -591,6 +595,8 @@ function buildArticles(array, followingElement) {
 				//image.find('input').val(array[a].article[i].value);
 				image.find('.imageLoaded').val(array[a].article[i].value);
 				var preview = image.find('img.preview');
+				preview.hide();
+				image.find('img.preloader').show();
 				preview.attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
 				// resize the preview image
 				preview.load(function() {
@@ -598,6 +604,8 @@ function buildArticles(array, followingElement) {
 						$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
 						$(this).css('width', MAX_WIDTH_UI);
 					}
+					$(this).siblings('img.preloader').hide();
+					$(this).show();
 				});
 				image.find('.imageUpload').bind('change', imageUploadHandler);
 				art.find('.article_buttons').before(image);
