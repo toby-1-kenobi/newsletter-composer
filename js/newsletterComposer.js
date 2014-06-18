@@ -259,19 +259,24 @@ function logoMugshotReset(container)
 	container.find('input.imageUpload').remove();
 	container.find('input.imageLoaded').parent().remove();
 	var freshButton = '<button>Upload</button>';
-	$(this).replaceWith(freshButton);
+	container.find('button.removeImage').replaceWith(freshButton);
 	container.find('button').button({icons:{primary: "ui-icon-image"},text:false}).click(function(){
 		logoMugshotHandler($(this).parent());
 	});
 	saveNewsletter();
 }
 
-var deleteFile = function(filename)
+var deleteFile = function(file_name)
 {
-	jQuery.post('file_ops.php', {task: "delete_file", 'filename': filename}, function(data) {
+	jQuery.post('file_ops.php', {task: "delete_file", filename: file_name}, function(data) {
 		alert(data);
 		populatePreviousNewsletters();
 	});
+}
+
+var deleteNewsletter = function(newsletter_id, filenames_start_with)
+{
+	$('#confirm_delete_' + newsletter_id).dialog('open');
 }
 
 function generatePreviousNewsletter(newsletter_data, files)
@@ -297,7 +302,9 @@ function generatePreviousNewsletter(newsletter_data, files)
 				fileRow.append('<div>' + files[i] + '</div>');
 				fileRow.append('<div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div>');
 				fileRow.append('<div><button class="delete_file">Delete</button></div>');
-				fileRow.find('.delete_file').click(deleteFile);
+				fileRow.find('.delete_file').click({file_name: files[i]}, function(event){
+					deleteFile(event.data.file_name);
+				});
 				files_container.append(fileRow);
 			}
 		}
@@ -326,8 +333,32 @@ function generatePreviousNewsletter(newsletter_data, files)
 	operations.find('.load_newsletter').button().click(function(){
 		restoreById(newsletter_data['id'], true);
 	});
-	operations.find('.delete_newsletter').button();
+	operations.find('.delete_newsletter').button({
+		icons: {
+			primary: "ui-icon-trash"
+		},
+		text: true
+	}).click({newsletter_id: newsletter_data['id'], filenames_start_with: filename_start}, function(event){
+		deleteNewsletter(event.data.newsletter_id, event.data.filenames_start_with);
+	});
 	element.append(operations);
+	element.append('<div id="confirm_delete' + newsletter_data['id'] + '"></div>');
+	$('#confirm_delete_' + newsletter_data['id']).dialog({
+		autoOpen: false,
+		resizable: false,
+		modal: true,
+		title: 'Are you sure?',
+		buttons: {
+			'Cancel': function(){
+				$(this).dialog('close');
+			},
+			'Delete': function(){
+				// delete the files associated with this newsletter
+
+				// delete the record of this newlsetter from the db
+			}
+		}
+	});
 	return element;
 }
 
@@ -715,7 +746,6 @@ function restore(jsonData, isString) {
 		$('#logo > .uploadedData').find('input').val(jsonData.logo);
 		$('#logo > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.logo));
 		$('#logo > .uploadedData').find('img').load(function() {
-			debugger;
 			if ($(this).width() > MAX_WIDTH_UI) {
 				$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
 				$(this).css('width', MAX_WIDTH_UI);
@@ -740,7 +770,8 @@ function restore(jsonData, isString) {
 	$('#emailFooter > textarea').val(decodeHTML(jsonData.footer.email));
 	$('#webFooter > textarea').val(decodeHTML(jsonData.footer.web));
 	$('#printFooter > textarea').val(decodeHTML(jsonData.footer.print));
-	$('#' + jsonData.privacy).attr('checked', true).button("refresh");
+	//$('#' + jsonData.privacy).attr('checked', true).button("refresh");
+	$('#' + jsonData.privacy).prop('checked', true).button("refresh");
 	$('#privacy_username').val(decodeHTML(jsonData.privacy_user));
 	$('#privacy_password').val(decodeHTML(jsonData.privacy_pass));
 	if (jsonData.privacy === 'privacy_protected') $('#privacy_credentials').show();
