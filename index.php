@@ -19,8 +19,7 @@ require_once 'environment.php';
 <meta http-equiv="content-style-type" content="text/css"/>
 <meta http-equiv="expires" content="0"/>
 
-<!--link href="css/smoothness/jquery-ui-1.10.0.custom.css" rel="stylesheet" type="text/css"/-->
-<link href="http://code.jquery.com/ui/1.10.2/themes/ui-lightness/jquery-ui.css" rel="stylesheet" type="text/css"/>
+<link href="css/custom-theme/jquery-ui-1.10.4.custom.css" rel="stylesheet" type="text/css"/>
 <link href="css/newsletterComposer.css?<?php echo time(); ?>" rel="stylesheet" type="text/css"/>
 
 <?php
@@ -38,8 +37,10 @@ if (isset($uid)) {
 ?>
 
 <script src="js/json2.js" type="text/javascript"></script>
-<script src="js/jquery-1.6.2.min.js" type="text/javascript"></script>
-<script src="js/jquery-ui-1.10.0.custom.js" type="text/javascript"></script>
+<!--script src="js/jquery-1.6.2.min.js" type="text/javascript"></script-->
+<script src="js/jquery-2.1.0.js" type="text/javascript"></script>
+<script src="js/jquery-migrate-1.2.1.js" type="text/javascript"></script>
+<script src="js/jquery-ui-1.10.4.custom.js" type="text/javascript"></script>
 <script src="js/jquery.cookies.2.2.0.js" type="text/javascript"></script>
 <script src="js/newsletterComposer.js?<?php echo time(); ?>" type="text/javascript"></script>
 
