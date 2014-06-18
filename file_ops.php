@@ -24,13 +24,16 @@ if (login_ok() == 1) {
 
 	else if (strcmp($_POST['task'], 'delete_file') == 0)
 	{
-		//delete the specified file
-		if (unlink($_POST['filename']))
+		//error_reporting(E_ALL);
+		//ini_set('display_errors', 1);
+		
+		// delete the specified file
+		if (unlink(realpath($rel_user_path . $_POST['filename'])))
 		{
-			echo 'deleted ' + $_POST['filename'];
+			echo 'deleted ' . $_POST['filename'];
 		}
 		else {
-			echo 'Fail: could not delete ' + $_POST['filename'];
+			echo 'Fail: could not delete ' . $rel_user_path . $_POST['filename'];
 		}
 	}
 	
