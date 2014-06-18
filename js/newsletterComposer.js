@@ -285,6 +285,7 @@ function generatePreviousNewsletter(newsletter_data, files)
 	element.append('<div class="prev_news_title">' + newsletter_data['name'] + ' ' + newsletter_data['issue'] + '</div>');
 	var files_fieldset = $('<fieldset><legend>Files online</legend></fieldset>');
 	var files_container = $('<div class="files_container"></div>');
+	var no_files_content = '<p>No files online</p>';
 	if (files != null)
 	{
 		if (newsletter_data['issue'].length < 3)
@@ -298,7 +299,7 @@ function generatePreviousNewsletter(newsletter_data, files)
 		{
 			if (files[i].startsWith(filename_start))
 			{
-				var fileRow = $('<div></div>');
+				var fileRow = $('<div id="' + files[i] + '"></div>');
 				fileRow.append('<div>' + files[i] + '</div>');
 				fileRow.append('<div><a href="users/' + $('#username').text() + '/' + files[i] + '">view</a></div>');
 				fileRow.append('<div><button class="delete_file">Delete</button></div>');
@@ -323,7 +324,7 @@ function generatePreviousNewsletter(newsletter_data, files)
 	}
 	if (files_container.children().length == 0)
 	{
-		files_container.append('<p>No files online</p>');
+		files_container.append(no_files_content);
 	}
 	files_fieldset.append(files_container);
 	element.append(files_fieldset);
@@ -354,8 +355,21 @@ function generatePreviousNewsletter(newsletter_data, files)
 			},
 			'Delete': function(){
 				// delete the files associated with this newsletter
+				files_container.children().each(function (index)
+				{
+					if($(this).html() !== no_files_content)
+					{
+						var file_name = $(this).attr('id');
+						jQuery.post('file_ops.php', {task: "delete_file", filename: file_name}, function(data) {
+							alert(data);
+						});
+					}
+				});
 
 				// delete the record of this newlsetter from the db
+				jQuery.post('db_interface_newsletters.php', {task: "delete_newsletter", newsletter_id: newsletter_data['id']});
+
+				populatePreviousNewsletters();
 			}
 		}
 	});
