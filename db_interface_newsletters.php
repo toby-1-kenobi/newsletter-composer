@@ -256,11 +256,14 @@ if (login_ok() == 1) {
 		// The assumption is that tables are properly related in the backend
 		// and that the delte will cascade over the saved instances.
 		// It is only possible to restore a deleted newsletter if the server administrator makes regular backups of the db
+
+		//error_reporting(E_ALL);
+		//ini_set('display_errors', 1);
 		$q_delete_newsletter = $dbh->prepare("DELETE FROM Newsletters WHERE id=:newsletter_id AND user=:user_id");
-		$q_delete_newsletters->bindParam(':user_id', $db_uid);
-		$q_delete_newsletters->bindParam(':newsletter_id', $_POST['newsletter_id']);
-		$q_delete_newsletters->execute();
-		echo $q_delete_newsletters->rowCount();
+		$q_delete_newsletter->bindParam(':user_id', $db_uid);
+		$q_delete_newsletter->bindParam(':newsletter_id', $_POST['newsletter_id']);
+		$q_delete_newsletter->execute();
+		echo $q_delete_newsletter->rowCount();
 	}
 	
 	else if (strcmp($_POST['task'], 'clear_old_history') == 0)

@@ -274,16 +274,19 @@ var deleteFile = function(file_name)
 	});
 }
 
-var deleteNewsletter = function(newsletter_id, filenames_start_with)
-{
-	$('#confirm_delete_' + newsletter_id).dialog('open');
-}
-
+// build the markup and code involved in one previous newsletter element
 function generatePreviousNewsletter(newsletter_data, files)
 {	
+	// outer div
 	var element = $('<div class="previous_newsletter section left"></div>');
+
+	// a dialog to confirm the delete of this newsletter. It gets initialised and opened when the "delete all" button is clicked.
+	element.append('<div class="dialog" id="confirm_delete_' + newsletter_data['id'] + '"><div class="dialogText"></div></div>');
+	
+	// the title of this newsletter
 	element.append('<div class="prev_news_title">' + newsletter_data['name'] + ' ' + newsletter_data['issue'] + '</div>');
 	var files_fieldset = $('<fieldset><legend>Files online</legend></fieldset>');
+	// this container will list the files associeted with this newsletter, each with a button to view or delete it.
 	var files_container = $('<div class="files_container"></div>');
 	var no_files_content = '<p>No files online</p>';
 	if (files != null)
@@ -328,10 +331,17 @@ function generatePreviousNewsletter(newsletter_data, files)
 	}
 	files_fieldset.append(files_container);
 	element.append(files_fieldset);
+
+	// these buttons apply to the newsleter as a whole - either load it into the editor, or delete it.
 	var operations = $('<fieldset><legend>Actions</legend></fieldset>');
 	operations.append('<button class="load_newsletter">Load</button>');
 	operations.append('<button class="delete_newsletter">Delete all</button>');
-	operations.find('.load_newsletter').button().click(function(){
+	operations.find('.load_newsletter').button({
+		icons: {
+			primary: "ui-icon-arrowthickstop-1-s"
+		},
+		text: true
+	}).click(function(){
 		restoreById(newsletter_data['id'], true);
 	});
 	operations.find('.delete_newsletter').button({
@@ -339,40 +349,44 @@ function generatePreviousNewsletter(newsletter_data, files)
 			primary: "ui-icon-trash"
 		},
 		text: true
-	}).click({newsletter_id: newsletter_data['id'], filenames_start_with: filename_start}, function(event){
-		deleteNewsletter(event.data.newsletter_id, event.data.filenames_start_with);
+	}).click(function(event){
+		// set the text of the dialog
+		$('#confirm_delete_' + newsletter_data['id'] + ' > .dialogText').text('Are you sure you want to delete this newsletter and all associated files? This operation canot be undone.');
+		// initialise and open the dialog
+		$('#confirm_delete_' + newsletter_data['id']).dialog({
+			resizable: false,
+			modal: true,
+			title: 'Are you sure?',
+			buttons: {
+				'Cancel': function(){
+					$(this).dialog('close');
+				},
+				'Delete': function(){
+					// delete the files associated with this newsletter
+					files_container.children().each(function (index)
+					{
+						if($(this).html() !== no_files_content)
+						{
+							var file_name = $(this).attr('id');
+							jQuery.post('file_ops.php', {task: "delete_file", filename: file_name}, function(data) {
+								//TODO: handle cases when file delete fails
+							});
+						}
+					});
+
+					// delete the record of this newlsetter from the db
+					jQuery.post('db_interface_newsletters.php', {task: "delete_newsletter", newsletter_id: newsletter_data['id']}, function(data) {
+						//TODO: handle cases when newsletter delete fails.
+					});
+
+					$(this).dialog('close');
+
+					populatePreviousNewsletters();
+				}
+			} 
+		});
 	});
 	element.append(operations);
-	element.append('<div id="confirm_delete' + newsletter_data['id'] + '"></div>');
-	$('#confirm_delete_' + newsletter_data['id']).dialog({
-		autoOpen: false,
-		resizable: false,
-		modal: true,
-		title: 'Are you sure?',
-		buttons: {
-			'Cancel': function(){
-				$(this).dialog('close');
-			},
-			'Delete': function(){
-				// delete the files associated with this newsletter
-				files_container.children().each(function (index)
-				{
-					if($(this).html() !== no_files_content)
-					{
-						var file_name = $(this).attr('id');
-						jQuery.post('file_ops.php', {task: "delete_file", filename: file_name}, function(data) {
-							alert(data);
-						});
-					}
-				});
-
-				// delete the record of this newlsetter from the db
-				jQuery.post('db_interface_newsletters.php', {task: "delete_newsletter", newsletter_id: newsletter_data['id']});
-
-				populatePreviousNewsletters();
-			}
-		}
-	});
 	return element;
 }
 
