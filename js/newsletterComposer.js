@@ -171,8 +171,6 @@ var imageUploadHandler = function(event){
 				// when it's uploaded to the server and saved then set the image preview to source from there.
 				uploadedDiv.find('input').val(data_returned); // this is so the uploaded image src can be saved
 				uploadedDiv.find('img.preview').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(data_returned));
-				uploadedDiv.children('img.preview').show();
-				uploadedDiv.children('img.preloader').hide();
 				saveNewsletter();
 			});
 		}
@@ -245,8 +243,12 @@ function logoMugshotHandler(container)
 		//var parent = $(this).parent();
 		var uploadControl = "<input type=\"file\" class=\"imageUpload input-issue\" name=\"fileSelect\" />\n";
 		uploadControl += '<button class="removeImage">Remove</button>';
-		uploadControl += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /></div>';
+		uploadControl += '<div class="uploadedData"><input type="hidden" class="imageLoaded input-issue save" /><img class="preview" /><img class="preloader hidden" src="images/image_preloader.gif" /></div>';
 		container.find('button').replaceWith(uploadControl);
+		container.find('img.preview').load(function() {
+			$(this).siblings('img.preloader').hide();
+			$(this).show();
+		});
 		container.find('.imageUpload').bind('change', imageUploadHandler);
 		container.find('.input-issue.save').change(saveNewsletter);
 		container.find('button.removeImage').button({icons:{primary: "ui-icon-trash"},text:false}).click(function(){
@@ -624,6 +626,10 @@ function bindArticleButtons(article) {
 	article.find('.addImage').click(function(){
 		var field = $(imageField);
 		bindControls(field);
+		field.find('img.preview').load(function() {
+			$(this).siblings('img.preloader').hide();
+			$(this).show();
+		});
 		field.find('.imageUpload').bind('change', imageUploadHandler);
 		field.find('.input-issue.save').change(saveNewsletter);
 		field.insertBefore($(this).parent());
@@ -656,7 +662,6 @@ function buildArticles(array, followingElement) {
 				var preview = image.find('img.preview');
 				preview.hide();
 				image.find('img.preloader').show();
-				preview.attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
 				// resize the preview image
 				preview.load(function() {
 					if ($(this).width() > MAX_WIDTH_UI) {
@@ -666,6 +671,7 @@ function buildArticles(array, followingElement) {
 					$(this).siblings('img.preloader').hide();
 					$(this).show();
 				});
+				preview.attr('src', 'users/' + userName + '/images/' + encodeURIComponent(array[a].article[i].value));
 				image.find('.imageUpload').bind('change', imageUploadHandler);
 				art.find('.article_buttons').before(image);
 			} else {
@@ -771,26 +777,34 @@ function restore(jsonData, isString) {
 	if (jsonData.logo.length > 0)
 	{
 		logoMugshotHandler($('#logo'));
+		$('#logo').find('img.preview').hide();
+		$('#logo').find('img.preloader').show();
 		$('#logo > .uploadedData').find('input').val(jsonData.logo);
-		$('#logo > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.logo));
-		$('#logo > .uploadedData').find('img').load(function() {
+		$('#logo > .uploadedData').find('img.preview').load(function() {
 			if ($(this).width() > MAX_WIDTH_UI) {
 				$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
 				$(this).css('width', MAX_WIDTH_UI);
 			}
+			$(this).siblings('img.preloader').hide();
+			$(this).show();
 		});
+		$('#logo > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.logo));
 	}
 	if (jsonData.mugshot.length > 0)
 	{
 		logoMugshotHandler($('#mugshot'));
+		$('#mugshot').find('img.preview').hide();
+		$('#mugshot').find('img.preloader').show();
 		$('#mugshot > .uploadedData').find('input').val(jsonData.mugshot);
-		$('#mugshot > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.mugshot));
-		$('#mugshot > .uploadedData').find('img').load(function() {
+		$('#mugshot > .uploadedData').find('img.preview').load(function() {
 			if ($(this).width() > MAX_WIDTH_UI) {
 				$(this).css('height', $(this).height() * MAX_WIDTH_UI / $(this).width()); // keep aspect ratio of image
 				$(this).css('width', MAX_WIDTH_UI);
 			}
+			$(this).siblings('img.preloader').hide();
+			$(this).show();
 		});
+		$('#mugshot > .uploadedData').find('img').attr('src', 'users/' + userName + '/images/' + encodeURIComponent(jsonData.mugshot));
 	}
 	$('#emailHeader > textarea').val(decodeHTML(jsonData.header.email));
 	$('#webHeader > textarea').val(decodeHTML(jsonData.header.web));
