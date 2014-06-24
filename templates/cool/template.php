@@ -286,7 +286,7 @@ WEBLOGO;
 
 
 // include title in main article beginning
-$template['web']['begin']['main']['article'] = '<!--main article--><h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
+$template['web']['begin']['main']['article'] = '<!--main article--><h2 style="font-family: Helvetica, Arial, sans-serif; font-size: 18px; margin: 0px; padding: 0px; padding-bottom: 5px; text-shadow: 1px 1px 1px #333333; color: #62b6ee;"><!--ARTICLE TITLE--></h2>';
 
 // an article may also not have a title
 $template['web']['begin']['main']['articleNoTitle'] = '<!--main article-->';
