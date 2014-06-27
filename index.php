@@ -181,7 +181,7 @@ else { // the user is logged in or attempting to log in
   <h3>Compose Newsletter</h3>
   <div>
 
-  <div id="new_newsletter" class="section hidden">
+  <div id="new_newsletter" class="section hidden ui-corner-all">
     <div>
       <label for="newNewsletterTitle">Newsletter title: </label>
       <input type="text" size="30" name="newNewsletterTitle" id="newNewsletterTitle"/>
@@ -293,8 +293,8 @@ else { // the user is logged in or attempting to log in
 <button class="clear left">Clear</button>
   
 
-<div class="section">
-	<fieldset><legend>Privacy</legend>
+<div class="section ui-corner-all">
+	<fieldset class="ui-corner-all"><legend>Privacy</legend>
 	My online content is
 	<div id="privacy_radioset">
 		<input type="radio" id="privacy_public" name="privacy" checked="checked" /><label for="privacy_public">Public</label>
@@ -308,7 +308,7 @@ else { // the user is logged in or attempting to log in
 	</div>
 	<div id="privacy_msg"></div>
 	</fieldset>
-	<fieldset><legend>Generate</legend>
+	<fieldset class="ui-corner-all"><legend>Generate</legend>
 	<button id="generate" name="generate">Generate Newsletter</button>
 	<div id="generateResults"></div>
 	</fieldset>

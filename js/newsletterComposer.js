@@ -280,14 +280,14 @@ var deleteFile = function(file_name)
 function generatePreviousNewsletter(newsletter_data, files)
 {	
 	// outer div
-	var element = $('<div class="previous_newsletter section left"></div>');
+	var element = $('<div class="previous_newsletter section left ui-corner-all"></div>');
 
 	// a dialog to confirm the delete of this newsletter. It gets initialised and opened when the "delete all" button is clicked.
 	element.append('<div class="dialog" id="confirm_delete_' + newsletter_data['id'] + '"><div class="dialogText"></div></div>');
 	
 	// the title of this newsletter
 	element.append('<div class="prev_news_title">' + newsletter_data['name'] + ' ' + newsletter_data['issue'] + '</div>');
-	var files_fieldset = $('<fieldset><legend>Files online</legend></fieldset>');
+	var files_fieldset = $('<fieldset class="ui-corner-all"><legend>Files online</legend></fieldset>');
 	// this container will list the files associeted with this newsletter, each with a button to view or delete it.
 	var files_container = $('<div class="files_container"></div>');
 	var no_files_content = '<p>No files online</p>';
@@ -335,7 +335,7 @@ function generatePreviousNewsletter(newsletter_data, files)
 	element.append(files_fieldset);
 
 	// these buttons apply to the newsleter as a whole - either load it into the editor, or delete it.
-	var operations = $('<fieldset><legend>Actions</legend></fieldset>');
+	var operations = $('<fieldset class="ui-corner-all"><legend>Actions</legend></fieldset>');
 	operations.append('<button class="load_newsletter">Load</button>');
 	operations.append('<button class="delete_newsletter">Delete all</button>');
 	operations.find('.load_newsletter').button({
