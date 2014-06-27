@@ -959,6 +959,7 @@ $(document).ready(function() {
 	// apply jQueryUI elements
 	$( ".tabs" ).tabs();
 	$( "#accordion" ).accordion({ active: 1, heightStyle: "content" });
+	//$( "select" ).selectmenu();
 	//$( ":checkbox" ).checkbox();
 	$( "button" ).button();
 	$( ".button" ).button();
@@ -1055,7 +1056,10 @@ $(document).ready(function() {
 		
 		// get the newsletter id
 		jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
-			//alert ("first newsletter id: " + data);
+			if (!is_numeric(data))
+			{
+				$('.newNewsletter').click();
+			}
 			$('#newsletterID').val(data);
 		});
 	

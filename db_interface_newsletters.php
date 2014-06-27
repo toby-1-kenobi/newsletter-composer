@@ -44,7 +44,13 @@ if (login_ok() == 1) {
 		{
 			$q_recent_newsletter_id = $dbh->query("SELECT id FROM Newsletters WHERE user = " . $db_uid . " AND `timestamp` = (SELECT MAX(`timestamp`) FROM Newsletters WHERE user = " . $db_uid . ")");
 			$recent_newsletter_id = $q_recent_newsletter_id->fetchAll(PDO::FETCH_ASSOC);
-			$current_newsletter_id = $recent_newsletter_id[0]['id'];
+			
+			if (sizeof($recent_newsletter_id) > 0)
+			{
+				$current_newsletter_id = $recent_newsletter_id[0]['id'];
+			}
+			// if no results returned then there are no newsletters yet.
+			// in this case we'll leave the newsletter id as null
 			$q_recent_newsletter_id->closeCursor();
 		}
 		return $current_newsletter_id;
@@ -66,7 +72,9 @@ if (login_ok() == 1) {
 	
 	if (strcmp($_POST['task'], 'get_newsletter_id') == 0)
 	{
-		echo getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id);
+		$id = getCurrentNewsletterID($dbh, $db_uid, $current_newsletter_id);
+		if ($id == null) echo "No newsletters";
+		else echo $id;
 	}
 	
 	else if (strcmp($_POST['task'], 'save') == 0)
