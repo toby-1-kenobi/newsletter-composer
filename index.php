@@ -180,8 +180,30 @@ else { // the user is logged in or attempting to log in
   <div id="previous_newsletters_container"></div>
   <h3>Compose Newsletter</h3>
   <div>
-  <!--fieldset><legend>Newsletter</legend-->
-  
+
+  <div id="new_newsletter" class="section hidden">
+    <div>
+      <label for="newNewsletterTitle">Newsletter title: </label>
+      <input type="text" size="30" name="newNewsletterTitle" id="newNewsletterTitle"/>
+      <label for="newIssueNum">Issue number: </label>
+      <input type="text" name="newIssueNum" size="4" maxlength="3" id="newIssueNum" />
+    </div>
+    <div id="copyExistingContent">
+      Copy existing content
+      <label>From: </label><select id="copyFromNewsletter"></select>
+      <div>
+        <input type="checkbox" name="head_foot" /><label for="head_foot">Headers and footers</label><br />
+        <input type="checkbox" name="mugshot" /><label for="mugshot">Mugshot</label><br />
+        <input type="checkbox" name="logo" /><label for="logo">Organisation logo</label><br />
+        <input type="checkbox" name="content" /><label for="content">Newsletter content</label><br />
+      </div>
+    </div>
+    <div><button id="newCancel">Cancel</button><button id="newGo">OK</button></div>
+  </div>
+
+  <div id="compose_newsletter">
+
+  <button class="newNewsletter">New Newsletter</button>
   <button class="clear">Clear</button>
   <button class="saveIssue">Save this revision</button>
   Last save: <span class="last_save_date"></span>
@@ -228,7 +250,7 @@ else { // the user is logged in or attempting to log in
   <div><label for="newsletterTitle">Newsletter title: </label>
   <input class="input-issue save key" type="text" size="30" name="newsletterTitle" id="newsletterTitle"/></div>
   
-  <div><label for="issuednum">Issue number: </label>
+  <div><label for="issuenum">Issue number: </label>
   <input class="input-issue save key" type="text" name="issuenum" size="4" maxlength="3" id="issuenum" />
   <label for="issuedate">Issue date: </label>
   <input class="input-issue save" type="text" name="issuedate" size="12" id="issuedate" /></div>
@@ -270,7 +292,6 @@ else { // the user is logged in or attempting to log in
 <button class="saveIssue right">Save this revision</button>
 <button class="clear left">Clear</button>
   
-<!--/fieldset-->
 
 <div class="section">
 	<fieldset><legend>Privacy</legend>
@@ -293,7 +314,6 @@ else { // the user is logged in or attempting to log in
 	</fieldset>
 </div>
 
-<div class="section left">
 </div>
 
 </div>
@@ -331,7 +351,7 @@ else { // the user is logged in or attempting to log in
     <thead><tr><td>Dear...</td><td>Email</td><td>Personal message A</td><td>Personal message B</td><td>Send results</td></tr></thead>
     <tbody id="all_recipients">
 <?php
-//Сheck that we have a file to import recipients from
+// Сheck if we have a file to import recipients from
 if((!empty($_FILES["recipientsFile"])) && ($_FILES['recipientsFile']['error'] == 0)) {
 	// ExcelFile($filename, $encoding);
    $data = new Spreadsheet_Excel_Reader();

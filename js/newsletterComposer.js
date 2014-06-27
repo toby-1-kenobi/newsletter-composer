@@ -959,6 +959,7 @@ $(document).ready(function() {
 	// apply jQueryUI elements
 	$( ".tabs" ).tabs();
 	$( "#accordion" ).accordion({ active: 1, heightStyle: "content" });
+	//$( ":checkbox" ).checkbox();
 	$( "button" ).button();
 	$( ".button" ).button();
 	$( "#logo > button, #mugshot > button" ).button({
@@ -1001,6 +1002,21 @@ $(document).ready(function() {
 	// bind buttons that reveal things
 	$('.reveal_trigger').click(function(){
 		$(this).parent().find('.hidden').show();
+	});
+
+	$('.newNewsletter').click(function(){
+		$('#compose_newsletter').hide();
+		$('#new_newsletter').show();
+	});
+
+	$('#newCancel').click(function(){
+		$('#compose_newsletter').show();
+		$('#new_newsletter').hide();
+	});
+
+	$('#newGo').click(function(){
+		$('#compose_newsletter').show();
+		$('#new_newsletter').hide();
 	});
 	
 	// bind rego form validation
