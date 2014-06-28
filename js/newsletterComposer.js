@@ -414,7 +414,13 @@ function populatePreviousNewsletters()
 			for (var i = 0; i < prev_newsletters.length; ++i)
 			{
 				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i], files));
+				$('#copyFromNewsletter').append('<option value="' + prev_newsletters[i]['id'] + '">' + prev_newsletters[i]['name'] + ' ' + prev_newsletters[i]['issue'] + '</option>')
 			}
+			$('#copyExistingContent').show();
+		}
+		else
+		{
+			$('#copyExistingContent').hide();
 		}
 		
 	});
@@ -1058,24 +1064,25 @@ $(document).ready(function() {
 		jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
 			if (!is_numeric(data))
 			{
+				// if there is no newsletters then let the user make a new one
 				$('.newNewsletter').click();
 			}
-			$('#newsletterID').val(data);
-		});
-	
-		// get existing content from db
-		jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $('#newsletterID').val()}, function(data) {
-
-			if (data.indexOf('Fail') >= 0) {alert (data);}
-			else if (data === '') {
-				alert ("no data to restore");
-				// do nothing if there's no data to get
+			else {
+				$('#newsletterID').val(data);
+				// get existing content from db
+				jQuery.post('db_interface_newsletters.php', {task: "restore", newsletter_id: $('#newsletterID').val()}, function(data) {
+					if (data.indexOf('Fail') >= 0) {alert (data);}
+					else if (data === '') {
+						alert ("no data to restore");
+						// do nothing if there's no data to get
+					}
+					else 
+					{
+						restore(data);
+					}
+				});
 			}
-			else 
-			{
-				//alert (data);
-				restore(data);
-			}
+			
 		});
 		
 		populatePreviousNewsletters();
