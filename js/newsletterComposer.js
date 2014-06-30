@@ -392,6 +392,8 @@ function generatePreviousNewsletter(newsletter_data, files)
 	return element;
 }
 
+//declare this variable globally becasue we use it elsewhere
+var prev_newsletters = [];
 function populatePreviousNewsletters()
 {
 	// get a list of files in the user's directory
@@ -410,7 +412,7 @@ function populatePreviousNewsletters()
 		// then fill it
 		if (data != '')
 		{
-			var prev_newsletters = jQuery.parseJSON(data);
+			prev_newsletters = jQuery.parseJSON(data);
 			for (var i = 0; i < prev_newsletters.length; ++i)
 			{
 				$('#previous_newsletters_container').append(generatePreviousNewsletter(prev_newsletters[i], files));
@@ -770,6 +772,8 @@ var addRecipientHandler = function(){
 // restore form content from JSON 
 function restore(jsonData, isString) {
 	//debugger;
+	$('#compose_newsletter').show();
+	$('#new_newsletter').hide();
 	$( "#accordion" ).accordion( "option", "active", 1 );
 	if(typeof(isString)==='undefined') isString = true;
 	if (isString)
@@ -1024,6 +1028,12 @@ $(document).ready(function() {
 	$('#newGo').click(function(){
 		$('#compose_newsletter').show();
 		$('#new_newsletter').hide();
+		$('#newCancel').show();
+	}).button('disable');
+
+	$('#loadExisting').click(function(){
+		$('#compose_newsletter').show();
+		$('#new_newsletter').hide();
 	});
 	
 	// bind rego form validation
@@ -1059,12 +1069,46 @@ $(document).ready(function() {
 		$('#logo > button, #mugshot > button').click(function(){
 			logoMugshotHandler($(this).parent());
 		});
+
+		// when creating a new newsletter, title and issue number should not be blank
+		// and if they match an existing newsletter then we're loading that instead of creating a new one
+		$('#newNewsletterTitle,#newIssueNum').on('input change', function(){
+			var newTitle = $('#newNewsletterTitle').val().trim();
+			var newIssue = $('#newIssueNum').val().trim();
+			if (newTitle === '' || newIssue === '')
+			{
+				$('#loadExisting').hide();
+				$('#newGo').show();
+				$('#newGo').button('disable');
+			}
+			else
+			{
+				$('#newGo').button('enable');
+				var match = false;
+				for (var i = 0; i < prev_newsletters.length; ++i)
+				{
+					if (newTitle === prev_newsletters[i]['name'] && pad(newIssue, 3) === pad(prev_newsletters[i]['issue'], 3))
+					{ 
+						$('#loadExisting').show();
+						$('#newGo').hide();
+						match = true;
+					}
+				}
+				if (!match)
+				{
+					$('#loadExisting').hide();
+					$('#newGo').show();
+				
+				}
+			}
+		});
 		
 		// get the newsletter id
 		jQuery.post('db_interface_newsletters.php', {task: "get_newsletter_id"}, function(data) {
-			if (!is_numeric(data))
+			if (!jQuery.isNumeric(data))
 			{
 				// if there is no newsletters then let the user make a new one
+				$('#newCancel').hide();
 				$('.newNewsletter').click();
 			}
 			else {

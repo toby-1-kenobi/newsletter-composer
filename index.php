@@ -41,6 +41,7 @@ if (isset($uid)) {
 <script src="js/jquery-2.1.0.js" type="text/javascript"></script>
 <script src="js/jquery-migrate-1.2.1.js" type="text/javascript"></script>
 <script src="js/jquery-ui-1.10.4.custom.js" type="text/javascript"></script>
+<script src="js/jquery.ui.selectmenu.js" type="text/javascript"></script>
 <script src="js/jquery.cookies.2.2.0.js" type="text/javascript"></script>
 <script src="js/newsletterComposer.js?<?php echo time(); ?>" type="text/javascript"></script>
 
@@ -198,7 +199,7 @@ else { // the user is logged in or attempting to log in
         <input type="checkbox" name="content" /><label for="content">Newsletter content</label><br />
       </div>
     </div>
-    <div><button id="newCancel">Cancel</button><button id="newGo">OK</button></div>
+    <div><button id="newCancel">Cancel</button><button id="newGo">OK</button><button id="loadExisting" class="hidden">Load existing newsletter</button></div>
   </div>
 
   <div id="compose_newsletter">
