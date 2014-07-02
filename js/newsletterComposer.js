@@ -1026,6 +1026,20 @@ $(document).ready(function() {
 	});
 
 	$('#newGo').click(function(){
+		// make an array of the names of the unchecked checkboxes
+		var checkedBoxes = $('#copyExistingContent > .checkboxes > .input').not(':checked');
+		var notChosen = jQuery.map(checkedBoxes, function(element){
+			return element.name;
+		});
+		jQuery.post('db_interface_newsletters.php', {
+			task: 'new_newsletter',
+			title: $('#newNewsletterTitle').val(),
+			issue: $('#newIssueNum').val(),
+			content_from: $('#copyFromNewsletter').val(),
+			not_chosen_content: chosen
+		}, function(data){
+
+		});
 		$('#compose_newsletter').show();
 		$('#new_newsletter').hide();
 		$('#newCancel').show();

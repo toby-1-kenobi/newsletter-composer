@@ -215,6 +215,36 @@ if (login_ok() == 1) {
 		}
 	}
 	
+	else if (strcmp($_POST['task'], 'new_newsletter') == 0)
+	{
+		// first get the content from the newsletter we are copying from
+		// if the id < 0 no newsletter is selected so we wont copy content
+		if ((int)$_POST['content_from'] < 0)
+		{
+			// make blank content
+			$new_content = array();
+			$new_content['template'] = 'cool';
+			$new_content['logo'] = '';
+			$new_content['mugshot'] = '';
+			$new_content['header'] = array('email' => '', 'web' => '', 'print' => '');
+			$new_content['footer'] = array('email' => '', 'web' => '', 'print' => '');
+			$new_content['mainArticles'] = array();
+			$new_content['sideArticles'] = array();
+		}
+		else
+		{
+			// get the content from the selected newsletter
+
+			// remove any content that was not selected to be copied
+
+		}
+		// set the date to be the current month
+
+		// create then new newsletter
+
+		// output the newsletter content
+	}
+	
 	else if (strcmp($_POST['task'], 'change_newsletter') == 0)
 	{
 		$q_find_newsletter = $dbh->prepare("SELECT id FROM Newsletters WHERE user=:user AND name=:title AND issue=:issue");

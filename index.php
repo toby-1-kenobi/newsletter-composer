@@ -191,8 +191,11 @@ else { // the user is logged in or attempting to log in
     </div>
     <div id="copyExistingContent">
       Copy existing content
-      <label>From: </label><select id="copyFromNewsletter"></select>
-      <div>
+      <label>From: </label>
+      <select id="copyFromNewsletter" size="10">
+        <option value="-1" selected="selected">Select a newsletter from which to load content.</option>
+      </select>
+      <div class="checkboxes">
         <input type="checkbox" name="head_foot" /><label for="head_foot">Headers and footers</label><br />
         <input type="checkbox" name="mugshot" /><label for="mugshot">Mugshot</label><br />
         <input type="checkbox" name="logo" /><label for="logo">Organisation logo</label><br />
@@ -214,7 +217,7 @@ else { // the user is logged in or attempting to log in
   
   <label for="template">Template: </label>
   <select name="template" id="template" class="input-issue save">
-    <option value="cool.php" selected="selected">Cool</option>
+    <option value="cool" selected="selected">Cool</option>
   </select>
   
   <button class="newsletter_undo">Undo</button>
